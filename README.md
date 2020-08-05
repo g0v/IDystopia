@@ -1,5 +1,6 @@
 fork from https://github.com/g0v/2d-online-chat
 
+共筆連結 https://g0v.hackmd.io/@qsl-tuBOSqqgZqsmYAFtzA/ryS4ob4WP/https%3A%2F%2Fg0v.hackmd.io%2FW4pZelEoTDyuYWiQBndr6Q
 ## usage
 ```
 npm install
