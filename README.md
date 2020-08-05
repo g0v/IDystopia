@@ -7,3 +7,8 @@ npm install
 npm start
 ```
 visit 127.0.0.1:3000
+
+## deploy (should do after npm start(build))
+```
+./deploy
+```
