@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="common.js"></script>
+<script src="hero.js"></script>
+<script src="map-editor.js"></script>
+<script src="game-core.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<style>
+#game {
+    width: 600px;
+    height: 600px;
+    position: relative;
+}
+
+#label-object .map-object.choosed {
+    border: 2px solid yellow;
+}
+</style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="col-md-8">
+            <canvas id="game" width="512" height="512"></canvas>
+        </div>
+        <div class="col-md-4">
+            Room Name: <input type="text" name="room_name" value="chat2d"><br>
+            Width: <input type="text" name="cols" class="size-column"><br>
+            Height: <input type="text" name="rows" class="size-column"><br>
+            <button type="button" id="button-loadcloud">Load from Cloud</button>
+            <button type="button" id="button-savecloud">Save to Cloud</button>
+            <button type="button" id="button-loadsample">Load Sample</button>
+            <br>
+            Cloud Version: <span id="cloud-version"></span>
+            <br>
+            Layers:
+            <label><input type="radio" name="layer" value="result" checked="checked">Result</label>
+            <label><input type="radio" name="layer" value="ground">Ground</label>
+            <label><input type="radio" name="layer" value="wall">Wall</label>
+            <label><input type="radio" name="layer" value="object">Object</label>
+            <br>
+            Config:
+            <textarea id="result">{}</textarea>
+            <hr>
+            Object: <div id="label-object"></div>
+            <script>
+              let gameCore = new GameCore();
+$('#button-loadsample').click(function(e){
+        e.preventDefault();
+        // Game.loadSample();
+});
+
+$('#button-loadcloud').click(function(e){
+    e.preventDefault();
+    var room_name = $('[name="room_name"]').val();
+    $.ajax({
+            url: API_URL + 'rpg/getroom?room=' + encodeURIComponent(room_name),
+            success:  function(ret){
+                $('#cloud-version').text(new Date(1000 * ret.data.room_data.updated_at));
+                map.layers = ret.data.room_data.data;
+                updateLayerConfig();
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                $('#cloud-version').text('not found');
+            }
+    });
+});
+
+$('#button-savecloud').click(function(e){
+    e.preventDefault();
+    var room_name = $('[name="room_name"]').val();
+    $.ajax({
+            type: 'post',
+            url: API_URL + 'rpg/updateroom?room=' + encodeURIComponent(room_name),
+            data: {data: $('#result').val()},
+            success:  function(ret){
+                $('#cloud-version').text(new Date(1000 * ret.updated_at));
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                $('#cloud-version').text('not found');
+            }
+    });
+});
+
+$('[name="layer"]').change(function(){
+        $('#label-object').html('');
+        var layer = $(this).val();
+        if ('undefined' === typeof(TILE_GROUPS[layer])) {
+            return;
+        }
+        TILE_GROUPS[layer].map(function(line){
+            line.map(function(obj){
+                if ('undefined' === typeof(TILE_MAP[obj])) {
+                    return;
+                }
+                var object_dom = $('<span></span>').css({
+                        width: 32,
+                        height: 32,
+                        display: 'inline-block',
+                        "background-position": (-32 * TILE_MAP[obj][0]) + 'px ' + (-32 * TILE_MAP[obj][1]) + 'px',
+                        'background-image': 'url(sprite/open_tileset.png)',
+                }).addClass('map-object').data('object', obj);
+
+                $('#label-object').append(object_dom);
+            });
+            $('#label-object').append('<br>');
+        });
+});
+$('#label-object').on('click', '.map-object', function(e){
+    e.preventDefault();
+    $('.map-object').removeClass('choosed');
+    $(this).addClass('choosed');
+});
+if (localStorage.getItem('config')) {
+  map.layers = JSON.parse(localStorage.getItem('config'));
+
+  updateLayerConfig();
+} else {
+  // Game.loadSample();
+}
+
+$('.size-column').change(function(){
+        var old_cols = map.cols;
+        var old_rows = map.rows;
+        if ($(this).attr('name') == 'cols') {
+            new_cols = $(this).val();
+            new_rows = old_rows;
+        } else {
+            new_rows = $(this).val();
+            new_cols = old_cols;
+        }
+        if (new_cols < old_cols || new_rows < old_rows) {
+            if (!confirm('地圖變小可能會造成右下資料消失，您確定要變小嗎？')) {
+                $(this).val(map.layers['_' + $(this).attr('name')]);
+                return;
+            }
+        }
+        map.layers['_' + $(this).attr('name')] = $(this).val();
+        map.cols = map.layers._cols = new_cols;
+        map.rows = map.layers._rows = new_rows;
+        for (var l of ['ground', 'wall', 'object']) {
+            old_layer = map.layers[l];
+            map.layers[l] = [];
+            for (var c = map.cols - 1; c >= 0; c --) {
+                for (var r = 0; r < map.rows; r ++) {
+                    map.layers[l][r * map.cols + c] = old_layer[r * old_cols + c];
+                }
+            }
+        }
+        Game.camera.maxX = map.cols * map.tsize - Game.camera.width;
+        Game.camera.maxY = map.rows * map.tsize - Game.camera.height;
+
+        updateLayerConfig();
+});
+            </script>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+</body>
+</html>
+
