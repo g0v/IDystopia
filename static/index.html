@@ -5,87 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="https://jitsi.jothon.online/libs/lib-jitsi-meet.min.js"></script>
-    <script src="common.js?"></script>
-    <script src="hero.js?"></script>
-    <script src="logic-grid.js?"></script>
-    <script src="game_object.js?"></script>
-    <script src="jitsi-channel.js?"></script>
-    <script src="game-core.js?"></script>
+    <script src="js/common.js?"></script>
+    <script src="js/hero.js?"></script>
+    <script src="js/logic-grid.js?"></script>
+    <script src="js/game_object.js?"></script>
+    <script src="js/jitsi-channel.js?"></script>
+    <script src="js/game-core.js?"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="css/index.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <style>
-body {
-  overflow: hidden;
-}
-
-#game {
-  position: absolute;
-  width: 75%;
-  height: 100%;
-}
-
-#controller {
-  position: absolute;
-  width: 25%;
-  height: 100%;
-  right: 0px;
-  top: 0px;
-  opacity: 80%;
-  display: flex;
-  flex-direction: column;
-  z-index: 20;
-}
-
-#controller .panel-heading {
-  flex: 1;
-}
-
-#controller .panel-body {
-  /* display: flex; */
-  flex-direction: column;
-  flex-grow: 100;
-}
-
-.panel-tab {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.character.choosed {
-  border: 3px solid blue;
-}
-
-@media only screen and (orientation: landscape) and (max-height: 500px) { /* phone, landscape */
-  #controller .panel-body ul.nav { display: none; }
-  #controller .panel-heading { display: none; }
-  #log-area { display: none; }
-}
-
-@media only screen and (orientation: portrait) {  /* phone, portrait */
-  #controller .panel-body ul.nav { display: none; }
-  #controller .panel-heading { display: none; }
-  #log-area { display: none; }
-  #controller {
-    width: 100%;
-    height: 20%;
-  }
-  #game {
-    top: 20%;
-    width: 100%;
-    height: 80%;
-  }
-}
-
-#arrow-controller img {
-  -webkit-touch-callout: none;
-  -ms-touch-callout: none;
-  -moz-touch-callout: none;
-  -o-touch-callout: none;
-  touch-callout: none;
-}
-
     </style>
   </head>
   <body>
@@ -821,4 +750,3 @@ body {
     </script>
   </body>
 </html>
-
