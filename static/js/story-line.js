@@ -2,6 +2,16 @@
  * Design Doc: https://g0v.hackmd.io/4HiKmrEASa-YdQ2bqg4kHg
  */
 
+/**
+ * <mission-id>:  # repeated
+ *   title: <mission-title>
+ *   description: <...>
+ *   depend:
+ *     - "<mission-id>:<step-id>"  # repeated
+ *   first_step: <step-id>
+ *   steps:
+ *     ...
+ */
 class Mission {
   constructor(id, title, description, depend, firstStep) {
     this.id = id;
@@ -15,8 +25,27 @@ class Mission {
   addStep(missionStep) {
     this.steps[missionStep.id] = missionStep;
   }
-}
 
+  static fromDict(missionId, dict) {
+    const title = dict['title'] || 'Unnamed Mission';
+    const description = dict['description'] || 'no description';
+    const depend = (dict['depend'] || []).filter(d => {
+      if (typeof(d) === 'string' || d instanceof String) {
+        return true;
+      }
+      console.warn(`${d} is not a string`);
+      return false;
+    });
+
+    const mission = new Mission(missionId, title, description, depend, null);
+
+    for (const stepId in dict['steps']) {
+      const step = MissionStep.fromDict(stepId, dict['steps'][stepId]);
+      mission.addStep(step);
+    }
+    return mission;
+  }
+}
 
 const EOD = '$EOD';
 const PLAYER = '$player';
@@ -27,7 +56,7 @@ const PLAYER = '$player';
  *   description: <...>
  *   nextStep: <step-id>  # the default next step
  *   npcId: <npc-id>  # whom to find to trigger the dialog of this step.
- *                     # NPC can be an object (e.g. a box).
+ *                    # NPC can be an object (e.g. a box).
  *   dialog:
  *     - name: "NPC name" or $player  # who is talking
  *       line: "hello, $player"
@@ -44,14 +73,45 @@ const PLAYER = '$player';
  *           nextLine: <line-id>  # optional
  */
 class MissionStep {
-  constructor(id, nextStep, npcId, dialog) {
+  constructor(id, title, description, nextStep, npcId, dialog) {
     this.id = id;
+    this.title = title;
+    this.description = description;
     this.nextStep = nextStep;
     this.npcId = npcId;
     this.dialog = dialog;
   }
+
+  static fromDict(stepId, dict) {
+    const title = dict['title'] || 'Unnamed Step';
+    const description = dict['description'] || 'no description';
+    const nextStep = dict['nextStep'];
+    const npcId = dict['npcId'];
+    if (npcId === undefined) {
+      throw 'npcId must be defined';
+    }
+    const dialog = Dialog.fromDict(dict['dialog'] || []);
+    return new MissionStep(
+      stepId, title, description, nextStep, npcId, dialog);
+  }
 }
 
+/**
+ *   dialog:
+ *     - name: "NPC name" or $player  # who is talking
+ *       line: "hello, $player"
+ *       id: <line-id>  # optional
+ *       nextLine: <line-id>  # optional: jump to another dialog if we don't
+ *                             # want to fallthrough.  "$EOD" means "end of
+ *                             # dialog"
+ *     - name: "NPC name" or $player
+ *       question: "Red pill or blue pill?"
+ *       choices:
+ *         - text: "Red"
+ *           nextLine: <line-id>  # optional
+ *         - text: "Blue"
+ *           nextLine: <line-id>  # optional
+ */
 class Dialog {
   constructor() {
     this.dialogItems = [];
@@ -67,6 +127,15 @@ class Dialog {
 
   getIterator() {
     return DialogIterator(this);
+  }
+
+  static fromDict(list) {
+    const dialog = new Dialog();
+    for (const dict of list) {
+      const dialogItem = DialogItem.fromDict(dict);
+      dialog.addDialogItem(dialogItem);
+    }
+    return dialog;
   }
 }
 
@@ -138,7 +207,7 @@ class DialogItem {
       line = '...';
     }
 
-    if (question !== undefined && (choices === undefined or !choices)) {
+    if (question !== undefined && (choices === undefined || !choices)) {
       console.warn('`question` is defined, but `choices` is not.');
       choices = [
         {text: 'Ok'}
@@ -156,4 +225,33 @@ class DialogItem {
       this.choices = choices;
     }
   }
+
+  static fromDict(dict) {
+    const name = dict['name'] || 'John Doe';
+    const id = dict['id'];
+    const line = dict['line'];
+    const nextLine = dict['nextLine'];
+    const question = dict['question'];
+    const choices = dict['choices'];
+
+    return new DialogItem(name, {id, line, nextLine, question, choices});
+  }
+}
+
+async function loadStoryLine(fileName) {
+  const response = await fetch(`/story-lines/${fileName}`);
+  const obj = await response.json();
+
+  const missions = obj['missions'];
+  const loadedMissions = [];
+  if (!missions) {
+    return loadedMissions;
+  }
+
+  for (const missionId in missions) {
+    const missionDict = missions[missionId];
+    loadedMissions.push(Mission.fromDict(missionId, missionDict));
+  }
+  console.log(loadedMissions);
+  return loadedMissions;
 }
