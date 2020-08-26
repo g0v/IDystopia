@@ -1,23 +1,29 @@
 {
-  "author": "zbryikt",
-  "name": "sample-project",
+  "author": "g0ver",
+  "name": "IDystopia",
   "license": "MIT",
   "description": "a dummy project",
   "version": "0.0.1",
-  "homepage": "https://github.com/your/project",
+  "homepage": "https://idystopia.online/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your/project"
+    "url": "https://github.com/g0v/idystopia"
   },
   "engines": {
     "node": ">=0.12.6",
     "npm": ">=1.2.2"
   },
   "scripts": {
-    "start": "./node_modules/.bin/lsc ./node_modules/template/server.ls"
+    "build": "webpack",
+    "start": "webpack-dev-server --open"
   },
   "dependencies": {
-    "LiveScript": "^1.3.1",
-    "template": "github:zbryikt/template#v2"
+    "stage-js": "^0.8.11"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^6.0.3",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   }
 }
