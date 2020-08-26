@@ -2,14 +2,14 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-  // entry: {
-  //   index: './src/index.js',
-  //   map_editor: './src/map_editor.js',
-  // },
-  // output: {
-  //   filename: '[name].js',
-  //   path: path.resolve(__dirname, 'dist', 'js'),
-  // },
+  entry: {
+    index: './src/js/index.js',
+    map_editor: './src/js/map_editor.js',
+  },
+  output: {
+    filename: 'js/[name].js',
+    path: path.resolve(__dirname, 'dist'),
+  },
   devServer: {
     contentBase: './dist',
   },
