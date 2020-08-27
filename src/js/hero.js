@@ -1,3 +1,126 @@
+const Stage = require('stage-js/platform/web');
+
+const CHAR_WIDTH = 32;
+const CHAR_HEIGHT = 32;
+
+export class Char {
+  constructor(x, y, character, name) {
+    if (Number.isNaN(x)) x = 0;
+    if (Number.isNaN(y)) y = 0;
+    this.targetX = x;
+    this.targetY = y;
+    this.x = x;
+    this.y = y;
+    this.character = character;
+    this.name = name;
+    this.messages = [];
+    this.facing = 'DOWN';
+    this.step = 1;
+
+    this.makeStageObj();
+  }
+
+  makeStageObj() {
+    this.loadImage();
+    this.stageObj = Stage.create();
+    this.stageObj.column(0.5);
+
+    this.imageObj = Stage.image(`${this.character}:${this.facing}_${this.step}`);
+    this.imageObj.appendTo(this.stageObj);
+
+    this.nameTag = Stage.string('text').appendTo(this.stageObj);
+    this.nameTag.value(this.name);
+  }
+
+  appendTo(stage) {
+    this.stageObj.appendTo(stage);
+    this.stageObj.pin({offsetX: this.x, offsetY: this.y});
+  }
+
+  get WIDTH() {
+    return 32;
+  }
+
+  get HEIGHT() {
+    return 32;
+  }
+
+  get SPEED() {
+    return 256;
+  }
+
+  loadImage() {
+    if (!this.character) return;
+
+    const src = `/sprite/${this.character}.png`;
+
+    const rows = {
+      DOWN: 0,
+      LEFT: 1,
+      RIGHT: 2,
+      UP: 3,
+    };
+    let textures = {};
+    for (const key in rows) {
+      const dy = rows[key];
+      for (let dx = 0; dx < 3; dx++) {
+        textures[`${key}_${dx}`] = {
+          x: dx * this.WIDTH,
+          y: dy * this.HEIGHT,
+          width: this.WIDTH,
+          height: this.HEIGHT,
+        };
+      }
+    }
+
+    Stage({
+      name: `${this.character}`,
+      image: src,
+      textures: textures,
+    });
+  }
+
+  // dt: delta T in seconds.
+  tick(dt) {
+    let moved = false;
+    let facing = '';
+
+    if (this.targetX != this.x) {
+      const sign = Math.sign(this.targetX - this.x);
+      if (this.SPEED * dt > Math.abs(this.targetX - this.x)) {
+        this.x = this.targetX;
+      } else {
+        this.x += sign * this.SPEED * dt;
+      }
+      moved = true;
+      facing = sign > 0 ? 'RIGHT' : 'LEFT';
+    }
+    if (this.targetY != this.y) {
+      const sign = Math.sign(this.targetY - this.y);
+      if (this.SPEED * dt > Math.abs(this.targetY - this.y)) {
+        this.y = this.targetY;
+      } else {
+        this.y += sign * this.SPEED * dt;
+      }
+      moved = true;
+      facing = sign > 0 ? 'DOWN' : 'UP';
+    }
+
+    if (moved) {
+      this.stageObj.pin({
+        offsetX: this.x,
+        offsetY: this.y,
+      });
+      this.facing = facing;
+      this.step = Math.floor(Math.abs(this.x + this.y) / (this.WIDTH / 2)) % 3;
+      this.imageObj.image(`${this.character}:${this.facing}_${this.step}`);
+    } else if (this.step != 1) {
+      this.step = 1;
+      this.imageObj.image(`${this.character}:${this.facing}_${this.step}`);
+    }
+  }
+}
+
 // We probably want to move "map" and moving function to another place.
 // These functions is only used in 2d version.
 class Hero {
