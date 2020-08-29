@@ -1,4 +1,5 @@
 const Stage = require('stage-js/platform/web');
+const Const = require('./const.js');
 
 const CHAR_WIDTH = 32;
 const CHAR_HEIGHT = 32;
@@ -22,19 +23,48 @@ export class Char {
 
   makeStageObj() {
     this.loadImage();
-    this.stageObj = Stage.create();
-    this.stageObj.column(0.5);
 
-    this.imageObj = Stage.image(`${this.character}:${this.facing}_${this.step}`);
-    this.imageObj.appendTo(this.stageObj);
+    this.imageBox = Stage.image(`${this.character}:${this.facing}_${this.step}`);
+    this.imageBox.pin({handle: 0.0});
 
-    this.nameTag = Stage.string('text').appendTo(this.stageObj);
-    this.nameTag.value(this.name);
+    this.nameBox = Stage.string('text');
+    this.nameBox.value(this.name);
+    this.nameBox.pin({handleX: 0.5});
+
+    this.outlineBox = Stage.image();
+    this.outlineBox.pin({handle: 0.0});
+    this.outlineBox.image(Stage.canvas(function(ctx) {
+      const ratio = 2;
+      this.size(Const.TILE_SIZE, Const.TILE_SIZE, ratio);
+      ctx.scale(ratio, ratio);
+      ctx.beginPath();
+      ctx.rect(0, 0, Const.TILE_SIZE, Const.TILE_SIZE);
+      ctx.stroke();
+    }));
+
   }
 
-  appendTo(stage) {
-    this.stageObj.appendTo(stage);
-    this.stageObj.pin({offsetX: this.x, offsetY: this.y});
+  appendTo(map) {
+    const z = Math.floor(this.y / Const.TILE_SIZE);
+
+    map.insert(this.imageBox, z);
+    map.insert(this.nameBox);
+    map.insert(this.outlineBox);
+
+    this.imageBox.pin({
+      offsetX: this.x,
+      offsetY: this.y,
+    });
+
+    this.nameBox.pin({
+      offsetX: this.x + Const.TILE_SIZE / 2,
+      offsetY: this.y + Const.TILE_SIZE,
+    });
+
+    this.outlineBox.pin({
+      offsetX: this.x,
+      offsetY: this.y,
+    });
   }
 
   get WIDTH() {
@@ -80,11 +110,46 @@ export class Char {
     });
   }
 
-  // dt: delta T in seconds.
-  tick(dt) {
+  // moved by user input
+  move(dt, dx, dy, map) {
+    if (dx || dy) {
+      let newX = this.x + dx * dt * this.SPEED;
+      let newY = this.y + dy * dt * this.SPEED;
+
+      // Check if we can move into the new location.
+      // The check is more strict on X axis.
+      // For Y axis, we only need to check for the center of the box, the
+      // visual effect is good enough.
+      if (map.isSolidTile(newX, newY + 16) && dx === -1) {
+        newX = (Math.floor(newX / Const.TILE_SIZE) + 1) * Const.TILE_SIZE;
+      }
+      if (map.isSolidTile(newX + 31, newY + 16) && dx === 1) {
+        newX = (Math.floor(newX / Const.TILE_SIZE)) * Const.TILE_SIZE;
+      }
+      if (map.isSolidTile(newX, newY + 16) ||
+          map.isSolidTile(newX + 31, newY + 16)) {
+        return;
+      }
+
+      this.x = newX;
+      this.y = newY;
+      this.targetX = this.x;
+      this.targetY = this.y;
+
+      if (dx) this.facing = dx > 0 ? 'RIGHT' : 'LEFT';
+      if (dy) this.facing = dy > 0 ? 'DOWN' : 'UP';
+      this.appendTo(map);
+      this.step = Math.floor(Math.abs(this.x + this.y) / (this.WIDTH / 2)) % 3;
+      this.imageBox.image(`${this.character}:${this.facing}_${this.step}`);
+    }
+  }
+
+  // To handle non-user input movements.
+  tick(dt, map) {
     let moved = false;
     let facing = '';
 
+    // For movement not caused by user input.
     if (this.targetX != this.x) {
       const sign = Math.sign(this.targetX - this.x);
       if (this.SPEED * dt > Math.abs(this.targetX - this.x)) {
@@ -107,19 +172,143 @@ export class Char {
     }
 
     if (moved) {
-      this.stageObj.pin({
-        offsetX: this.x,
-        offsetY: this.y,
-      });
+      this.appendTo(map);
       this.facing = facing;
       this.step = Math.floor(Math.abs(this.x + this.y) / (this.WIDTH / 2)) % 3;
-      this.imageObj.image(`${this.character}:${this.facing}_${this.step}`);
+      this.imageBox.image(`${this.character}:${this.facing}_${this.step}`);
     } else if (this.step != 1) {
       this.step = 1;
-      this.imageObj.image(`${this.character}:${this.facing}_${this.step}`);
+      this.imageBox.image(`${this.character}:${this.facing}_${this.step}`);
     }
   }
 }
+
+export class CharDaemon {
+  constructor() {
+    this.chars = {};
+  }
+
+  create(id, row, col, texture, displayName) {
+    if (id in this.chars) {
+      console.error(`Character ID "${id}" is already declared:`);
+      console.error(this.chars[id]);
+      return;
+    }
+    const char = new Char(
+        row * Const.TILE_SIZE, col * Const.TILE_SIZE, texture, displayName);
+
+    this.chars[id] = char;
+    return char;
+  }
+
+  getChar(id) {
+    if (this.chars.hasOwnProperty(id)) {
+      return this.chars[id];
+    }
+    return null;
+  }
+}
+
+
+export class DialogDaemon {
+  constructor(charDaemon) {
+    this.charDaemon = charDaemon;
+    this.dialogs = {};
+    this.hasOnGoingDialog = false;
+  }
+
+  getDialog(dialogId) {
+    if (this.dialogs.hasOwnProperty(dialogId)) {
+      return this.dialogs[dialogId];
+    }
+    return null;
+  }
+
+  makeDialogContent(dialogItem) {
+    const me = this.charDaemon.getChar('me');
+    const talker = dialogItem.name.replace(/\$player/, me.name);
+    const content = dialogItem.line.replace(/\$player/, me.name);
+    return `${talker}:<br/><p>${content}</p>`;
+  }
+
+  showDialog(iterator) {
+    const item = iterator.getCurrentDialogItem();
+    if (item) {
+      this.hasOnGoingDialog = true;
+
+      bootbox.alert(this.makeDialogContent(item), (e) => {
+        this.hasOnGoingDialog = false;
+        const next = iterator.nextDialogItem();
+        if (next) {
+          this.showDialog(iterator);
+        }
+      });
+    }
+  }
+
+  startDialog(dialogId) {
+    if (this.hasOnGoingDialog) {
+      console.warn(`There is an on-going dialog, cannot start a new one`);
+      return;
+    }
+
+    const tuple = this.getDialog(dialogId);
+    if (tuple === null) {
+      console.error(`No such dialog: ${dialogId}`);
+      return;
+    }
+    const {npcId, dialog} = tuple;
+    const iterator = dialog.getIterator();
+    this.showDialog(iterator);
+  }
+
+  add(dialogId, npcId, dialog) {
+    if (this.getDialog(dialogId) !== null) {
+      console.error(`Dialog ${dialogId} already exists.`);
+      return;
+    }
+
+    const npc = this.charDaemon.getChar(npcId);
+    if (null === npc) {
+      console.error(`NPC ${npcId} doesn't exist.`);
+      return;
+    }
+
+    this.dialogs[dialogId] = {
+      npcId: npcId,
+      dialog: dialog,
+    };
+    return this.dialogs[dialogId];
+  }
+
+  remove(dialogId) {
+    const tuple = this.getDialog(dialogId);
+    if (null === tuple) {
+      return;
+    }
+
+    const {npcId, dialog} = tuple;
+
+    delete this.dialogs[dialogId];
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // We probably want to move "map" and moving function to another place.
 // These functions is only used in 2d version.

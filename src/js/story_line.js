@@ -126,7 +126,7 @@ class Dialog {
   }
 
   getIterator() {
-    return DialogIterator(this);
+    return new DialogIterator(this);
   }
 
   static fromDict(list) {
@@ -238,7 +238,7 @@ class DialogItem {
   }
 }
 
-async function loadStoryLine(fileName) {
+export async function loadStoryLine(fileName) {
   const response = await fetch(`/story-lines/${fileName}`);
   const obj = await response.json();
 

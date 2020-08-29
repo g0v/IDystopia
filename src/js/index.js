@@ -1,9 +1,15 @@
 const Stage = require('stage-js/platform/web');
 // const common = require('./common.js');
-const game_core = require('./game_core.js');
-const game_object = require('./game_object.js');
+// const game_core = require('./game_core.js');
+// const game_object = require('./game_object.js');
 const hero = require('./hero.js');
+const Map = require('./map.js');
+const Textures = require('./textures.js');
 // const jitsi_channel = require('./jitsi_channel.js');
+const StoryLine = require('./story_line.js');
+
+const charDaemon = new hero.CharDaemon();
+const dialogDaemon = new hero.DialogDaemon(charDaemon);
 
 const KEY_MAP = {
   LEFT: 37,
@@ -11,6 +17,7 @@ const KEY_MAP = {
   UP: 38,
   DOWN: 40,
   ENTER: 13,
+  SPACE: 32,
 };
 
 class Keyboard {
@@ -29,9 +36,12 @@ class Keyboard {
   }
 
   onKeyDown(e) {
+    // Don't listen to inputs when there is an active dialog.
+    if (dialogDaemon.hasOnGoingDialog) return;
+
     const keyCode = e.keyCode;
     if (keyCode in this.active) {
-      e.preventDefault();
+      // e.preventDefault();
       this.active[keyCode] = true;
     }
   }
@@ -39,7 +49,7 @@ class Keyboard {
   onKeyUp(e) {
     const keyCode = e.keyCode;
     if (keyCode in this.active) {
-      e.preventDefault();
+      // e.preventDefault();
       this.active[keyCode] = false;
     }
   }
@@ -61,28 +71,79 @@ class App {
     body.insertBefore(loading, body.firstChild);
   }
 
+  /*
+  hideDialog() {
+    this.dialogBox.hide();
+  }
+
+  showDialog(title, text, buttons) {
+
+    return;
+    this.dialogBox.empty();
+
+    const w = this.world.width();
+    const h = this.world.height();
+    console.log(w, h);
+    this.dialogBox.image(Stage.canvas(function(ctx) {
+      this.size(w / 2, h / 2);
+      ctx.fillStyle = '#555';
+      ctx.fillRect(0, 0, w, h);
+    }));
+    this.dialogBox.show()
+
+    const textBox = Stage.string('text').value(text).pin({align: 0.5});
+    textBox.appendTo(this.dialogBox);
+
+    const titleBox = Stage.string('text').value(title).pin({align: 0});
+    titleBox.appendTo(this.dialogBox);
+
+    if (buttons) {
+      const row = Stage.row();
+      for (const button in buttons) {
+        if (!buttons.hasOwnProperty(button)) {
+          continue;
+        }
+
+        const buttonBox = Stage.string('text').value(button);
+        buttonBox.on('click', (e) => buttons[button](e));
+        buttonBox.appendTo(row);
+      }
+      row.pin({align: 1});
+      row.appendTo(this.dialogBox);
+    }
+
+  }
+  */
+
   tick(dt) {
     // dt: delta T in seconds.
-    // speed: move 256 pixels per second.
-    const speed = 256;
-    let dx = (-!!this.keyboard.active[KEY_MAP.LEFT] + !!this.keyboard.active[KEY_MAP.RIGHT]);
-    let dy = (-!!this.keyboard.active[KEY_MAP.UP] + !!this.keyboard.active[KEY_MAP.DOWN]);
 
+    let dx = (!!this.keyboard.active[KEY_MAP.RIGHT] - !!this.keyboard.active[KEY_MAP.LEFT]);
+    let dy = (!!this.keyboard.active[KEY_MAP.DOWN] - !!this.keyboard.active[KEY_MAP.UP]);
     if (dx || dy) {
-      this.me.targetX = this.me.x + dx * dt * speed;
-      this.me.targetY = this.me.y + dy * dt * speed;
-      //const x = this.box.pin('offsetX');
-      //const y = this.box.pin('offsetY');
-      //this.box.pin({
-        //'offsetX': x + dx * dt * speed,
-        //'offsetY': y + dy * dt * speed,
-      //});
+      this.me.move(dt, dx, dy, this.map);
+    } else {
+      this.me.tick(dt, this.map);
     }
-    this.me.tick(dt);
+
+    if (this.keyboard.active[KEY_MAP.ENTER] ||
+        this.keyboard.active[KEY_MAP.SPACE]) {
+      this.dialogDaemon.startDialog('dialog-1');
+      this.keyboard.active[KEY_MAP.ENTER] = false;
+      this.keyboard.active[KEY_MAP.SPACE] = false;
+    }
+
+    // Move camera on to user.
+    const scaleX = this.world.pin('scaleX');
+    const scaleY = this.world.pin('scaleY');
+    this.world.pin({
+      offsetX: -this.me.x * scaleX,
+      offsetY: -this.me.y * scaleY,
+    });
     return true;
   }
 
-  initialize() {
+  async initialize() {
     this.showLoading();
 
     this.keyboard = new Keyboard(KEY_MAP);
@@ -106,51 +167,64 @@ class App {
       };
     })();
 
-    Stage({
-      textures : {
-        text : function(text, style) {
-          text += '';
-          style = style || {};
-          return Stage.canvas(function(ctx) {
-            var ratio = 2;
-
-            ctx.font = style.font || 'normal 12px Arial';
-            const dim = ctx.measureText(text);
-
-            this.size(dim.width, 12, ratio);
-            ctx.scale(ratio, ratio);
-            // TODO(stimim): figure out why do we need to set this again...
-            // I guess this is related to the "ratio" setting.
-            ctx.font = style.font || 'normal 12px Arial';
-            ctx.fillStyle = style.fillStyle || '#ddd';
-            ctx.textBaseline = 'top';
-            ctx.fillText(text, 0, 0);
-          });
-        }
-      }
-    });
-
+    const storyLine = await StoryLine.loadStoryLine('sample.json');
     //this.me = new hero.Char(32, 32, 'teachers/Headmaster male', '史提米');
-    this.me = new hero.Char(32, 32, 'teachers/Headmaster male', 'stimim');
+    Textures.loadTextures();
+    this.me = charDaemon.create('me', 2, 2, 'teachers/Headmaster male', '史提米');
+    // this.npc = charDaemon.create('lady-of-lake', 8, 2, 'teachers/Teacher fmale 04', '湖中女神');
+    this.npc = charDaemon.create('lady-of-lake', 8, 2, 'teachers/Teacher fmale 04', '失物招領處員工');
+    this.dialogDaemon = dialogDaemon;
+
+    dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-1'].dialog);
+
     Stage((stage) => {
-      stage.viewbox(32 * 40, 32 * 20);
+      this.stage = stage;
+
+      this.world = new Stage();
+      this.world.pin({
+        handle: -0.5,
+        width: 32 * 40,
+        height: 32 * 20,
+      }).appendTo(stage);
+
+      this.dialogBox = Stage.image().pin({
+        handle: -0.5,
+        align: 0.5,
+        width: 32 * 40,
+        height: 32 * 20,
+      }).appendTo(this.stage);
+
+      this.dialogBox.hide();
+
+      stage.on('viewport', (viewport) => {
+        this.world.pin({
+          scaleMode : 'in-pad',
+          scaleWidth : viewport.width,
+          scaleHeight : viewport.height,
+        });
+
+        this.dialogBox.pin({
+          scaleMode : 'in-pad',
+          scaleWidth : viewport.width,
+          scaleHeight : viewport.height,
+        });
+      });
+
       stage.background('#222222');
 
-      this.me.appendTo(stage);
+      (Map.loadMap(this.world, 'stimim-castle-2')).then(
+        (map) => {
+          this.map = map;
+          this.map.init();
+          this.me.appendTo(this.map);
+          this.npc.appendTo(this.map);
+          // dt is delta T in milliseconds, convert it to seconds.
+          stage.tick((dt) => this.tick(dt / 1000));
+        }
+      );
 
-      // dt is delta T in milliseconds, convert it to seconds.
-      stage.tick((dt) => this.tick(dt / 1000));
     });
-
-    // Texture
-    //Stage({
-      //image : '/sprite/teachers/Headmaster male.png',
-      //textures : {
-        //teacher : { x : 0, y : 0, width : 32, height : 32 }
-      //}
-    //});
   }
-
 }
 
 app = new App();
