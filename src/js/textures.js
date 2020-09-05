@@ -72,6 +72,9 @@ function addTextTexture() {
           var ratio = 2;
 
           ctx.font = style.font || 'normal 12px Arial';
+          ctx.strokeStyle = 'black';
+          ctx.lineWidth = 3;
+          ctx.textAlign = 'center';
           const dim = ctx.measureText(text);
 
           this.size(dim.width, 12, ratio);
@@ -79,8 +82,10 @@ function addTextTexture() {
           // TODO(stimim): figure out why do we need to set this again...
           // I guess this is related to the "ratio" setting.
           ctx.font = style.font || 'normal 12px Arial';
-          ctx.fillStyle = style.fillStyle || '#ddd';
           ctx.textBaseline = 'top';
+          ctx.strokeText(text, 0, 0);
+
+          ctx.fillStyle = style.fillStyle || 'white';
           ctx.fillText(text, 0, 0);
         });
       }
