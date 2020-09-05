@@ -157,14 +157,15 @@ class DialogIterator {
     }
 
     if (dialogItem.choices !== undefined) {
-      if (selectedIndex !== undefined) {
+      if (selectedIndex === undefined) {
         console.warn('This is a multiple choice question, but no selected ' +
                      'answer. Default to the first answer.')
         selectedIndex = 0;
       }
 
       if (dialogItem.choices[selectedIndex].nextLine !== undefined) {
-        nextIndex = dialogItem.choices[selectedIndex].nextLine;
+        const nextLine = dialogItem.choices[selectedIndex].nextLine;
+        nextIndex = this.dialog.dialogIdMap[nextLine];
       }
     }
 

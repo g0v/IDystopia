@@ -224,23 +224,58 @@ export class DialogDaemon {
     return null;
   }
 
-  makeDialogContent(dialogItem) {
-    const me = this.charDaemon.getChar('me');
-    const talker = dialogItem.name.replace(/\$player/, me.name);
-    const content = dialogItem.line.replace(/\$player/, me.name);
-    return `${talker}:<br/><p>${content}</p>`;
-  }
-
   showDialog(iterator) {
     const item = iterator.getCurrentDialogItem();
-    if (item) {
-      this.hasOnGoingDialog = true;
+    if (!item) {
+      return;
+    }
 
-      bootbox.alert(this.makeDialogContent(item), (e) => {
-        this.hasOnGoingDialog = false;
-        const next = iterator.nextDialogItem();
-        if (next) {
-          this.showDialog(iterator);
+    this.hasOnGoingDialog = true;
+    const me = this.charDaemon.getChar('me');
+    const talker = item.name.replace(/\$player/, me.name);
+
+    if (item.line) {
+      const content = item.line.replace(/\$player/, me.name);
+      bootbox.alert({
+        title: talker,
+        message: content,
+        callback: e => {
+          this.hasOnGoingDialog = false;
+          const next = iterator.nextDialogItem();
+          if (next) {
+            this.showDialog(iterator);
+          }
+        }
+      });
+    } else if (item.question) {
+      const question = item.question.replace(/\$player/, me.name);
+      const inputOptions = [];
+
+      for (const idx in item.choices) {
+        const text = item.choices[idx].text;
+        inputOptions.push({
+          text: text.replace(/\$player/, me.name),
+          value: idx,
+        });
+      }
+
+      bootbox.prompt({
+        title: talker,
+        message: question,
+        inputType: 'select',
+        onEscape: false,
+        backdrop: true,
+        inputOptions: inputOptions,
+        callback: result => {
+          if (result === null) {
+            return false;
+          }
+          this.hasOnGoingDialog = false;
+          const next = iterator.nextDialogItem(result);
+          if (next) {
+            this.showDialog(iterator);
+          }
+          return true;
         }
       });
     }

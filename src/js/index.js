@@ -175,7 +175,7 @@ class App {
     this.npc = charDaemon.create('lady-of-lake', 8, 2, 'teachers/Teacher fmale 04', '失物招領處員工');
     this.dialogDaemon = dialogDaemon;
 
-    dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-1'].dialog);
+    dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-2'].dialog);
 
     Stage((stage) => {
       this.stage = stage;
