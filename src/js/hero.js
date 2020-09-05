@@ -17,6 +17,7 @@ export class Char {
     this.messages = [];
     this.facing = 'DOWN';
     this.step = 1;
+    this.missionMark = false;
 
     this.makeStageObj();
   }
@@ -31,6 +32,11 @@ export class Char {
     this.nameBox.value(this.name);
     this.nameBox.pin({handleX: 0.5});
 
+    this.missionMarkBox = Stage.string('text');
+    this.missionMarkBox.value('!');
+    this.missionMarkBox.pin({handleX: 0.5});
+    this.missionMarkBox.hide();
+
     this.outlineBox = Stage.image();
     this.outlineBox.pin({handle: 0.0});
     this.outlineBox.image(Stage.canvas(function(ctx) {
@@ -41,7 +47,6 @@ export class Char {
       ctx.rect(0, 0, Const.TILE_SIZE, Const.TILE_SIZE);
       ctx.stroke();
     }));
-
   }
 
   appendTo(map) {
@@ -49,6 +54,7 @@ export class Char {
 
     map.insert(this.imageBox, z);
     map.insert(this.nameBox);
+    map.insert(this.missionMarkBox);
     map.insert(this.outlineBox);
 
     this.imageBox.pin({
@@ -59,6 +65,10 @@ export class Char {
     this.nameBox.pin({
       offsetX: this.x + Const.TILE_SIZE / 2,
       offsetY: this.y + Const.TILE_SIZE,
+    });
+    this.missionMarkBox.pin({
+      offsetX: this.x + Const.TILE_SIZE / 2,
+      offsetY: this.y - Const.TILE_SIZE / 2,
     });
 
     this.outlineBox.pin({
@@ -149,6 +159,11 @@ export class Char {
     let moved = false;
     let facing = '';
 
+    if (this.missionMark) {
+      this.missionMarkBox.show();
+    } else {
+      this.missionMarkBox.hide();
+    }
     // For movement not caused by user input.
     if (this.targetX != this.x) {
       const sign = Math.sign(this.targetX - this.x);
@@ -210,6 +225,30 @@ export class CharDaemon {
 }
 
 
+export class StoryLineDaemon {
+  constructor(storyLine, dialogDaemon) {
+    this.storyLine = storyLine;
+    this.dialogDaemon = dialogDaemon;
+  }
+
+  init() {
+    for (const missionId in this.storyLine) {
+      if (!this.storyLine.hasOwnProperty(missionId)) continue;
+
+      const mission = this.storyLine[missionId];
+      // TODO: check dependency
+
+      const key = mission.firstStep;
+      const firstStep = mission.steps[key];
+
+      const id = `${mission.id}/${firstStep.id}`;
+      this.dialogDaemon.add(id, firstStep.npcId, firstStep.dialog);
+    }
+
+    // dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-2'].dialog);
+  }
+}
+
 export class DialogDaemon {
   constructor(charDaemon) {
     this.charDaemon = charDaemon;
@@ -244,6 +283,8 @@ export class DialogDaemon {
           const next = iterator.nextDialogItem();
           if (next) {
             this.showDialog(iterator);
+          } else {
+            this.doneDialog(iterator);
           }
         }
       });
@@ -274,11 +315,32 @@ export class DialogDaemon {
           const next = iterator.nextDialogItem(result);
           if (next) {
             this.showDialog(iterator);
+          } else {
+            this.doneDialog(iterator);
           }
           return true;
         }
       });
     }
+  }
+
+  doneDialog(iterator) {
+    const dialog = iterator.dialog;
+    const missionStep = dialog.missionStep;
+    const mission = missionStep.mission;
+
+    this.remove(`${mission.id}/${missionStep.id}`);
+
+    const nextStepKey = iterator.nextStep;
+    if (!nextStepKey) {
+      return;
+    }
+
+    console.log(nextStepKey);
+
+    const nextStep = mission.steps[nextStepKey];
+    if (!nextStep) return;
+    this.add(`${mission.id}/${nextStep.id}`, nextStep.npcId, nextStep.dialog);
   }
 
   startDialog(dialogId) {
@@ -297,6 +359,20 @@ export class DialogDaemon {
     this.showDialog(iterator);
   }
 
+  findNearbyDialog(me) {
+    for (const dialogId in this.dialogs) {
+      if (!this.dialogs.hasOwnProperty(dialogId)) continue;
+
+      const {npcId, dialog} = this.dialogs[dialogId];
+      const npc = this.charDaemon.getChar(npcId);
+
+      if (Math.hypot(npc.x - me.x, npc.y - me.y) < 2 * Const.TILE_SIZE) {
+        return dialogId;
+      }
+    }
+    return null;
+  }
+
   add(dialogId, npcId, dialog) {
     if (this.getDialog(dialogId) !== null) {
       console.error(`Dialog ${dialogId} already exists.`);
@@ -308,6 +384,8 @@ export class DialogDaemon {
       console.error(`NPC ${npcId} doesn't exist.`);
       return;
     }
+
+    npc.missionMark = true;
 
     this.dialogs[dialogId] = {
       npcId: npcId,
@@ -323,6 +401,10 @@ export class DialogDaemon {
     }
 
     const {npcId, dialog} = tuple;
+    const npc = this.charDaemon.getChar(npcId);
+    if (npc !== null) {
+      npc.missionMark = false;
+    }
 
     delete this.dialogs[dialogId];
   }

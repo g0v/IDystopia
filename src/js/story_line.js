@@ -29,6 +29,7 @@ class Mission {
   static fromDict(missionId, dict) {
     const title = dict['title'] || 'Unnamed Mission';
     const description = dict['description'] || 'no description';
+    const firstStep = dict['firstStep'] || 'step-1';
     const depend = (dict['depend'] || []).filter(d => {
       if (typeof(d) === 'string' || d instanceof String) {
         return true;
@@ -37,10 +38,10 @@ class Mission {
       return false;
     });
 
-    const mission = new Mission(missionId, title, description, depend, null);
+    const mission = new Mission(missionId, title, description, depend, firstStep);
 
     for (const stepId in dict['steps']) {
-      const step = MissionStep.fromDict(stepId, dict['steps'][stepId]);
+      const step = MissionStep.fromDict(stepId, dict['steps'][stepId], mission);
       mission.addStep(step);
     }
     return mission;
@@ -73,16 +74,17 @@ const PLAYER = '$player';
  *           nextLine: <line-id>  # optional
  */
 class MissionStep {
-  constructor(id, title, description, nextStep, npcId, dialog) {
+  constructor(id, title, description, nextStep, npcId, dialog, mission) {
     this.id = id;
     this.title = title;
     this.description = description;
     this.nextStep = nextStep;
     this.npcId = npcId;
     this.dialog = dialog;
+    this.mission = mission;
   }
 
-  static fromDict(stepId, dict) {
+  static fromDict(stepId, dict, mission) {
     const title = dict['title'] || 'Unnamed Step';
     const description = dict['description'] || 'no description';
     const nextStep = dict['nextStep'];
@@ -90,9 +92,12 @@ class MissionStep {
     if (npcId === undefined) {
       throw 'npcId must be defined';
     }
-    const dialog = Dialog.fromDict(dict['dialog'] || []);
-    return new MissionStep(
-      stepId, title, description, nextStep, npcId, dialog);
+    const missionStep = new MissionStep(
+      stepId, title, description, nextStep, npcId, null, mission);
+
+    const dialog = Dialog.fromDict(dict['dialog'] || [], missionStep);
+    missionStep.dialog = dialog;
+    return missionStep;
   }
 }
 
@@ -113,7 +118,8 @@ class MissionStep {
  *           nextLine: <line-id>  # optional
  */
 class Dialog {
-  constructor() {
+  constructor(missionStep) {
+    this.missionStep = missionStep;
     this.dialogItems = [];
     this.dialogIdMap = {};
   }
@@ -126,11 +132,11 @@ class Dialog {
   }
 
   getIterator() {
-    return new DialogIterator(this);
+    return new DialogIterator(this, this.missionStep.nextStep);
   }
 
-  static fromDict(list) {
-    const dialog = new Dialog();
+  static fromDict(list, missionStep) {
+    const dialog = new Dialog(missionStep);
     for (const dict of list) {
       const dialogItem = DialogItem.fromDict(dict);
       dialog.addDialogItem(dialogItem);
@@ -140,13 +146,16 @@ class Dialog {
 }
 
 class DialogIterator {
-  constructor(dialog) {
+  constructor(dialog, nextStep) {
     this.dialog = dialog;
     this.currentIndex = 0;
+    this.nextStep = nextStep;
   }
 
   getCurrentDialogItem() {
-    return this.dialog.dialogItems[this.currentIndex];
+    const item = this.dialog.dialogItems[this.currentIndex];
+    if (item && item.nextStep) this.nextStep = nextStep;
+    return item;
   }
 
   nextDialogItem(selectedIndex=undefined) {
@@ -244,14 +253,14 @@ export async function loadStoryLine(fileName) {
   const obj = await response.json();
 
   const missions = obj['missions'];
-  const loadedMissions = [];
+  const loadedMissions = {};
   if (!missions) {
     return loadedMissions;
   }
 
   for (const missionId in missions) {
     const missionDict = missions[missionId];
-    loadedMissions.push(Mission.fromDict(missionId, missionDict));
+    loadedMissions[missionId] = Mission.fromDict(missionId, missionDict);
   }
   console.log(loadedMissions);
   return loadedMissions;

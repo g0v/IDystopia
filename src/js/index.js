@@ -122,15 +122,22 @@ class App {
     let dy = (!!this.keyboard.active[KEY_MAP.DOWN] - !!this.keyboard.active[KEY_MAP.UP]);
     if (dx || dy) {
       this.me.move(dt, dx, dy, this.map);
-    } else {
-      this.me.tick(dt, this.map);
+    }
+    for (const charId in charDaemon.chars) {
+      if (charId === 'me') continue;
+      const npc = charDaemon.getChar(charId);
+      if (npc !== null) npc.tick(dt, this.map);
     }
 
     if (this.keyboard.active[KEY_MAP.ENTER] ||
         this.keyboard.active[KEY_MAP.SPACE]) {
-      this.dialogDaemon.startDialog('dialog-1');
-      this.keyboard.active[KEY_MAP.ENTER] = false;
-      this.keyboard.active[KEY_MAP.SPACE] = false;
+
+      const dialogId = this.dialogDaemon.findNearbyDialog(this.me);
+      if (dialogId !== null) {
+        this.dialogDaemon.startDialog(dialogId);
+        this.keyboard.active[KEY_MAP.ENTER] = false;
+        this.keyboard.active[KEY_MAP.SPACE] = false;
+      }
     }
 
     // Move camera on to user.
@@ -168,14 +175,14 @@ class App {
     })();
 
     const storyLine = await StoryLine.loadStoryLine('sample.json');
-    //this.me = new hero.Char(32, 32, 'teachers/Headmaster male', '史提米');
+    console.log(storyLine);
     Textures.loadTextures();
     this.me = charDaemon.create('me', 2, 2, 'teachers/Headmaster male', '史提米');
-    // this.npc = charDaemon.create('lady-of-lake', 8, 2, 'teachers/Teacher fmale 04', '湖中女神');
-    this.npc = charDaemon.create('lady-of-lake', 8, 2, 'teachers/Teacher fmale 04', '失物招領處員工');
+    this.ladyOfLake = charDaemon.create('lady-of-lake', 23, 2, 'teachers/Teacher fmale 04', '湖中女神');
+    this.npc = charDaemon.create('lost-and-found-npc', 8, 2, 'teachers/Teacher fmale 04', '失物招領處員工');
     this.dialogDaemon = dialogDaemon;
-
-    dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-2'].dialog);
+    this.storyLineDaemon = new hero.StoryLineDaemon(storyLine, this.dialogDaemon);
+    this.storyLineDaemon.init();
 
     Stage((stage) => {
       this.stage = stage;
@@ -217,6 +224,7 @@ class App {
           this.map = map;
           this.map.init();
           this.me.appendTo(this.map);
+          this.ladyOfLake.appendTo(this.map);
           this.npc.appendTo(this.map);
           // dt is delta T in milliseconds, convert it to seconds.
           stage.tick((dt) => this.tick(dt / 1000));

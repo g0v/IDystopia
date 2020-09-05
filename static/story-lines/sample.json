@@ -3,7 +3,7 @@
     "mission-find-axe": {
       "title": "尋找斧頭",
       "description": "你的斧頭不見了，這樣明天沒辦法上班，得趕快找到才行...",
-      "first_step": "step-1",
+      "firstStep": "step-1",
       "steps": {
         "step-1": {
           "title": "失物招領處",
