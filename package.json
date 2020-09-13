@@ -18,6 +18,7 @@
     "start": "webpack-dev-server --open"
   },
   "dependencies": {
+    "phaser": "^3.24.1",
     "stage-js": "^0.8.11"
   },
   "devDependencies": {

@@ -1,239 +1,174 @@
-const Stage = require('stage-js/platform/web');
-// const common = require('./common.js');
-// const game_core = require('./game_core.js');
-// const game_object = require('./game_object.js');
-const hero = require('./hero.js');
-const Map = require('./map.js');
-const Textures = require('./textures.js');
-// const jitsi_channel = require('./jitsi_channel.js');
-const StoryLine = require('./story_line.js');
-
-const charDaemon = new hero.CharDaemon();
-const dialogDaemon = new hero.DialogDaemon(charDaemon);
-
-const KEY_MAP = {
-  LEFT: 37,
-  RIGHT: 39,
-  UP: 38,
-  DOWN: 40,
-  ENTER: 13,
-  SPACE: 32,
+const config = {
+  type: Phaser.AUTO,
+  width: 800,
+  height: 600,
+  parent: "game-container",
+  pixelArt: true,
+  physics: {
+    default: "arcade",
+    arcade: {
+      gravity: { y: 0 }
+    }
+  },
+  scene: {
+    preload: preload,
+    create: create,
+    update: update
+  }
 };
 
-class Keyboard {
-  constructor(keys) {
-    this.active = {};
-    for (const k in keys) {
-      const keyCode = keys[k];
-      console.log(`adding ${k}: ${keyCode}`);
-      this.active[keyCode] = false;
-    }
-  }
+const game = new Phaser.Game(config);
+let cursors;
+let player;
+let showDebug = false;
 
-  listen() {
-    window.addEventListener('keydown', (e) => this.onKeyDown(e));
-    window.addEventListener('keyup', (e) => this.onKeyUp(e));
-  }
+function preload() {
+  this.load.setPath('assets/');
+  this.load.image("tiles", "tiles/tuxmon.png");
+  this.load.tilemapTiledJSON("map", "maps/tuxemon.json");
 
-  onKeyDown(e) {
-    // Don't listen to inputs when there is an active dialog.
-    if (dialogDaemon.hasOnGoingDialog) return;
-
-    const keyCode = e.keyCode;
-    if (keyCode in this.active) {
-      // e.preventDefault();
-      this.active[keyCode] = true;
-    }
-  }
-
-  onKeyUp(e) {
-    const keyCode = e.keyCode;
-    if (keyCode in this.active) {
-      // e.preventDefault();
-      this.active[keyCode] = false;
-    }
-  }
+  // An atlas is a way to pack multiple images together into one texture. I'm using it to load all
+  // the player animations (walking left, walking right, etc.) in one image. For more info see:
+  //  https://labs.phaser.io/view.html?src=src/animation/texture%20atlas%20animation.js
+  // If you don't use an atlas, you can do the same thing with a spritesheet, see:
+  //  https://labs.phaser.io/view.html?src=src/animation/single%20sprite%20sheet.js
+  this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
 }
 
-class App {
+function create() {
+  const map = this.make.tilemap({ key: "map" });
 
-  showLoading() {
-    var body = document.body;
-    var loading = document.createElement('class');
-    loading.className = 'loading';
-    if (Stage._supported) {
-      loading.innerHTML = 'Loading...';
-      loading.style.zIndex = -1;
-    } else {
-      loading.innerHTML = 'Please use a <a target="_blank" href="https://www.google.com/search?q=modern+browser">modern browser!';
-      loading.style.zIndex = 0;
-    }
-    body.insertBefore(loading, body.firstChild);
-  }
+  // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
+  // Phaser's cache (i.e. the name you used in preload)
+  const tileset = map.addTilesetImage("tuxmon", "tiles");
 
-  /*
-  hideDialog() {
-    this.dialogBox.hide();
-  }
+  // Parameters: layer name (or index) from Tiled, tileset, x, y
+  const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
+  const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
+  const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
-  showDialog(title, text, buttons) {
+  // By default, everything gets depth sorted on the screen in the order we created things. Here, we
+  // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
+  // Higher depths will sit on top of lower depth objects.
+  aboveLayer.setDepth(10);
 
-    return;
-    this.dialogBox.empty();
+  // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
+  // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
+  const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
-    const w = this.world.width();
-    const h = this.world.height();
-    console.log(w, h);
-    this.dialogBox.image(Stage.canvas(function(ctx) {
-      this.size(w / 2, h / 2);
-      ctx.fillStyle = '#555';
-      ctx.fillRect(0, 0, w, h);
-    }));
-    this.dialogBox.show()
+  // Create a sprite with physics enabled via the physics system. The image used for the sprite has
+  // a bit of whitespace, so I'm using setSize & setOffset to control the size of the player's body.
+  player = this.physics.add
+    .sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
+    .setSize(30, 40)
+    .setOffset(0, 24);
 
-    const textBox = Stage.string('text').value(text).pin({align: 0.5});
-    textBox.appendTo(this.dialogBox);
+  // Watch the player and worldLayer for collisions, for the duration of the scene:
+  this.physics.add.collider(player, worldLayer);
 
-    const titleBox = Stage.string('text').value(title).pin({align: 0});
-    titleBox.appendTo(this.dialogBox);
+  // Create the player's walking animations from the texture atlas. These are stored in the global
+  // animation manager so any sprite can access them.
+  const anims = this.anims;
+  anims.create({
+    key: "misa-left-walk",
+    frames: anims.generateFrameNames("atlas", { prefix: "misa-left-walk.", start: 0, end: 3, zeroPad: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
+  anims.create({
+    key: "misa-right-walk",
+    frames: anims.generateFrameNames("atlas", { prefix: "misa-right-walk.", start: 0, end: 3, zeroPad: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
+  anims.create({
+    key: "misa-front-walk",
+    frames: anims.generateFrameNames("atlas", { prefix: "misa-front-walk.", start: 0, end: 3, zeroPad: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
+  anims.create({
+    key: "misa-back-walk",
+    frames: anims.generateFrameNames("atlas", { prefix: "misa-back-walk.", start: 0, end: 3, zeroPad: 3 }),
+    frameRate: 10,
+    repeat: -1
+  });
 
-    if (buttons) {
-      const row = Stage.row();
-      for (const button in buttons) {
-        if (!buttons.hasOwnProperty(button)) {
-          continue;
-        }
+  const camera = this.cameras.main;
+  camera.startFollow(player);
+  camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-        const buttonBox = Stage.string('text').value(button);
-        buttonBox.on('click', (e) => buttons[button](e));
-        buttonBox.appendTo(row);
-      }
-      row.pin({align: 1});
-      row.appendTo(this.dialogBox);
-    }
+  cursors = this.input.keyboard.createCursorKeys();
 
-  }
-  */
+  // Help text that has a "fixed" position on the screen
+  this.add
+    .text(16, 16, 'Arrow keys to move\nPress "D" to show hitboxes', {
+      font: "18px monospace",
+      fill: "#000000",
+      padding: { x: 20, y: 10 },
+      backgroundColor: "#ffffff"
+    })
+    .setScrollFactor(0)
+    .setDepth(30);
 
-  tick(dt) {
-    // dt: delta T in seconds.
+  // Debug graphics
+  this.input.keyboard.once("keydown_D", event => {
+    // Turn on physics debugging to show player's hitbox
+    this.physics.world.createDebugGraphic();
 
-    let dx = (!!this.keyboard.active[KEY_MAP.RIGHT] - !!this.keyboard.active[KEY_MAP.LEFT]);
-    let dy = (!!this.keyboard.active[KEY_MAP.DOWN] - !!this.keyboard.active[KEY_MAP.UP]);
-    if (dx || dy) {
-      this.me.move(dt, dx, dy, this.map);
-    }
-    for (const charId in charDaemon.chars) {
-      if (charId === 'me') continue;
-      const npc = charDaemon.getChar(charId);
-      if (npc !== null) npc.tick(dt, this.map);
-    }
-
-    if (this.keyboard.active[KEY_MAP.ENTER] ||
-        this.keyboard.active[KEY_MAP.SPACE]) {
-
-      const dialogId = this.dialogDaemon.findNearbyDialog(this.me);
-      if (dialogId !== null) {
-        this.dialogDaemon.startDialog(dialogId);
-        this.keyboard.active[KEY_MAP.ENTER] = false;
-        this.keyboard.active[KEY_MAP.SPACE] = false;
-      }
-    }
-
-    // Move camera on to user.
-    const scaleX = this.world.pin('scaleX');
-    const scaleY = this.world.pin('scaleY');
-    this.world.pin({
-      offsetX: -this.me.x * scaleX,
-      offsetY: -this.me.y * scaleY,
+    // Create worldLayer collision graphic above the player, but below the help text
+    const graphics = this.add
+      .graphics()
+      .setAlpha(0.75)
+      .setDepth(20);
+    worldLayer.renderDebug(graphics, {
+      tileColor: null, // Color of non-colliding tiles
+      collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255), // Color of colliding tiles
+      faceColor: new Phaser.Display.Color(40, 39, 37, 255) // Color of colliding face edges
     });
-    return true;
-  }
-
-  async initialize() {
-    this.showLoading();
-
-    this.keyboard = new Keyboard(KEY_MAP);
-    this.keyboard.listen();
-
-    var status = (function() {
-      var el = null;
-      return function(msg) {
-        if (el === null) {
-          var el = document.createElement('div');
-          el.style.position = 'absolute';
-          el.style.color = 'black';
-          el.style.background = 'white';
-          el.style.zIndex = 999;
-          el.style.top = '5px';
-          el.style.right = '5px';
-          el.style.padding = '1px 5px';
-          document.body.appendChild(el);
-        }
-        el.innerHTML = msg;
-      };
-    })();
-
-    const storyLine = await StoryLine.loadStoryLine('sample.json');
-    console.log(storyLine);
-    Textures.loadTextures();
-    this.me = charDaemon.create('me', 2, 2, 'teachers/Headmaster male', '史提米');
-    this.ladyOfLake = charDaemon.create('lady-of-lake', 23, 2, 'teachers/Teacher fmale 04', '湖中女神');
-    this.npc = charDaemon.create('lost-and-found-npc', 8, 2, 'teachers/Teacher fmale 04', '失物招領處員工');
-    this.dialogDaemon = dialogDaemon;
-    this.storyLineDaemon = new hero.StoryLineDaemon(storyLine, this.dialogDaemon);
-    this.storyLineDaemon.init();
-
-    Stage((stage) => {
-      this.stage = stage;
-
-      this.world = new Stage();
-      this.world.pin({
-        handle: -0.5,
-        width: 32 * 40,
-        height: 32 * 20,
-      }).appendTo(stage);
-
-      this.dialogBox = Stage.image().pin({
-        handle: -0.5,
-        align: 0.5,
-        width: 32 * 40,
-        height: 32 * 20,
-      }).appendTo(this.stage);
-
-      this.dialogBox.hide();
-
-      stage.on('viewport', (viewport) => {
-        this.world.pin({
-          scaleMode : 'in-pad',
-          scaleWidth : viewport.width,
-          scaleHeight : viewport.height,
-        });
-
-        this.dialogBox.pin({
-          scaleMode : 'in-pad',
-          scaleWidth : viewport.width,
-          scaleHeight : viewport.height,
-        });
-      });
-
-      stage.background('#222222');
-
-      (Map.loadMap(this.world, 'stimim-castle-2')).then(
-        (map) => {
-          this.map = map;
-          this.map.init();
-          this.me.appendTo(this.map);
-          this.ladyOfLake.appendTo(this.map);
-          this.npc.appendTo(this.map);
-          // dt is delta T in milliseconds, convert it to seconds.
-          stage.tick((dt) => this.tick(dt / 1000));
-        }
-      );
-
-    });
-  }
+  });
 }
 
-app = new App();
-app.initialize();
+function update(time, delta) {
+  const speed = 175;
+  const prevVelocity = player.body.velocity.clone();
+
+  // Stop any previous movement from the last frame
+  player.body.setVelocity(0);
+
+  // Horizontal movement
+  if (cursors.left.isDown) {
+    player.body.setVelocityX(-speed);
+  } else if (cursors.right.isDown) {
+    player.body.setVelocityX(speed);
+  }
+
+  // Vertical movement
+  if (cursors.up.isDown) {
+    player.body.setVelocityY(-speed);
+  } else if (cursors.down.isDown) {
+    player.body.setVelocityY(speed);
+  }
+
+  // Normalize and scale the velocity so that player can't move faster along a diagonal
+  player.body.velocity.normalize().scale(speed);
+
+  // Update the animation last and give left/right animations precedence over up/down animations
+  if (cursors.left.isDown) {
+    player.anims.play("misa-left-walk", true);
+  } else if (cursors.right.isDown) {
+    player.anims.play("misa-right-walk", true);
+  } else if (cursors.up.isDown) {
+    player.anims.play("misa-back-walk", true);
+  } else if (cursors.down.isDown) {
+    player.anims.play("misa-front-walk", true);
+  } else {
+    player.anims.stop();
+
+    // If we were moving, pick and idle frame to use
+    if (prevVelocity.x < 0) player.setTexture("atlas", "misa-left");
+    else if (prevVelocity.x > 0) player.setTexture("atlas", "misa-right");
+    else if (prevVelocity.y < 0) player.setTexture("atlas", "misa-back");
+    else if (prevVelocity.y > 0) player.setTexture("atlas", "misa-front");
+  }
+}
