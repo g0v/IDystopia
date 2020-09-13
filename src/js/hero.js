@@ -31,7 +31,7 @@ export class Char {
       font: '18px monospace',
       fill: '#fff',
       align: 'center',
-    }).setOrigin(0.5).setStroke('#000', 3);
+    }).setOrigin(0.5).setStroke('#000', 3).setDepth(30);
     this.text = text;
   }
 
