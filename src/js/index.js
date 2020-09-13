@@ -1,3 +1,5 @@
+const Hero = require('./hero.js');
+
 const config = {
   type: Phaser.AUTO,
   width: 800,
@@ -58,15 +60,42 @@ function create() {
   // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
   const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
+  console.log(spawnPoint);
   // Create a sprite with physics enabled via the physics system. The image used for the sprite has
   // a bit of whitespace, so I'm using setSize & setOffset to control the size of the player's body.
-  player = this.physics.add
-    .sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
-    .setSize(30, 40)
-    .setOffset(0, 24);
+  //player = this.physics.add
+    //.sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
+    //.setSize(30, 40)
+    //.setOffset(0, 24);
 
+  window.ppp = this;
+  this.charDaemon = new Hero.CharDaemon(this);
+
+  let npc;
+  npc = this.charDaemon.create(
+    'lost-and-found-npc', '失物招領處員工',
+    spawnPoint.x + 64, spawnPoint.y - 64, 'atlas', 'misa-left');
+  npc = this.charDaemon.create(
+    'lady-of-lake', '湖中女神',
+    spawnPoint.x + 128, spawnPoint.y - 128, 'atlas', 'misa-left');
+  npc = this.charDaemon.create(
+    'registration-npc', '臨櫃人員',
+    spawnPoint.x + 128, spawnPoint.y - 256, 'atlas', 'misa-left');
+
+  const playerChar = this.charDaemon.create(
+    'player', 'stimim', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
+  player = playerChar.player;
+  npc.showMissionMark(true);
   // Watch the player and worldLayer for collisions, for the duration of the scene:
-  this.physics.add.collider(player, worldLayer);
+  const group = this.physics.add.group();
+
+  for (const id in this.charDaemon.chars) {
+    if (this.charDaemon.chars.hasOwnProperty(id)) {
+      group.add(this.charDaemon.chars[id].player);
+    }
+  }
+  group.add(worldLayer);
+  this.physics.add.collider(group, group);
 
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
@@ -173,4 +202,5 @@ function update(time, delta) {
     else if (prevVelocity.y < 0) player.setTexture("atlas", "misa-back");
     else if (prevVelocity.y > 0) player.setTexture("atlas", "misa-front");
   }
+  this.charDaemon.update();
 }
