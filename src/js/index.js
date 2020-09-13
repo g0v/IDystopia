@@ -94,8 +94,9 @@ function create() {
       group.add(this.charDaemon.chars[id].player);
     }
   }
-  group.add(worldLayer);
-  this.physics.add.collider(group, group);
+
+  this.physics.add.collider(player, worldLayer);
+  this.physics.add.collider(player, group);
 
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
