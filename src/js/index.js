@@ -96,7 +96,11 @@ function create() {
   }
 
   this.physics.add.collider(player, worldLayer);
-  this.physics.add.collider(player, group);
+  this.physics.add.collider(player, group, function (a, b) {
+    a.setVelocity(0, 0);
+    b.setVelocity(0, 0);
+  });
+  this.physics.add.collider(group, worldLayer);
 
   this.dialogDaemon = new Hero.DialogDaemon(this.charDaemon);
 
