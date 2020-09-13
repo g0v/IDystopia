@@ -1,4 +1,5 @@
 const Hero = require('./hero.js');
+const StoryLine = require('./story_line.js');
 
 const config = {
   type: Phaser.AUTO,
@@ -68,24 +69,22 @@ function create() {
     //.setSize(30, 40)
     //.setOffset(0, 24);
 
-  window.ppp = this;
   this.charDaemon = new Hero.CharDaemon(this);
 
-  let npc;
-  npc = this.charDaemon.create(
+  this.charDaemon.create(
     'lost-and-found-npc', '失物招領處員工',
     spawnPoint.x + 64, spawnPoint.y - 64, 'atlas', 'misa-left');
-  npc = this.charDaemon.create(
+  this.charDaemon.create(
     'lady-of-lake', '湖中女神',
     spawnPoint.x + 128, spawnPoint.y - 128, 'atlas', 'misa-left');
-  npc = this.charDaemon.create(
+  this.charDaemon.create(
     'registration-npc', '臨櫃人員',
     spawnPoint.x + 128, spawnPoint.y - 256, 'atlas', 'misa-left');
 
   const playerChar = this.charDaemon.create(
     'player', 'stimim', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
   player = playerChar.player;
-  npc.showMissionMark(true);
+
   // Watch the player and worldLayer for collisions, for the duration of the scene:
   const group = this.physics.add.group();
 
@@ -98,6 +97,14 @@ function create() {
   this.physics.add.collider(player, worldLayer);
   this.physics.add.collider(player, group);
 
+  this.dialogDaemon = new Hero.DialogDaemon(this.charDaemon);
+
+  StoryLine.loadStoryLine('sample.json').then(
+    (storyLine) => {
+      this.storyLineDaemon = new Hero.StoryLineDaemon(storyLine, this.dialogDaemon);
+      this.storyLineDaemon.init();
+    }
+  );
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
   const anims = this.anims;
@@ -131,6 +138,14 @@ function create() {
   camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
   cursors = this.input.keyboard.createCursorKeys();
+  const enterKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+  enterKey.on('down',(key, event) => {
+    if (this.dialogDaemon.hasOnGoingDialog) return;
+    const dialogId = this.dialogDaemon.findNearbyDialog(player);
+    if (dialogId !== null) {
+      this.dialogDaemon.startDialog(dialogId);
+    }
+  });
 
   // Help text that has a "fixed" position on the screen
   this.add

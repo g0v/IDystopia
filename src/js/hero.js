@@ -23,7 +23,7 @@ export class Char {
 
   makeContainer() {
     const player = this.phaser.physics.add.sprite(
-      this.x, this.y, this.texture, this.frame).setSize(32, 32);
+      this.x, this.y, this.texture, this.frame).setSize(32, 40).setOffset(0, 24);
     this.player = player;
 
     const text = this.phaser.add.text(this.x, this.y, this.name, {
@@ -164,7 +164,7 @@ export class DialogDaemon {
     }
 
     this.hasOnGoingDialog = true;
-    const me = this.charDaemon.getChar('me');
+    const me = this.charDaemon.getChar('player');
     const talker = item.name.replace(/\$player/, me.name);
 
     if (item.line) {
@@ -279,7 +279,8 @@ export class DialogDaemon {
       return;
     }
 
-    npc.missionMark = true;
+    // npc.missionMark = true;
+    npc.showMissionMark(true);
 
     this.dialogs[dialogId] = {
       npcId: npcId,
@@ -297,7 +298,8 @@ export class DialogDaemon {
     const {npcId, dialog} = tuple;
     const npc = this.charDaemon.getChar(npcId);
     if (npc !== null) {
-      npc.missionMark = false;
+      // npc.missionMark = false;
+      npc.showMissionMark(false);
     }
 
     delete this.dialogs[dialogId];
