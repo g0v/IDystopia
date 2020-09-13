@@ -1,3 +1,4 @@
+const DataStore = require('./data_store.js');
 const Hero = require('./hero.js');
 const StoryLine = require('./story_line.js');
 
@@ -81,9 +82,9 @@ function create() {
     'registration-npc', '臨櫃人員',
     spawnPoint.x + 128, spawnPoint.y - 256, 'atlas', 'misa-left');
 
-  const playerChar = this.charDaemon.create(
-    'player', 'stimim', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
-  player = playerChar.player;
+  const char = this.charDaemon.create(
+    'player', '???', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
+  player = char.player;
 
   // Watch the player and worldLayer for collisions, for the duration of the scene:
   const group = this.physics.add.group();
@@ -105,6 +106,10 @@ function create() {
       this.storyLineDaemon.init();
     }
   );
+
+  DataStore.AnswerStore.listen('player_name', (e) => {
+    char.name = DataStore.AnswerStore.get('player_name');
+  });
   // Create the player's walking animations from the texture atlas. These are stored in the global
   // animation manager so any sprite can access them.
   const anims = this.anims;

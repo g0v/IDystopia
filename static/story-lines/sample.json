@@ -1,5 +1,41 @@
 {
   "missions": {
+    "self-introduction": {
+      "title": "",
+      "description": "",
+      "firstStep": "step-1",
+      "steps": {
+        "step-1": {
+          "title": "申辦櫃檯",
+          "description": "...",
+          "npcId": "registration-npc",
+          "dialog": [
+            {
+              "name": "臨櫃人員",
+              "line": "是要申辦身分證嗎？"
+            },
+            {
+              "name": "臨櫃人員",
+              "type": "input.text",
+              "question": "請問你的名字是？",
+              "storeKey": "player_name"
+            },
+            {
+              "name": "臨櫃人員",
+              "line": "電話..."
+            },
+            {
+              "name": "臨櫃人員",
+              "line": "出生年月日..."
+            },
+            {
+              "name": "臨櫃人員",
+              "line": "好了!! 這就是你的新身分證，不要搞丟了喔"
+            }
+          ]
+        }
+      }
+    },
     "mission-find-axe": {
       "title": "尋找斧頭",
       "description": "你的斧頭不見了，這樣明天沒辦法上班，得趕快找到才行...",
@@ -37,6 +73,7 @@
             },
             {
               "name": "湖中女神",
+              "type": "input.select",
               "question": "我最近確實撿到了一些斧頭，請問你掉的是金斧頭還是銀斧頭？",
               "choices": [
                 {

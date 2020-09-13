@@ -1,5 +1,6 @@
 const Stage = require('stage-js/platform/web');
 const Const = require('./const.js');
+const StoryLine = require('./story_line.js');
 
 const CHAR_WIDTH = 32;
 const CHAR_HEIGHT = 32;
@@ -167,7 +168,7 @@ export class DialogDaemon {
     const me = this.charDaemon.getChar('player');
     const talker = item.name.replace(/\$player/, me.name);
 
-    if (item.line) {
+    if (item instanceof StoryLine.DialogItemLine) {
       const content = item.line.replace(/\$player/, me.name);
       bootbox.alert({
         title: talker,
@@ -182,7 +183,7 @@ export class DialogDaemon {
           }
         }
       });
-    } else if (item.question) {
+    } else if (item instanceof StoryLine.DialogItemSelect) {
       const question = item.question.replace(/\$player/, me.name);
       const inputOptions = [];
 
@@ -201,6 +202,28 @@ export class DialogDaemon {
         onEscape: false,
         backdrop: true,
         inputOptions: inputOptions,
+        callback: result => {
+          if (result === null) {
+            return false;
+          }
+          this.hasOnGoingDialog = false;
+          const next = iterator.nextDialogItem(result);
+          if (next) {
+            this.showDialog(iterator);
+          } else {
+            this.doneDialog(iterator);
+          }
+          return true;
+        }
+      });
+    } else if (item instanceof StoryLine.DialogItemPrompt) {
+      const question = item.question.replace(/\$player/, me.name);
+      bootbox.prompt({
+        title: talker,
+        message: question,
+        inputType: 'text',
+        onEscape: false,
+        backdrop: true,
         callback: result => {
           if (result === null) {
             return false;

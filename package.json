@@ -19,7 +19,8 @@
   },
   "dependencies": {
     "phaser": "^3.24.1",
-    "stage-js": "^0.8.11"
+    "stage-js": "^0.8.11",
+    "store2": "^2.12.0"
   },
   "devDependencies": {
     "copy-webpack-plugin": "^6.0.3",

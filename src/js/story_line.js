@@ -2,6 +2,9 @@
  * Design Doc: https://g0v.hackmd.io/4HiKmrEASa-YdQ2bqg4kHg
  */
 
+
+const DataStore = require('./data_store.js');
+
 /**
  * <mission-id>:  # repeated
  *   title: <mission-title>
@@ -145,6 +148,7 @@ class Dialog {
   }
 }
 
+
 class DialogIterator {
   constructor(dialog, nextStep) {
     this.dialog = dialog;
@@ -158,23 +162,31 @@ class DialogIterator {
     return item;
   }
 
-  nextDialogItem(selectedIndex=undefined) {
+  nextDialogItem(answer=undefined) {
     const dialogItem = this.dialog.dialogItems[this.currentIndex];
     let nextIndex = this.currentIndex + 1;
     if (dialogItem.nextLine !== undefined) {
       nextIndex = this.dialog.dialogIdMap[dialogItem.nextLine];
     }
 
-    if (dialogItem.choices !== undefined) {
-      if (selectedIndex === undefined) {
+    if (dialogItem instanceof DialogItemSelect) {
+      if (answer === undefined) {
         console.warn('This is a multiple choice question, but no selected ' +
-                     'answer. Default to the first answer.')
-        selectedIndex = 0;
+          'answer. Default to the first answer.')
+        answer = 0;
       }
 
-      if (dialogItem.choices[selectedIndex].nextLine !== undefined) {
-        const nextLine = dialogItem.choices[selectedIndex].nextLine;
+      if (dialogItem.choices[answer].nextLine !== undefined) {
+        const nextLine = dialogItem.choices[answer].nextLine;
         nextIndex = this.dialog.dialogIdMap[nextLine];
+      }
+    }
+
+    if (dialogItem instanceof DialogItemPrompt ||
+      dialogItem instanceof DialogItemSelect) {
+      if (dialogItem.storeKey) {
+        DataStore.AnswerStore.setAndNotify(dialogItem.storeKey, answer);
+        // DataStore.AnswerStore.notify();
       }
     }
 
@@ -185,66 +197,119 @@ class DialogIterator {
 }
 
 /**
+ * Properties:
+ *   - id: (optional) an id to find this line.
+ *   - name: Who is talking, can be "$player"
+ *   - nextLine: (optional) jump to another dialog if we don't want to fallthrough.
+ *               use "$EOD" to end the dialog.
+ */
+class DialogItem {
+  constructor(name, {id: id, nextLine: nextLine}) {
+    this.name = name;
+    this.id = id;
+    this.nextLine = nextLine;
+  }
+
+  static fromDict(dict) {
+    const name = dict['name'] || 'John Doe';
+    const type = dict['type'] || 'line';
+
+    switch (type) {
+      case 'line':
+        return new DialogItemLine(name, dict);
+      case 'input.select':
+        return new DialogItemSelect(name, dict);
+      case 'input.text':
+        return new DialogItemPrompt(name, dict);
+      default:
+        console.warn('unkonwn dialog type: %s', type);
+        return new DialogItemLine(name, dict);
+    }
+  }
+}
+
+/**
+ * Dialog item for a single line
  *     - name: "NPC name" or $player  # who is talking
  *       line: "hello, $player"
  *       id: <line-id>  # optional
  *       nextLine: <line-id>  # optional: jump to another dialog if we don't
  *                             # want to fallthrough.  "$EOD" means "end of
  *                             # dialog"
+ */
+export class DialogItemLine extends DialogItem {
+  constructor(name, {
+    id: id,
+    nextLine: nextLine,
+    line: line, }) {
+    super(name, {id, nextLine});
+
+    if (line === undefined) {
+      console.warn('One of `line` and `question` should be defined.');
+      line = '...';
+    }
+    this.line = line;
+  }
+
+}
+
+/**
  *     - name: "NPC name" or $player
  *       question: "Red pill or blue pill?"
+ *       storeKey: 'key'  (optional) to save the answer in localStore.
  *       choices:
  *         - text: "Red"
  *           nextLine: <line-id>  # optional
  *         - text: "Blue"
  *           nextLine: <line-id>  # optional
  */
-class DialogItem {
+export class DialogItemSelect extends DialogItem {
   constructor(name, {
     id: id,
     nextLine: nextLine,
-    line: line,
     question: question,
-    choices: choices}) {
+    choices: choices,
+    storeKey: storeKey}) {
 
-    if (line !== undefined && question !== undefined) {
-      console.warn('`line` and `question` should be mutually exclusive.');
-      question = undefined;
+    super(name, {id, nextLine});
+    if (question === undefined) {
+      console.warn('set default question');
+      question = 'Please select an answer.';
     }
+    this.question = question;
 
-    if (line === undefined && question === undefined) {
-      console.warn('One of `line` and `question` should be defined.');
-      line = '...';
-    }
-
-    if (question !== undefined && (choices === undefined || !choices)) {
-      console.warn('`question` is defined, but `choices` is not.');
+    if (choices === undefined || !choices) {
+      console.warn('set default choices');
       choices = [
         {text: 'Ok'}
       ]
     }
-
-    this.name = name;  // Who is talking.
-    // Optional fields
-    this.id = id;
-    this.nextLine = nextLine;
-    if (line !== undefined) {
-      this.line = line;
-    } else {  // question should be defined.
-      this.question = question;
-      this.choices = choices;
-    }
+    this.choices = choices;
+    this.storeKey = storeKey;
   }
+}
 
-  static fromDict(dict) {
-    const name = dict['name'] || 'John Doe';
-    const id = dict['id'];
-    const line = dict['line'];
-    const nextLine = dict['nextLine'];
-    const question = dict['question'];
-    const choices = dict['choices'];
-
-    return new DialogItem(name, {id, line, nextLine, question, choices});
+/**
+ * Dialog item for an open question
+ *
+ *     - name: "NPC name" or $player
+ *       question: "What's your name?"
+ *       storeKey: 'key' (optional) to save the answer in localStore
+ *
+ */
+export class DialogItemPrompt extends DialogItem {
+  constructor(name, {
+    id: id,
+    nextLine: nextLine,
+    question: question,
+    storeKey: storeKey, }) {
+    super(name, {id, nextLine});
+    if (question === undefined) {
+      console.warn('set deafult question');
+      question = 'What do you want to share?';
+    }
+    this.question = question;
+    this.storeKey = storeKey;
   }
 }
 
