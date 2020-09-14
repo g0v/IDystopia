@@ -152,6 +152,22 @@ export class DialogDaemon {
     this.hasOnGoingDialog = false;
   }
 
+  showHint() {
+    let message = '';
+    for (const key in this.dialogs) {
+      if (this.dialogs.hasOwnProperty(key)) {
+        const dialog = this.dialogs[key];
+        console.log(dialog);
+        message += `<h3>${dialog.dialog.missionStep.title}</h3>`;
+        message += `<p>${dialog.dialog.missionStep.description}</p>`;
+      }
+    }
+    bootbox.alert({
+      title: '任務列表',
+      message: message,
+    });
+  }
+
   getDialog(dialogId) {
     if (this.dialogs.hasOwnProperty(dialogId)) {
       return this.dialogs[dialogId];
