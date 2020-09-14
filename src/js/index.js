@@ -62,14 +62,6 @@ function create() {
   // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"
   const spawnPoint = map.findObject("Objects", obj => obj.name === "Spawn Point");
 
-  console.log(spawnPoint);
-  // Create a sprite with physics enabled via the physics system. The image used for the sprite has
-  // a bit of whitespace, so I'm using setSize & setOffset to control the size of the player's body.
-  //player = this.physics.add
-    //.sprite(spawnPoint.x, spawnPoint.y, "atlas", "misa-front")
-    //.setSize(30, 40)
-    //.setOffset(0, 24);
-
   this.charDaemon = new Hero.CharDaemon(this);
 
   this.charDaemon.create(
@@ -91,15 +83,17 @@ function create() {
 
   for (const id in this.charDaemon.chars) {
     if (this.charDaemon.chars.hasOwnProperty(id)) {
-      group.add(this.charDaemon.chars[id].player);
+      const p = this.charDaemon.chars[id].player;
+      group.add(p);
+      // I don't know why, but I can't do this in Char.makeContainer function.
+      // And we must not set player as immovable.
+      if (id !== 'player') {
+        p.setImmovable(true);
+      }
     }
   }
 
-  this.physics.add.collider(player, worldLayer);
-  this.physics.add.collider(player, group, function (a, b) {
-    a.setVelocity(0, 0);
-    b.setVelocity(0, 0);
-  });
+  this.physics.add.collider(group, group);
   this.physics.add.collider(group, worldLayer);
 
   this.dialogDaemon = new Hero.DialogDaemon(this.charDaemon);

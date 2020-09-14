@@ -23,16 +23,17 @@ export class Char {
   }
 
   makeContainer() {
-    const player = this.phaser.physics.add.sprite(
+    // Create a sprite with physics enabled via the physics system. The image
+    // used for the sprite has a bit of whitespace, so I'm using setSize &
+    // setOffset to control the size of the player's body.
+    this.player = this.phaser.physics.add.sprite(
       this.x, this.y, this.texture, this.frame).setSize(32, 40).setOffset(0, 24);
-    this.player = player;
 
-    const text = this.phaser.add.text(this.x, this.y, this.name, {
+    this.text = this.phaser.add.text(this.x, this.y, this.name, {
       font: '18px monospace',
       fill: '#fff',
       align: 'center',
     }).setOrigin(0.5).setStroke('#000', 3).setDepth(30);
-    this.text = text;
   }
 
   get WIDTH() {
