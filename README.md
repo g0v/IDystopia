@@ -11,5 +11,6 @@ visit 127.0.0.1:3000
 
 ## deploy (should do after npm start(build))
 ```
-./deploy
+npm run build
+bash ./deploy
 ```
