@@ -1,0 +1,224 @@
+{
+  "missions": {
+    "intro": {
+      "title": "第一幕",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "title": "世界觀介紹",
+          "description": "...",
+          "dialog": [
+            {
+              "type": "message",
+              "message": "2035 年，政府以促進環境保護、減少碳足跡為理由，透過數位身份記錄公民日常生活的碳排放量，包括交通方式、飲食內容、消費習慣等，政府各部會並依據其執掌，分別對碳足跡高者的日常生活進行指導或限制，以達成全國碳足跡減排的目的。國家依據公民本身的基因健康指數進行分級，基因好的人財力跟健康狀況也比較好階級也會較高，財力可用以購買其他人的碳足跡配額，因此財力高者比較不用擔心自己的日常生活受到政府限制，財力低者如果消費與行為受到限制，則可能更無法取得提高階級所需的資源。"
+            }
+          ]
+        }
+      }
+    },
+    "receive-package": {
+      "title": "到超商取貨",
+      "description": "昨天網購的商品已經送到超商了，趕快把它領回來吧",
+      "steps": {
+        "step-1": {
+          "title": "超商取貨",
+          "description": "昨天網購的商品已經送到超商了，趕快把它領回來吧",
+          "npcId": "convenient-store-npc",
+          "nextStep": "step-2",
+          "dialog": [
+            {
+              "name": "$player",
+              "line": "你好，我要取貨"
+            },
+            {
+              "name": "店員",
+              "line": "電話後三碼 XXX 的包裹... 有了！ 麻煩掃描你的 eID ，我們需要核對身份..."
+            },
+            {
+              "name": "店員",
+              "type": "input.text",
+              "question": "好的... 所以你的名字是？",
+              "storeKey": "player_name"
+            },
+            {
+              "name": "店員",
+              "type": "input.select",
+              "question": "嗯，沒錯。咦，系統顯示還需要核對職業，請問你的職業是？",
+              "storeKey": "player_occupation",
+              "choices": [
+                {
+                  "text": "學生",
+                  "value": "學生"
+                },
+                {
+                  "text": "工程師",
+                  "value": "工程師"
+                },
+                {
+                  "text": "律師",
+                  "value": "律師"
+                },
+                {
+                  "text": "健身教練",
+                  "value": "健身教練"
+                },
+                {
+                  "text": "中年職業婦女",
+                  "value": "中年職業婦女"
+                },
+                {
+                  "text": "記者",
+                  "value": "記者"
+                }
+              ]
+            }
+          ]
+        },
+        "step-2": {
+          "title": "回家",
+          "moveTo": "貨品拿到了，可以回家休息了"
+        }
+      }
+    },
+    "student-scene-intro": {
+      "depend": [
+        {
+          "storeKey": "player_occupation",
+          "value": "學生"
+        }
+      ],
+      "title": "學生線",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "nextStep": "step-2",
+          "dialog": [
+            {
+              "type": "message",
+              "message": "啊，上學要遲到了，快點去學校吧~~"
+            }
+          ]
+        },
+        "step-2": {
+          "nextStep": "step-3",
+          "moveTo": "SCHOOL",
+          "dialog": [
+            {
+              "type": "message",
+              "message": "你在選課的時候遇到了問題，不確定是怎麼回事，和同學討論看看吧"
+            }
+          ]
+        },
+        "step-3": {
+          "title": "和朋友聊天",
+          "description": "你在選課的時候遇到了問題，不確定是怎麼回事，和同學討論看看吧",
+          "npcId": "classmate-npc",
+          "dialog": [
+            {
+              "name": "$player",
+              "line": "我怎麼有些課都不能選？"
+            },
+            {
+              "name": "朋友",
+              "line": "對阿，我之前有問過老師，好像是因為我們的基因等級比較低被分配到專班所以不能選。"
+            },
+            {
+              "name": "$player",
+              "line": "是嗎?當初招生的時候不是說雖然是專班但還是可以選其他班級的課"
+            },
+            {
+              "name": "朋友",
+              "line": "那些都只是要騙你進來的話術而已啦"
+            },
+            {
+              "name": "朋友",
+              "line": "反正學校都幫我們選好課程了,就這樣照著上課就好了阿,不能選就不能選反正我們基因等級本來就比較低就算學了也不一定會。"
+            },
+            {
+              "name": "朋友",
+              "line": "啊，快要到王關了，這個魔王得要專心打才行，先不聊..."
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "下午原本想要上的課沒選到，接下在要做什麼呢？",
+              "storeKey": "student-intro-choice",
+              "choices": [
+                {
+                  "text": "回家",
+                  "value": "passive"
+                },
+                {
+                  "text": "去教務處問問",
+                  "value": "proactive"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "student-scece-academic-affairs-office": {
+      "depend": [
+        {
+          "storeKey": "student-intro-choice",
+          "value": "proactive"
+        }
+      ],
+      "title": "教務處",
+      "description": "你打算到教務處問問看為什麼有些課會不能選",
+      "steps": {
+        "step-1": {
+          "title": "到教務處",
+          "description": "你打算到教務處問問看為什麼有些課會不能選..",
+          "npcId": "academic-affairs-officer",
+          "dialog": [
+            {
+              "name": "教職員",
+              "line": "請問有甚麼問題嗎?"
+            },
+            {
+              "name": "$player",
+              "line": "我有想選的課程但是無法選課(把手機給教職員看)"
+            },
+            {
+              "name": "教職員",
+              "line": "你是專班的學生嗎?"
+            },
+            {
+              "name": "$player",
+              "line": "對阿"
+            },
+            {
+              "name": "教職員",
+              "line": "專班的都規定不能選課"
+            },
+            {
+              "name": "$player",
+              "line": "是嗎?可是當初招生的時候明明說可以選"
+            },
+            {
+              "name": "教職員",
+              "line": "就是不能選!這是學校規定的"
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "怎麼辦呢？",
+              "choices": [
+                {
+                  "text": "好吧... (回家)",
+                  "nextLine": "$EOD"
+                },
+                {
+                  "text": "那為甚麼不能選?"
+                }
+              ]
+            }
+          ]
+        }
+
+      }
+    }
+  }
+}

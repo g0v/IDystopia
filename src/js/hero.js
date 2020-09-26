@@ -1,6 +1,7 @@
 const Stage = require('stage-js/platform/web');
 const Const = require('./const.js');
 const StoryLine = require('./story_line.js');
+const DataStore = require('./data_store.js');
 
 const CHAR_WIDTH = 32;
 const CHAR_HEIGHT = 32;
@@ -125,6 +126,20 @@ export class StoryLineDaemon {
   constructor(storyLine, dialogDaemon) {
     this.storyLine = storyLine;
     this.dialogDaemon = dialogDaemon;
+    this.missionWithDependencies = {};
+
+    DataStore.AnswerStore.listen('*', (key) => {
+      console.log(this);
+      for (const missionId in this.missionWithDependencies) {
+        const mission = this.storyLine[missionId];
+        if (!mission.isReady()) {
+          continue;
+        }
+        delete this.missionWithDependencies[missionId];
+
+        this._addToDialogDaemon(mission);
+      }
+    });
   }
 
   init() {
@@ -132,16 +147,24 @@ export class StoryLineDaemon {
       if (!this.storyLine.hasOwnProperty(missionId)) continue;
 
       const mission = this.storyLine[missionId];
-      // TODO: check dependency
 
+      if (!mission.isReady()) {
+        this.missionWithDependencies[missionId] = mission;
+        continue;
+      }
+
+      this._addToDialogDaemon(mission);
+    }
+    console.log('not enabled missions: ', this.missionWithDependencies);
+  }
+
+  _addToDialogDaemon(mission) {
       const key = mission.firstStep;
       const firstStep = mission.steps[key];
 
       const id = `${mission.id}/${firstStep.id}`;
       this.dialogDaemon.add(id, firstStep.npcId, firstStep.dialog);
-    }
 
-    // dialogDaemon.add('dialog-1', 'lady-of-lake', storyLine[0].steps['step-2'].dialog);
   }
 }
 
@@ -150,6 +173,7 @@ export class DialogDaemon {
     this.charDaemon = charDaemon;
     this.dialogs = {};
     this.hasOnGoingDialog = false;
+    this.dialogToTrigger = [];
   }
 
   showHint() {
@@ -161,6 +185,9 @@ export class DialogDaemon {
         message += `<h3>${dialog.dialog.missionStep.title}</h3>`;
         message += `<p>${dialog.dialog.missionStep.description}</p>`;
       }
+    }
+    if (!message) {
+      message = '沒有任務!';
     }
     bootbox.alert({
       title: '任務列表',
@@ -178,6 +205,7 @@ export class DialogDaemon {
   showDialog(iterator) {
     const item = iterator.getCurrentDialogItem();
     if (!item) {
+      this.doneDialog(iterator);
       return;
     }
 
@@ -255,6 +283,21 @@ export class DialogDaemon {
           return true;
         }
       });
+    } else if (item instanceof StoryLine.DialogItemMessage) {
+      const message = item.message.replace(/\$player/, me.name);
+      bootbox.alert({
+        title: "",
+        message: message,
+        callback: e => {
+          this.hasOnGoingDialog = false;
+          const next = iterator.nextDialogItem();
+          if (next) {
+            this.showDialog(iterator);
+          } else {
+            this.doneDialog(iterator);
+          }
+        }
+      });
     }
   }
 
@@ -277,6 +320,17 @@ export class DialogDaemon {
     this.add(`${mission.id}/${nextStep.id}`, nextStep.npcId, nextStep.dialog);
   }
 
+  moveTo(where) {
+    const player = this.charDaemon.getChar('player');
+    console.log(player);
+    switch (where) {
+      case 'SCHOOL':
+        player.player.x = 500;
+        player.player.y = 500;
+        break;
+    }
+  }
+
   startDialog(dialogId) {
     if (this.hasOnGoingDialog) {
       console.warn(`There is an on-going dialog, cannot start a new one`);
@@ -288,9 +342,30 @@ export class DialogDaemon {
       console.error(`No such dialog: ${dialogId}`);
       return;
     }
+
+    console.info(`startDialog: ${dialogId}`, tuple.dialog);
+
     const {npcId, dialog} = tuple;
+
+    if (dialog.missionStep.moveTo) {
+      this.moveTo(dialog.missionStep.moveTo);
+    }
+
     const iterator = dialog.getIterator();
     this.showDialog(iterator);
+  }
+
+  checkDialogToTrigger(me) {
+    if (this.hasOnGoingDialog) return null;
+
+    for (const idx in this.dialogToTrigger) {
+      if (!this.dialogToTrigger.hasOwnProperty(idx)) continue;
+      const {dialogId} = this.dialogToTrigger[idx];
+      this.dialogToTrigger.shift();
+      return dialogId;
+    }
+
+    return null;
   }
 
   findNearbyDialog(me) {
@@ -313,14 +388,22 @@ export class DialogDaemon {
       return;
     }
 
-    const npc = this.charDaemon.getChar(npcId);
-    if (null === npc) {
-      console.error(`NPC ${npcId} doesn't exist.`);
-      return;
+    if (npcId === undefined) {
+      const missionStep = dialog.missionStep;
+      // trigger this in next frame
+      this.dialogToTrigger.push({
+        dialogId,
+        dialog,
+      });
+    } else {
+      const npc = this.charDaemon.getChar(npcId);
+      if (null === npc) {
+        console.error(`NPC ${npcId} doesn't exist.`);
+        return;
+      }
+      // npc.missionMark = true;
+      npc.showMissionMark(true);
     }
-
-    // npc.missionMark = true;
-    npc.showMissionMark(true);
 
     this.dialogs[dialogId] = {
       npcId: npcId,

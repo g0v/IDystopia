@@ -23,7 +23,14 @@ const StoreModule = require('store2');
         callback.call(this, key);
       }
     }
+
+    if (this.callbacks.hasOwnProperty('*')) {
+      for (const callback of this.callbacks['*']) {
+        callback.call(this, key);
+      }
+    }
   });
+
   _.fn('notify', function() {
     for (const key in callbacks) {
       if (this.callbacks.hasOwnProperty(key)) {

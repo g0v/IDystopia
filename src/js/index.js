@@ -64,6 +64,7 @@ function create() {
 
   this.charDaemon = new Hero.CharDaemon(this);
 
+  /*
   this.charDaemon.create(
     'lost-and-found-npc', '失物招領處員工',
     spawnPoint.x + 64, spawnPoint.y - 64, 'atlas', 'misa-left');
@@ -73,6 +74,38 @@ function create() {
   this.charDaemon.create(
     'registration-npc', '臨櫃人員',
     spawnPoint.x + 128, spawnPoint.y - 256, 'atlas', 'misa-left');
+  */
+
+  // TODO(stimim): move this into another file.
+  const NPCs = {
+    'convenient-store-npc': {
+      name: '便利商店店員',
+      x: spawnPoint.x + 128,
+      y: spawnPoint.y - 128,
+      texture: 'atlas',
+      frame: 'misa-left',
+    },
+    'classmate-npc': {
+      name: '同學',
+      x: 600,
+      y: 550,
+      texture: 'atlas',
+      frame: 'misa-left',
+    },
+    'academic-affairs-officer': {
+      name: '教務處職員',
+      x: 700,
+      y: 550,
+      texture: 'atlas',
+      frame: 'misa-left',
+    }
+  };
+
+  for (const npcId in NPCs) {
+    if (!NPCs.hasOwnProperty(npcId)) continue;
+    const {name, x, y, texture, frame} = NPCs[npcId];
+    this.charDaemon.create(npcId, name, x, y, texture, frame);
+  }
 
   const char = this.charDaemon.create(
     'player', '???', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
@@ -98,7 +131,10 @@ function create() {
 
   this.dialogDaemon = new Hero.DialogDaemon(this.charDaemon);
 
-  StoryLine.loadStoryLine('sample.json').then(
+  // TODO(stimim): properly load game status
+  DataStore.AnswerStore.clearAll();
+
+  StoryLine.loadStoryLine('regular.json').then(
     (storyLine) => {
       this.storyLineDaemon = new Hero.StoryLineDaemon(storyLine, this.dialogDaemon);
       this.storyLineDaemon.init();
@@ -193,6 +229,13 @@ function create() {
 }
 
 function update(time, delta) {
+  // let's check if we triggered any dialogs
+  const dialogId = this.dialogDaemon.checkDialogToTrigger(player);
+  if (dialogId !== null) {
+    this.dialogDaemon.startDialog(dialogId);
+    return;
+  }
+
   const speed = 175;
   const prevVelocity = player.body.velocity.clone();
 

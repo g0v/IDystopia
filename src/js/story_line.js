@@ -11,7 +11,7 @@ const DataStore = require('./data_store.js');
  *   description: <...>
  *   depend:
  *     - "<mission-id>:<step-id>"  # repeated
- *   first_step: <step-id>
+ *   firstStep: <step-id>
  *   steps:
  *     ...
  */
@@ -29,6 +29,29 @@ class Mission {
     this.steps[missionStep.id] = missionStep;
   }
 
+  isReady() {
+    console.log(`checking dependency of ${this.id}`);
+    if (!this.depend) return true;
+    for (const idx in this.depend) {
+      const d = this.depend[idx];
+      console.log(`condition: `, d);
+      let key;
+      let expectedValue;
+      if (typeof(d) === 'string') {
+        key = d;
+      } else if (typeof(d) === 'object') {
+        key = d['storeKey'];
+        expectedValue = d['value'];
+      }
+      if (!DataStore.AnswerStore.has(key)) return false;
+      if (!expectedValue) continue;
+      const actualValue = DataStore.AnswerStore.get(key);
+      if (actualValue !== expectedValue) return false;
+    }
+    console.log(`${this.id} is ready!`);
+    return true;
+  }
+
   static fromDict(missionId, dict) {
     const title = dict['title'] || 'Unnamed Mission';
     const description = dict['description'] || 'no description';
@@ -37,7 +60,8 @@ class Mission {
       if (typeof(d) === 'string' || d instanceof String) {
         return true;
       }
-      console.warn(`${d} is not a string`);
+      if (typeof(d) === 'object') return true;
+      console.warn(`${d} is not a string nor an object`);
       return false;
     });
 
@@ -77,26 +101,27 @@ const PLAYER = '$player';
  *           nextLine: <line-id>  # optional
  */
 class MissionStep {
-  constructor(id, title, description, nextStep, npcId, dialog, mission) {
+  constructor({id, title, description, nextStep, npcId, dialog, mission, moveTo}) {
     this.id = id;
-    this.title = title;
-    this.description = description;
+    this.title = title || 'Unnamed Step';
+    this.description = description || '...';
     this.nextStep = nextStep;
     this.npcId = npcId;
     this.dialog = dialog;
     this.mission = mission;
+    this.moveTo = moveTo;
   }
 
   static fromDict(stepId, dict, mission) {
-    const title = dict['title'] || 'Unnamed Step';
-    const description = dict['description'] || 'no description';
-    const nextStep = dict['nextStep'];
-    const npcId = dict['npcId'];
-    if (npcId === undefined) {
-      throw 'npcId must be defined';
-    }
-    const missionStep = new MissionStep(
-      stepId, title, description, nextStep, npcId, null, mission);
+    //const title = dict['title'] || 'Unnamed Step';
+    //const description = dict['description'] || 'no description';
+    //const nextStep = dict['nextStep'];
+    //const npcId = dict['npcId'];
+    //if (npcId === undefined) {
+      //throw 'npcId must be defined';
+    //}
+    const d = {id: stepId, mission: mission, ...dict};
+    const missionStep = new MissionStep(d);
 
     const dialog = Dialog.fromDict(dict['dialog'] || [], missionStep);
     missionStep.dialog = dialog;
@@ -182,15 +207,19 @@ class DialogIterator {
       }
     }
 
-    if (dialogItem instanceof DialogItemPrompt ||
-      dialogItem instanceof DialogItemSelect) {
+    if (dialogItem instanceof DialogItemPrompt) {
       if (dialogItem.storeKey) {
         DataStore.AnswerStore.setAndNotify(dialogItem.storeKey, answer);
-        // DataStore.AnswerStore.notify();
+      }
+    }
+    if (dialogItem instanceof DialogItemSelect) {
+      const value = dialogItem.choices[answer].value || answer;
+      if (dialogItem.storeKey) {
+        DataStore.AnswerStore.setAndNotify(dialogItem.storeKey, value);
       }
     }
 
-    console.info(`The next line is: ${nextIndex}`);
+    console.info(`${this.dialog.missionStep.id} The next line is: ${nextIndex}`);
     this.currentIndex = nextIndex;
     return this.getCurrentDialogItem();
   }
@@ -221,6 +250,8 @@ class DialogItem {
         return new DialogItemSelect(name, dict);
       case 'input.text':
         return new DialogItemPrompt(name, dict);
+      case 'message':
+        return new DialogItemMessage(name, dict);
       default:
         console.warn('unkonwn dialog type: %s', type);
         return new DialogItemLine(name, dict);
@@ -310,6 +341,20 @@ export class DialogItemPrompt extends DialogItem {
     }
     this.question = question;
     this.storeKey = storeKey;
+  }
+}
+
+export class DialogItemMessage extends DialogItem {
+  constructor(name, {
+    id: id,
+    nextLine: nextLine,
+    message: message}) {
+    super(name, {id, nextLine});
+    if (message === undefined) {
+      console.warn('use default message');
+      message = 'MESSAGE';
+    }
+    this.message = message;
   }
 }
 
