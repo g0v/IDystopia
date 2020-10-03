@@ -307,6 +307,7 @@ export class DialogDaemon {
     const mission = missionStep.mission;
 
     this.remove(`${mission.id}/${missionStep.id}`);
+    DataStore.AnswerStore.setAndNotify(`${mission.id}/${missionStep.id}/done`, "true");
 
     const nextStepKey = iterator.nextStep;
     if (!nextStepKey) {

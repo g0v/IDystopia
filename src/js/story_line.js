@@ -183,7 +183,7 @@ class DialogIterator {
 
   getCurrentDialogItem() {
     const item = this.dialog.dialogItems[this.currentIndex];
-    if (item && item.nextStep) this.nextStep = nextStep;
+    if (item && item.nextStep) this.nextStep = item.nextStep;
     return item;
   }
 
