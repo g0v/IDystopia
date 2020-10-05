@@ -1,4 +1,3 @@
-const Stage = require('stage-js/platform/web');
 const Const = require('./const.js');
 const StoryLine = require('./story_line.js');
 const DataStore = require('./data_store.js');
