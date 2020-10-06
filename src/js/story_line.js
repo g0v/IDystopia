@@ -2,8 +2,7 @@
  * Design Doc: https://g0v.hackmd.io/4HiKmrEASa-YdQ2bqg4kHg
  */
 
-
-const DataStore = require('./data_store.js');
+import * as DataStore from './data_store.js';
 
 /**
  * <mission-id>:  # repeated

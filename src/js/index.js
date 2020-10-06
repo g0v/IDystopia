@@ -1,6 +1,9 @@
-const DataStore = require('./data_store.js');
-const Hero = require('./hero.js');
-const StoryLine = require('./story_line.js');
+/* global Phaser */
+
+import * as DataStore from './data_store.js';
+import * as Hero from './hero.js';
+import * as StoryLine from './story_line.js';
+// import * as Phaser from 'phaser';
 
 const config = {
   type: Phaser.AUTO,

@@ -1,9 +1,8 @@
-const Const = require('./const.js');
-const StoryLine = require('./story_line.js');
-const DataStore = require('./data_store.js');
+/* global bootbox */
 
-const CHAR_WIDTH = 32;
-const CHAR_HEIGHT = 32;
+import * as Const from './const.js';
+import * as StoryLine from './story_line.js';
+import * as DataStore from './data_store.js';
 
 export class Char {
   constructor(phaser, id, name, x, y, texture, frame) {
@@ -104,7 +103,7 @@ export class CharDaemon {
   }
 
   getChar(id) {
-    if (this.chars.hasOwnProperty(id)) {
+    if (id in this.chars) {
       return this.chars[id];
     }
     return null;
@@ -112,10 +111,8 @@ export class CharDaemon {
 
   update(time, delta) {
     for (const id in this.chars) {
-      if (this.chars.hasOwnProperty(id)) {
-        const char = this.chars[id];
-        char.update(time, delta);
-      }
+      const char = this.chars[id];
+      char.update(time, delta);
     }
   }
 }
@@ -127,7 +124,7 @@ export class StoryLineDaemon {
     this.dialogDaemon = dialogDaemon;
     this.missionWithDependencies = {};
 
-    DataStore.AnswerStore.listen('*', (key) => {
+    DataStore.AnswerStore.listen('*', () => {
       console.log(this);
       for (const missionId in this.missionWithDependencies) {
         const mission = this.storyLine[missionId];
@@ -143,8 +140,6 @@ export class StoryLineDaemon {
 
   init() {
     for (const missionId in this.storyLine) {
-      if (!this.storyLine.hasOwnProperty(missionId)) continue;
-
       const mission = this.storyLine[missionId];
 
       if (!mission.isReady()) {
@@ -178,12 +173,10 @@ export class DialogDaemon {
   showHint() {
     let message = '';
     for (const key in this.dialogs) {
-      if (this.dialogs.hasOwnProperty(key)) {
-        const dialog = this.dialogs[key];
-        console.log(dialog);
-        message += `<h3>${dialog.dialog.missionStep.title}</h3>`;
-        message += `<p>${dialog.dialog.missionStep.description}</p>`;
-      }
+      const dialog = this.dialogs[key];
+      console.log(dialog);
+      message += `<h3>${dialog.dialog.missionStep.title}</h3>`;
+      message += `<p>${dialog.dialog.missionStep.description}</p>`;
     }
     if (!message) {
       message = '沒有任務!';
@@ -195,7 +188,7 @@ export class DialogDaemon {
   }
 
   getDialog(dialogId) {
-    if (this.dialogs.hasOwnProperty(dialogId)) {
+    if (dialogId in this.dialogs) {
       return this.dialogs[dialogId];
     }
     return null;
@@ -217,7 +210,7 @@ export class DialogDaemon {
       bootbox.alert({
         title: talker,
         message: content,
-        callback: e => {
+        callback: () => {
           this.hasOnGoingDialog = false;
           const next = iterator.nextDialogItem();
           if (next) {
@@ -287,7 +280,7 @@ export class DialogDaemon {
       bootbox.alert({
         title: "",
         message: message,
-        callback: e => {
+        callback: () => {
           this.hasOnGoingDialog = false;
           const next = iterator.nextDialogItem();
           if (next) {
@@ -345,7 +338,7 @@ export class DialogDaemon {
 
     console.info(`startDialog: ${dialogId}`, tuple.dialog);
 
-    const {npcId, dialog} = tuple;
+    const {dialog} = tuple;
 
     if (dialog.missionStep.moveTo) {
       this.moveTo(dialog.missionStep.moveTo);
@@ -355,11 +348,10 @@ export class DialogDaemon {
     this.showDialog(iterator);
   }
 
-  checkDialogToTrigger(me) {
+  checkDialogToTrigger() {
     if (this.hasOnGoingDialog) return null;
 
     for (const idx in this.dialogToTrigger) {
-      if (!this.dialogToTrigger.hasOwnProperty(idx)) continue;
       const {dialogId} = this.dialogToTrigger[idx];
       this.dialogToTrigger.shift();
       return dialogId;
@@ -370,9 +362,7 @@ export class DialogDaemon {
 
   findNearbyDialog(me) {
     for (const dialogId in this.dialogs) {
-      if (!this.dialogs.hasOwnProperty(dialogId)) continue;
-
-      const {npcId, dialog} = this.dialogs[dialogId];
+      const {npcId} = this.dialogs[dialogId];
       const npc = this.charDaemon.getChar(npcId);
 
       if (Math.hypot(npc.x - me.x, npc.y - me.y) < 2 * Const.TILE_SIZE) {
@@ -389,7 +379,6 @@ export class DialogDaemon {
     }
 
     if (npcId === undefined) {
-      const missionStep = dialog.missionStep;
       // trigger this in next frame
       this.dialogToTrigger.push({
         dialogId,
@@ -418,7 +407,7 @@ export class DialogDaemon {
       return;
     }
 
-    const {npcId, dialog} = tuple;
+    const {npcId} = tuple;
     const npc = this.charDaemon.getChar(npcId);
     if (npc !== null) {
       // npc.missionMark = false;

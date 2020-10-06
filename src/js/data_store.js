@@ -8,7 +8,11 @@
  * on remoteStorage, different datastore_token means a different identity.
  */
 
-const StoreModule = require('store2');
+import StoreModule from 'store2';
+
+function _hasOwnProperty(obj, property) {
+  return Object.prototype.hasOwnProperty.call(obj, property);
+}
 
 (function(_) {
   const callbacks = [];
@@ -18,13 +22,13 @@ const StoreModule = require('store2');
 
     if (!this.callbacks) return;
 
-    if (this.callbacks.hasOwnProperty(key)) {
+    if (_hasOwnProperty(this.callbacks, key)) {
       for (const callback of this.callbacks[key]) {
         callback.call(this, key);
       }
     }
 
-    if (this.callbacks.hasOwnProperty('*')) {
+    if (_hasOwnProperty(this.callbacks, '*')) {
       for (const callback of this.callbacks['*']) {
         callback.call(this, key);
       }
@@ -33,7 +37,7 @@ const StoreModule = require('store2');
 
   _.fn('notify', function() {
     for (const key in callbacks) {
-      if (this.callbacks.hasOwnProperty(key)) {
+      if (_hasOwnProperty(this.callbacks, key)) {
         for (const callback of this.callbacks[key]) {
           callback.call(this);
         }

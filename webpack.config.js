@@ -1,7 +1,10 @@
+/* eslint-env node */
+
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
+  target: "web",
   entry: {
     index: './src/js/index.js',
   },
@@ -12,6 +15,7 @@ module.exports = {
   devServer: {
     contentBase: './dist',
   },
+  devtool: 'source-map',
   plugins: [
     new CopyPlugin({
       patterns: [
