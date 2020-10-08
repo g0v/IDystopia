@@ -162,6 +162,8 @@ export class StoryLineDaemon {
   }
 }
 
+const _RE_PLAYER = /\$player/;
+
 export class DialogDaemon {
   constructor(charDaemon) {
     this.charDaemon = charDaemon;
@@ -203,10 +205,10 @@ export class DialogDaemon {
 
     this.hasOnGoingDialog = true;
     const me = this.charDaemon.getChar('player');
-    const talker = item.name.replace(/\$player/, me.name);
+    const talker = item.name.replace(_RE_PLAYER, me.name);
 
     if (item instanceof StoryLine.DialogItemLine) {
-      const content = item.line.replace(/\$player/, me.name);
+      const content = item.line.replace(_RE_PLAYER, me.name);
       bootbox.alert({
         title: talker,
         message: content,
@@ -221,13 +223,13 @@ export class DialogDaemon {
         }
       });
     } else if (item instanceof StoryLine.DialogItemSelect) {
-      const question = item.question.replace(/\$player/, me.name);
+      const question = item.question.replace(_RE_PLAYER, me.name);
       const inputOptions = [];
 
       for (const idx in item.choices) {
         const text = item.choices[idx].text;
         inputOptions.push({
-          text: text.replace(/\$player/, me.name),
+          text: text.replace(_RE_PLAYER, me.name),
           value: idx,
         });
       }
@@ -254,7 +256,7 @@ export class DialogDaemon {
         }
       });
     } else if (item instanceof StoryLine.DialogItemPrompt) {
-      const question = item.question.replace(/\$player/, me.name);
+      const question = item.question.replace(_RE_PLAYER, me.name);
       bootbox.prompt({
         title: talker,
         message: question,
@@ -276,7 +278,7 @@ export class DialogDaemon {
         }
       });
     } else if (item instanceof StoryLine.DialogItemMessage) {
-      const message = item.message.replace(/\$player/, me.name);
+      const message = item.message.replace(_RE_PLAYER, me.name);
       bootbox.alert({
         title: "",
         message: message,

@@ -74,9 +74,6 @@ class Mission {
   }
 }
 
-const EOD = '$EOD';
-const PLAYER = '$player';
-
 /**
  * <step-id>:  # repeated
  *   title: <step-title>
