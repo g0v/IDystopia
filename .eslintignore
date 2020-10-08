@@ -1,0 +1,8 @@
+# ignore legacy files from 2d-online-chat
+/src/js/map.js
+/src/js/common.js
+/src/js/game_core.js
+/src/js/game_object.js
+/src/js/logic-grid.js
+/src/js/map_editor.js
+/src/js/jitsi_channel.js
