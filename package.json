@@ -5,6 +5,7 @@
   "description": "a dummy project",
   "version": "0.0.1",
   "homepage": "https://idystopia.online/",
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/g0v/idystopia"
@@ -14,8 +15,8 @@
     "npm": ">=1.2.2"
   },
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack-dev-server --open"
+    "build": "node ./gen_remote_key_map.js && webpack --mode production --config ./webpack.config.cjs",
+    "start": "webpack-dev-server --open --config ./webpack.config.cjs"
   },
   "dependencies": {
     "store2": "^2.12.0"

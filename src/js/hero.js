@@ -1,5 +1,3 @@
-/* global bootbox */
-
 import * as Const from './const.js';
 import * as StoryLine from './story_line.js';
 import * as DataStore from './data_store.js';
@@ -295,13 +293,18 @@ export class DialogDaemon {
     }
   }
 
+  recordDone(recordKey) {
+    DataStore.AnswerStore.setAndNotify(recordKey, "true");
+    DataStore.RemoteStore.increase(`MISSION/${recordKey}`);
+  }
+
   doneDialog(iterator) {
     const dialog = iterator.dialog;
     const missionStep = dialog.missionStep;
     const mission = missionStep.mission;
 
     this.remove(`${mission.id}/${missionStep.id}`);
-    DataStore.AnswerStore.setAndNotify(`${mission.id}/${missionStep.id}/done`, "true");
+    this.recordDone(`${mission.id}/${missionStep.id}/done`);
 
     const nextStepKey = iterator.nextStep;
     if (!nextStepKey) {

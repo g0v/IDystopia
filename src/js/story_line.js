@@ -212,6 +212,7 @@ class DialogIterator {
       const value = dialogItem.choices[answer].value || answer;
       if (dialogItem.storeKey) {
         DataStore.AnswerStore.setAndNotify(dialogItem.storeKey, value);
+        DataStore.RemoteStore.increase(`USER_RESPONSE/${dialogItem.storeKey}`);
       }
     }
 
@@ -354,10 +355,7 @@ export class DialogItemMessage extends DialogItem {
   }
 }
 
-export async function loadStoryLine(fileName) {
-  const response = await fetch(`/story-lines/${fileName}`);
-  const obj = await response.json();
-
+export function loadStoryLineFromObject(obj) {
   const missions = obj['missions'];
   const loadedMissions = {};
   if (!missions) {
@@ -370,4 +368,11 @@ export async function loadStoryLine(fileName) {
   }
   console.log(loadedMissions);
   return loadedMissions;
+}
+
+export async function loadStoryLine(fileName) {
+  const response = await fetch(`/story-lines/${fileName}`);
+  const obj = await response.json();
+
+  return loadStoryLineFromObject(obj);
 }
