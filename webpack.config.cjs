@@ -7,7 +7,7 @@ module.exports = {
   target: 'web',
   entry: {
     index: './src/js/index.js',
-    stat: './src/js/stat.js',
+    show_stat: './src/js/show_stat.js',
   },
   output: {
     filename: 'js/[name].js',
