@@ -15,10 +15,6 @@ module.exports = {
   },
   devServer: {
     contentBase: './dist',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
-    }
   },
   devtool: 'source-map',
   plugins: [
