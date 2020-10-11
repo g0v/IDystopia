@@ -39,6 +39,10 @@ function preload() {
   this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
 }
 
+const DEPTH_BELOW_LAYER = 0;
+const DEPTH_WORLD_LAYER = 10;
+const DEPTH_ABOVE_LAYER = 20;
+
 function create() {
   const map = this.make.tilemap({ key: "map" });
 
@@ -56,7 +60,9 @@ function create() {
   // By default, everything gets depth sorted on the screen in the order we created things. Here, we
   // want the "Above Player" layer to sit on top of the player, so we explicitly give it a depth.
   // Higher depths will sit on top of lower depth objects.
-  aboveLayer.setDepth(10);
+  belowLayer.setDepth(DEPTH_BELOW_LAYER);
+  worldLayer.setDepth(DEPTH_WORLD_LAYER);
+  aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
 
   // Object layers in Tiled let you embed extra info into a map - like a spawn point or custom
   // collision shapes. In the tmx file, there's an object layer with a point named "Spawn Point"

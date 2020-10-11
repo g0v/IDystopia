@@ -26,11 +26,13 @@ export class Char {
     this.player = this.phaser.physics.add.sprite(
       this.x, this.y, this.texture, this.frame).setSize(32, 40).setOffset(0, 24);
 
+    this.player.setDepth(2);
+
     this.text = this.phaser.add.text(this.x, this.y, this.name, {
       font: '18px monospace',
       fill: '#fff',
       align: 'center',
-    }).setOrigin(0.5).setStroke('#000', 3).setDepth(30);
+    }).setOrigin(0.5).setStroke('#000', 3).setDepth(1);
   }
 
   get WIDTH() {
@@ -66,7 +68,7 @@ export class Char {
           fill: '#000',
           align: 'center',
         }
-      ).setOrigin(0.5).setStroke('#fff', 3);
+      ).setOrigin(0.5).setStroke('#fff', 3).setDepth(99);
     } else {
       this.missionMark.destroy();
       this.missionMark = null;
@@ -395,7 +397,6 @@ export class DialogDaemon {
         console.error(`NPC ${npcId} doesn't exist.`);
         return;
       }
-      // npc.missionMark = true;
       npc.showMissionMark(true);
     }
 
