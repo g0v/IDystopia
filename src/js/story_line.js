@@ -249,6 +249,8 @@ class DialogItem {
         return new DialogItemPrompt(name, dict);
       case 'message':
         return new DialogItemMessage(name, dict);
+      case 'iframe':
+        return new DialogItemIframe(name, dict);
       default:
         console.warn('unkonwn dialog type: %s', type);
         return new DialogItemLine(name, dict);
@@ -355,6 +357,21 @@ export class DialogItemMessage extends DialogItem {
   }
 }
 
+export class DialogItemIframe extends DialogItem {
+  constructor(name, {
+    id: id,
+    nextLine: nextLine,
+    url: url,
+    callback: callback,
+    style: style,}) {
+    super(name, {id, nextLine});
+
+    this.url = url;
+    this.callback = callback;
+    this.style = style;
+  }
+}
+
 export function loadStoryLineFromObject(obj) {
   const missions = obj['missions'];
   const loadedMissions = {};
@@ -366,7 +383,7 @@ export function loadStoryLineFromObject(obj) {
     const missionDict = missions[missionId];
     loadedMissions[missionId] = Mission.fromDict(missionId, missionDict);
   }
-  console.log(loadedMissions);
+  console.debug(loadedMissions);
   return loadedMissions;
 }
 

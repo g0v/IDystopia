@@ -292,6 +292,32 @@ export class DialogDaemon {
           }
         }
       });
+    } else if (item instanceof StoryLine.DialogItemIframe) {
+      const style = item.style || "";
+      const message = `
+      <iframe
+        id='dialog-iframe'
+        class="dialog-iframe"
+        src="${item.url}"
+        style="${style}" ></iframe>`;
+      bootbox.dialog({
+        message,
+        size: 'large',
+        centerVertical: true,
+        closeButton: true,
+        // callback: this won't be called in "dialog"
+        onShown: () => {
+          const iframe = document.getElementById('dialog-iframe');
+          console.log(iframe);
+        },
+        onHidden: () => {
+          // this function is called when user press "x" to close the dialog.
+          console.log('on hidden');
+        }
+      });
+      // We can use iframe.contentWindow.postMessage()" to send a message to
+      // iframe.  And use window.addEventListener('message', e => { ... }) to
+      // receive the event.  (and vice versa)
     }
   }
 
