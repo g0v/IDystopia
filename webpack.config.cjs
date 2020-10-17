@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     index: './src/js/index.js',
     show_stat: './src/js/show_stat.js',
+    online_event: './src/js/online_event.js',
   },
   output: {
     filename: 'js/[name].js',

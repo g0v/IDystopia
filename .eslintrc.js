@@ -8,7 +8,8 @@ module.exports = {
     "extends": "eslint:recommended",
     "globals": {
         "bootbox": "readonly",
-        "Phaser": "readonly"
+        "Phaser": "readonly",
+        "JitsiMeetJS": "readonly",
     },
     "parserOptions": {
         "ecmaVersion": 12,

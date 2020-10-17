@@ -1,3 +1,5 @@
+import * as Hero from './hero.js';
+
 const INIT_OPTIONS = {
   disableAudioLevels: false,
 
@@ -33,14 +35,15 @@ const initJitsiMeetJs = (
 /**
  * A class to handle Jitsi connection of a room.
  */
-class JitsiConnection {
+export class JitsiConnection {
   constructor() {
     this.connection = null;
     this.room = null;
     this.cameraTrack = null;
+    this.previousUpdate = 0;
   }
 
-  initConnection(onConnectionSuccess, onConnectionFailed) {
+  init() {
     initJitsiMeetJs();
 
     if (this.conenction) {
@@ -66,22 +69,22 @@ class JitsiConnection {
     // TODO(stimim): why???
     const onDisconnected = () => {
       this.connection.removeEventListener(
-          JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-          onConnectionSuccess);
+        JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
+        () => this.onConnectionSuccess());
       this.connection.removeEventListener(
-          JitsiMeetJS.events.connection.CONNECTION_FAILED,
-          onConnectionFailed);
+        JitsiMeetJS.events.connection.CONNECTION_FAILED,
+        () => this.onConnectionFailed());
       this.connection.removeEventListener(
-          JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
-          onDisconnected);
+        JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
+        onDisconnected);
     };
 
     this.connection.addEventListener(
-        JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
-        onConnectionSuccess);
+      JitsiMeetJS.events.connection.CONNECTION_ESTABLISHED,
+      () => this.onConnectionSuccess());
     this.connection.addEventListener(
-        JitsiMeetJS.events.connection.CONNECTION_FAILED,
-        onConnectionFailed);
+      JitsiMeetJS.events.connection.CONNECTION_FAILED,
+      () => this.onConnectionFailed());
     this.connection.addEventListener(
         JitsiMeetJS.events.connection.CONNECTION_DISCONNECTED,
         onDisconnected);
@@ -96,33 +99,41 @@ class JitsiConnection {
     }
   }
 
-  initConferenceRoom(roomID, displayName, participantProperty, onTrackAdded,
-      onConferenceJoined) {
-    console.log(roomID);
+  onConnectionSuccess() {
+    this._initConferenceRoom();
+  }
+
+  onConnectionFailed() {
+
+  }
+
+  _initConferenceRoom() {
+    // const roomId = 'idystopia_online';
+    const roomId = 'eid';
+    console.log('roomId: ', roomId);
     if (this.room) {
-      return;
+      return this.room;
     }
     const confOptions = {
       openBridgeChannel: true,
-      confID: `jitsi.jothon.online/${roomID}`,
+      confID: `jitsi.jothon.online/${roomId}`,
     };
 
-    this.room = this.connection.initJitsiConference(roomID, confOptions);
+    this.room = this.connection.initJitsiConference(roomId, confOptions);
 
-    this.room.setDisplayName(displayName);
-    this.setLocalParticipantProperty(participantProperty);
-    this.room.on(JitsiMeetJS.events.conference.TRACK_ADDED, onTrackAdded);
-    this.room.on(JitsiMeetJS.events.conference.TRACK_REMOVED, (track) => {
-      console.log(`track removed!!! ${track}`);
+    this.room.setDisplayName('???');
+    this.setLocalParticipantProperty({
+      top: 600,
+      left: 600,
+      texture: 'atlas',
+      frame: 'misa-left',
     });
     this.room.on(
-        JitsiMeetJS.events.conference.CONFERENCE_JOINED,
-        onConferenceJoined);
+      JitsiMeetJS.events.conference.CONFERENCE_JOINED,
+      () => { this.onConferenceJoined(); });
 
     this.room.join();
 
-    JitsiMeetJS.createLocalTracks({devices: ['audio']})
-        .then(onLocalTracks);
     return this.room;
   }
 
@@ -154,5 +165,107 @@ class JitsiConnection {
       this.connection = null;
     }
   }
-}
 
+  loadParticipants() {
+    if (!this.room || !this.connection) return;
+
+    const participants = this.room.participants;
+
+    for (const id in participants) {
+      const user = participants[id];
+
+      console.log(id, user);
+
+      const char = Hero.charDaemon.getChar(id);
+      if (char) continue;
+
+      Hero.charDaemon.createRemotePlayer(
+        id,
+        user.getDisplayName(),
+        parseInt(user.getProperty('left')),
+        parseInt(user.getProperty('top')),
+        user.getProperty('texture'),
+        user.getProperty('frame'),
+      );
+    }
+
+    for (const id in Hero.charDaemon.chars) {
+      const char = Hero.charDaemon.chars[id];
+      if (char instanceof Hero.RemotePlayer) {
+        if (!(id in participants)) {
+          delete Hero.charDaemon.chars[id];
+        }
+      }
+    }
+  }
+
+  onConferenceJoined() {
+    //gameCore.registerOnMemberListChanged(renderMemberList);
+
+    // this.loadParticipants();
+
+    this.room.on(
+      JitsiMeetJS.events.conference.USER_JOINED,
+      (id, user) => {
+        // Normally, at this point, we won't be able to get properties.
+        // We will get property update very soon in the
+        // "PARTICIPANT_PROPERTY_CHANGED" event later.
+        Hero.charDaemon.createRemotePlayer(id, user.getDisplayName());
+      });
+    //room.on(
+    //JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
+    //gameCore.onMessageReceived.bind(gameCore));
+    //room.on(
+    //JitsiMeetJS.events.conference.USER_LEFT, 
+    //gameCore.onUserLeft.bind(gameCore));
+    this.room.on(
+      JitsiMeetJS.events.conference.PARTICIPANT_PROPERTY_CHANGED,
+      (user, key) => {
+        const id = user.getId();
+        const char = Hero.charDaemon.getChar(id);
+        if (!char) {
+          return;
+        }
+        if (!this.room || !this.connection) return;
+        const x = parseInt(user.getProperty('left'));
+        const y = parseInt(user.getProperty('top'));
+        if (!Number.isNaN(x) && !Number.isNaN(y)) {
+          char.setProperty('x', x);
+          char.setProperty('y', y);
+        }
+
+        const texture = user.getProperty('texture');
+        const frame = user.getProperty('frame');
+        if (texture && frame && (frame !== char.frame || texture !== char.texture)) {
+          char.setProperty('texture', texture);
+          char.setProperty('frame', frame);
+        }
+      });
+    //room.on(
+    //JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED,
+    //gameCore.onEndpointMessageReceived.bind(gameCore));
+    this.room.on(
+      JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED,
+      (id, name) => {
+        const char = Hero.charDaemon.getChar(id);
+        if (!char) return;
+        char.setProperty('name', name);
+      });
+    //room.on(
+    //JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED,
+    //gameCore.onTrackAudioLevelChanged.bind(gameCore));
+  }
+
+  update(time, delta, char) {
+    const minDelta = 1000;  // 1 seconds
+    if (time - this.previousUpdate > minDelta) {
+      this.previousUpdate = time;
+      this.setLocalParticipantProperty({
+        left: char.player.x,
+        top: char.player.y,
+        texture: char.texture,
+        frame: char.frame,
+      });
+    }
+  }
+}

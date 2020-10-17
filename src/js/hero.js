@@ -82,10 +82,51 @@ export class Char {
   }
 }
 
+export class RemotePlayer extends Char {
+
+  constructor(phaser, id, name, x, y, texture, frame) {
+    super(phaser, id, name, x, y, texture, frame);
+    this.jitsiProperty = {};
+  }
+
+  setProperty(key, value) {
+    switch (key) {
+      case 'texture':
+        this.texture = value;
+        this.player.setTexture(value);
+        break;
+      case 'frame':
+        this.frame = value;
+        this.player.setFrame(value);
+        break;
+      case 'name':
+        this.name = value;
+        break;
+      case 'x':
+        this.x = value;
+        break;
+      case 'y':
+        this.y = value;
+        break;
+    }
+  }
+
+  update() {
+    super.update();
+
+    this.player.setX(this.x);
+    this.player.setY(this.y);
+  }
+}
+
 export class CharDaemon {
-  constructor(phaser) {
-    this.phaser = phaser;
+  constructor() {
+    this.phaser = null;
     this.chars = {};
+  }
+
+  setPhaser(phaser) {
+    this.phaser = phaser;
   }
 
   create(id, name, x, y, texture, frame) {
@@ -95,6 +136,21 @@ export class CharDaemon {
       return;
     }
     const char = new Char(
+      this.phaser,
+      id, name, x, y, texture, frame);
+
+    this.chars[id] = char;
+    return char;
+  }
+
+  createRemotePlayer(id, name, x, y, texture, frame) {
+    if (id in this.chars) {
+      console.error(`Character ID "${id}" is already declared:`);
+      console.error(this.chars[id]);
+      return;
+    }
+
+    const char = new RemotePlayer(
       this.phaser,
       id, name, x, y, texture, frame);
 
@@ -119,8 +175,8 @@ export class CharDaemon {
 
 
 export class StoryLineDaemon {
-  constructor(storyLine, dialogDaemon) {
-    this.storyLine = storyLine;
+  constructor(dialogDaemon) {
+    this.storyLine = null;
     this.dialogDaemon = dialogDaemon;
     this.missionWithDependencies = {};
 
@@ -138,7 +194,8 @@ export class StoryLineDaemon {
     });
   }
 
-  init() {
+  init(storyLine) {
+    this.storyLine = storyLine;
     for (const missionId in this.storyLine) {
       const mission = this.storyLine[missionId];
 
@@ -449,3 +506,9 @@ export class DialogDaemon {
     delete this.dialogs[dialogId];
   }
 }
+
+export const charDaemon = new CharDaemon();
+export const dialogDaemon = new DialogDaemon(charDaemon);
+export const storyLineDaemon = new StoryLineDaemon(dialogDaemon);
+
+window.charDaemon = charDaemon;
