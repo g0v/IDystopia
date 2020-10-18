@@ -64,7 +64,8 @@ class Mission {
       return false;
     });
 
-    const mission = new Mission(missionId, title, description, depend, firstStep);
+    const mission = new Mission(
+      missionId, title, description, depend, firstStep);
 
     for (const stepId in dict['steps']) {
       const step = MissionStep.fromDict(stepId, dict['steps'][stepId], mission);
@@ -97,7 +98,8 @@ class Mission {
  *           nextLine: <line-id>  # optional
  */
 class MissionStep {
-  constructor({id, title, description, nextStep, npcId, dialog, mission, moveTo}) {
+  constructor({
+      id, title, description, nextStep, npcId, dialog, mission, moveTo}) {
     this.id = id;
     this.title = title || 'Unnamed Step';
     this.description = description || '...';
@@ -109,13 +111,6 @@ class MissionStep {
   }
 
   static fromDict(stepId, dict, mission) {
-    //const title = dict['title'] || 'Unnamed Step';
-    //const description = dict['description'] || 'no description';
-    //const nextStep = dict['nextStep'];
-    //const npcId = dict['npcId'];
-    //if (npcId === undefined) {
-      //throw 'npcId must be defined';
-    //}
     const d = {id: stepId, mission: mission, ...dict};
     const missionStep = new MissionStep(d);
 
@@ -216,7 +211,8 @@ class DialogIterator {
       }
     }
 
-    console.info(`${this.dialog.missionStep.id} The next line is: ${nextIndex}`);
+    console.info(
+        `${this.dialog.missionStep.id} The next line is: ${nextIndex}`);
     this.currentIndex = nextIndex;
     return this.getCurrentDialogItem();
   }
@@ -226,8 +222,8 @@ class DialogIterator {
  * Properties:
  *   - id: (optional) an id to find this line.
  *   - name: Who is talking, can be "$player"
- *   - nextLine: (optional) jump to another dialog if we don't want to fallthrough.
- *               use "$EOD" to end the dialog.
+ *   - nextLine: (optional) jump to another dialog if we don't want to
+ *               fallthrough.  Use "$EOD" to end the dialog.
  */
 class DialogItem {
   constructor(name, {id: id, nextLine: nextLine}) {

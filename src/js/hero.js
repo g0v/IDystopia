@@ -24,7 +24,9 @@ export class Char {
     // used for the sprite has a bit of whitespace, so I'm using setSize &
     // setOffset to control the size of the player's body.
     this.player = this.phaser.physics.add.sprite(
-      this.x, this.y, this.texture, this.frame).setSize(32, 40).setOffset(0, 24);
+      this.x, this.y, this.texture, this.frame)
+      .setSize(32, 40)
+      .setOffset(0, 24);
 
     this.player.setDepth(2);
 

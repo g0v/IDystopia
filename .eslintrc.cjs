@@ -16,5 +16,12 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "max-len": [
+            "error",
+            {
+                "code": 80,
+                "tabWidth": 2,
+            }
+        ]
     }
 };

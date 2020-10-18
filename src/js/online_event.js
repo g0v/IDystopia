@@ -8,7 +8,10 @@ function initJitsi() {
   connection.init();
 }
 
-PhaserWrapper.CreateGame('maps/idystopia.json', 'online_event.json', connection);
+PhaserWrapper.CreateGame({
+  tilemapTiledJSON: 'maps/idystopia.json',
+  storylineJSON: 'online_event.json',
+  connection});
 
 initJitsi();
 

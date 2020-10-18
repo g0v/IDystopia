@@ -1,11 +1,13 @@
 /*
  * Remember some key-value pairs locally and or remotely.
  *
- * 2. localStorage: use window.localStorage to store something across browser section.
- * 3. remoteStorage: use ??? to store data remotely.
+ * 1. localStorage: use window.localStorage to store something across browser
+ *    section.
+ * 2. remoteStorage: use g0v backend to store data remotely.
  *
- * For (3), we will generate an 'datastore_token', which is saved in localStorage,
- * on remoteStorage, different datastore_token means a different identity.
+ * For (2), we will generate an 'datastore_token', which is saved in
+ * localStorage, on remoteStorage, different datastore_token means a different
+ * identity.
  */
 
 import StoreModule from 'store2';
@@ -170,4 +172,3 @@ class RemoteStoreClass {
 
 export const AnswerStore = StoreModule.namespace('DIALOG_ANSWER');
 export const RemoteStore = new RemoteStoreClass();
-// window.RemoteStore = RemoteStore;
