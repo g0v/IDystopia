@@ -40,7 +40,7 @@ export class JitsiConnection {
     this.connection = null;
     this.room = null;
     this.cameraTrack = null;
-    this.previousUpdate = 0;
+    this.previousUpdateTime = 0;
   }
 
   init() {
@@ -123,8 +123,8 @@ export class JitsiConnection {
 
     this.room.setDisplayName('???');
     this.setLocalParticipantProperty({
-      top: 600,
-      left: 600,
+      top: 0,
+      left: 0,
       texture: 'atlas',
       frame: 'misa-left',
     });
@@ -202,7 +202,7 @@ export class JitsiConnection {
   onConferenceJoined() {
     //gameCore.registerOnMemberListChanged(renderMemberList);
 
-    // this.loadParticipants();
+    this.loadParticipants();
 
     this.room.on(
       JitsiMeetJS.events.conference.USER_JOINED,
@@ -212,12 +212,31 @@ export class JitsiConnection {
         // "PARTICIPANT_PROPERTY_CHANGED" event later.
         Hero.charDaemon.createRemotePlayer(id, user.getDisplayName());
       });
-    //room.on(
-    //JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
-    //gameCore.onMessageReceived.bind(gameCore));
-    //room.on(
-    //JitsiMeetJS.events.conference.USER_LEFT, 
-    //gameCore.onUserLeft.bind(gameCore));
+
+    this.room.on(
+      JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
+      (id, text, timestamp) => {
+        console.log({id, text, timestamp});
+        if (timestamp === undefined) {
+          timestamp = (new Date()).getTime();
+        } else if (typeof(timestamp) === 'string' ||
+                   timestamp instanceof String) {
+          timestamp = (new Date(timestamp)).getTime();
+        }
+        let char;
+        if (id === this.room.myUserId()) {
+          char = Hero.charDaemon.getChar('player');
+        } else {
+          char = Hero.charDaemon.getChar(id);
+        }
+        if (char) char.addMessage(text, timestamp + 60 * 1000);
+      });
+
+    this.room.on(
+      JitsiMeetJS.events.conference.USER_LEFT,
+      (id, /* user */) => {
+        Hero.charDaemon.deleteChar(id);
+      });
     this.room.on(
       JitsiMeetJS.events.conference.PARTICIPANT_PROPERTY_CHANGED,
       (user, key) => {
@@ -236,14 +255,15 @@ export class JitsiConnection {
 
         const texture = user.getProperty('texture');
         const frame = user.getProperty('frame');
-        if (texture && frame && (frame !== char.frame || texture !== char.texture)) {
+        if (texture && frame &&
+            (frame !== char.frame || texture !== char.texture)) {
           char.setProperty('texture', texture);
           char.setProperty('frame', frame);
         }
       });
-    //room.on(
-    //JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED,
-    //gameCore.onEndpointMessageReceived.bind(gameCore));
+    this.room.on(
+      JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED,
+      (/* participant, message */) => {});
     this.room.on(
       JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED,
       (id, name) => {
@@ -251,20 +271,22 @@ export class JitsiConnection {
         if (!char) return;
         char.setProperty('name', name);
       });
-    //room.on(
-    //JitsiMeetJS.events.conference.TRACK_AUDIO_LEVEL_CHANGED,
-    //gameCore.onTrackAudioLevelChanged.bind(gameCore));
+  }
+
+  sendMessage(message) {
+    this.room.sendTextMessage(message);
   }
 
   update(time, delta, char) {
-    const minDelta = 1000;  // 1 seconds
-    if (time - this.previousUpdate > minDelta) {
-      this.previousUpdate = time;
+    const now = (new Date()).getTime();
+    const minDelta = 200;  // 0.2 seconds
+    if (now - this.previousUpdateTime > minDelta) {
+      this.previousUpdateTime = now;
       this.setLocalParticipantProperty({
         left: char.player.x,
         top: char.player.y,
-        texture: char.texture,
-        frame: char.frame,
+        texture: char.player.texture.key,
+        frame: char.player.frame.name,
       });
     }
   }

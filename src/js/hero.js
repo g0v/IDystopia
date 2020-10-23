@@ -14,8 +14,8 @@ export class Char {
     this._name = name;
     this.texture = texture;
     this.frame = frame;
-    this.facing = 'DOWN';
-    this.missionMark = null;
+    this.messages = [];
+    this.messageBox = null;
 
     this.makeContainer();
   }
@@ -59,29 +59,74 @@ export class Char {
     this.text.setText(this.name);
   }
 
+  addMessage(message, expireTime) {
+    if (expireTime === undefined) expireTime = Infinity;
+    this.messages.push({message, expireTime});
+  }
+
+  clearMessage() {
+    this.messages = [];
+  }
+
   showMissionMark(enable) {
     if (enable) {
-      if (this.missionMark) return;
-
-      this.missionMark = this.phaser.add.text(
-        this.player.x, this.player.y - 16,
-        '!',
-        {
-          font: '24px monospace',
-          fill: '#000',
-          align: 'center',
-        }
-      ).setOrigin(0.5).setStroke('#fff', 3).setDepth(99);
+      this.addMessage('!');
     } else {
-      this.missionMark.destroy();
-      this.missionMark = null;
+      this.clearMessage();
     }
+  }
+
+  _removeOutdatedMessage() {
+    const now = (new Date()).getTime();
+    let end = 0;
+    for (const i in this.messages) {
+      if (this.messages[i].expireTime > now) {
+        this.messages[end] = this.messages[i];
+        end++;
+      }
+    }
+    this.messages = this.messages.slice(0, end);
   }
 
   update() {
     // this is stupid, but I can't find a better way.
     this.text.setX(this.player.x);
     this.text.setY(this.player.y + 45);
+
+    if (this.messages.length > 0) {
+      this._removeOutdatedMessage();
+      if (this.messages.length > 0) {
+        if (!this.messageBox) {
+          this.messageBox = this.phaser.add.text(
+            this.player.x, this.player.y - 16,
+            '',
+            {
+              font: '24px monospace',
+              fill: '#000',
+              align: 'center',
+              backgroundColor: 'white',
+            }
+          ).setOrigin(0.5, 1).setDepth(99);
+        }
+        let jointMessage = '';
+        for (const i in this.messages) {
+          jointMessage += this.messages[i].message + '\n';
+        }
+        this.messageBox.setText(jointMessage.slice(0, -1));
+      } else {
+        if (this.messageBox) this.messageBox.hide();
+      }
+    }
+
+    if (this.messageBox) {
+      this.messageBox.setX(this.player.x);
+      this.messageBox.setY(this.player.y - 16);
+    }
+  }
+
+  destroy() {
+    this.player.destroy();
+    this.text.destroy();
   }
 }
 
@@ -159,6 +204,13 @@ export class CharDaemon {
 
     this.chars[id] = char;
     return char;
+  }
+
+  deleteChar(id) {
+    if (id in this.chars) {
+      this.chars[id].destroy();
+      delete this.chars[id];
+    }
   }
 
   getChar(id) {
@@ -323,7 +375,7 @@ export class DialogDaemon {
         onEscape: false,
         backdrop: true,
         callback: result => {
-          if (result === null) {
+          if (!result) {
             return false;
           }
           this.hasOnGoingDialog = false;
@@ -525,7 +577,6 @@ export class DialogDaemon {
     const {npcId} = tuple;
     const npc = this.charDaemon.getChar(npcId);
     if (npc !== null) {
-      // npc.missionMark = false;
       npc.showMissionMark(false);
     }
 
