@@ -1,6 +1,7 @@
 import * as Const from './const.js';
 import * as StoryLine from './story_line.js';
 import * as DataStore from './data_store.js';
+import * as PhaserWrapper from './phaser_wrapper.js';
 
 export class Char {
   constructor(phaser, id, name, x, y, texture, frame) {
@@ -216,8 +217,7 @@ export class StoryLineDaemon {
       const firstStep = mission.steps[key];
 
       const id = `${mission.id}/${firstStep.id}`;
-      this.dialogDaemon.add(id, firstStep.npcId, firstStep.dialog);
-
+      this.dialogDaemon.add(id, firstStep);
   }
 }
 
@@ -398,21 +398,19 @@ export class DialogDaemon {
       return;
     }
 
-    console.log(nextStepKey);
+    console.log('nextStepKey: ', nextStepKey);
 
     const nextStep = mission.steps[nextStepKey];
     if (!nextStep) return;
-    this.add(`${mission.id}/${nextStep.id}`, nextStep.npcId, nextStep.dialog);
+    this.add(`${mission.id}/${nextStep.id}`, nextStep);
   }
 
   moveTo(where) {
-    const player = this.charDaemon.getChar('player');
-    console.log(player);
-    switch (where) {
-      case 'SCHOOL':
-        player.player.x = 500;
-        player.player.y = 500;
-        break;
+    const me = this.charDaemon.getChar('player');
+    if (where in PhaserWrapper.mapObjects) {
+      const loc = PhaserWrapper.mapObjects[where];
+      me.player.x = loc.x;
+      me.player.y = loc.y;
     }
   }
 
@@ -440,7 +438,7 @@ export class DialogDaemon {
     this.showDialog(iterator);
   }
 
-  checkDialogToTrigger() {
+  checkDialogToTrigger(me) {
     if (this.hasOnGoingDialog) return null;
 
     for (const idx in this.dialogToTrigger) {
@@ -449,44 +447,70 @@ export class DialogDaemon {
       return dialogId;
     }
 
+    for (const dialogId in this.dialogs) {
+      const {locationId} = this.dialogs[dialogId];
+      if (locationId && (locationId in PhaserWrapper.mapObjects)) {
+        const loc = PhaserWrapper.mapObjects[locationId];
+        if (Math.hypot(loc.x - me.x, loc.y - me.y) < 2 * Const.TILE_SIZE) {
+          console.log('Will trigger dialog', dialogId, 'because of location');
+          return dialogId;
+        }
+      }
+    }
+
     return null;
   }
 
   findNearbyDialog(me) {
     for (const dialogId in this.dialogs) {
       const {npcId} = this.dialogs[dialogId];
-      const npc = this.charDaemon.getChar(npcId);
+      if (npcId) {
+        const npc = this.charDaemon.getChar(npcId);
 
-      if (Math.hypot(npc.x - me.x, npc.y - me.y) < 2 * Const.TILE_SIZE) {
-        return dialogId;
+        if (Math.hypot(npc.x - me.x, npc.y - me.y) < 2 * Const.TILE_SIZE) {
+          return dialogId;
+        }
       }
     }
     return null;
   }
 
-  add(dialogId, npcId, dialog) {
+  add(dialogId, step) {
+    const dialog = step.dialog;
+    const npcId = step.npcId;
+    const locationId = step.locationId;
+
+    console.log(`dialogId: ${dialogId}, npcId: ${npcId}, loc: ${locationId}`);
+
     if (this.getDialog(dialogId) !== null) {
       console.error(`Dialog ${dialogId} already exists.`);
       return;
     }
 
-    if (npcId === undefined) {
-      // trigger this in next frame
-      this.dialogToTrigger.push({
-        dialogId,
-        dialog,
-      });
-    } else {
+    if (step.npcId !== undefined) {
       const npc = this.charDaemon.getChar(npcId);
       if (null === npc) {
         console.error(`NPC ${npcId} doesn't exist.`);
         return;
       }
       npc.showMissionMark(true);
+    } else if (step.locationId !== undefined) {
+      if (!(locationId in PhaserWrapper.mapObjects)) {
+        console.error(`Location ${locationId} doesn't exist.`);
+        return;
+      }
+    } else {
+      console.warn(`adding ${dialogId} to dialogToTrigger`);
+      // trigger this in next frame
+      this.dialogToTrigger.push({
+        dialogId,
+        dialog,
+      });
     }
 
     this.dialogs[dialogId] = {
       npcId: npcId,
+      locationId: locationId,
       dialog: dialog,
     };
     return this.dialogs[dialogId];

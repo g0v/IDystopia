@@ -11,39 +11,15 @@
             {
               "type": "message",
               "message": "2035 年，政府以促進環境保護、減少碳足跡為理由，透過數位身份記錄公民日常生活的碳排放量，包括交通方式、飲食內容、消費習慣等，政府各部會並依據其執掌，分別對碳足跡高者的日常生活進行指導或限制，以達成全國碳足跡減排的目的。國家依據公民本身的基因健康指數進行分級，基因好的人財力跟健康狀況也比較好階級也會較高，財力可用以購買其他人的碳足跡配額，因此財力高者比較不用擔心自己的日常生活受到政府限制，財力低者如果消費與行為受到限制，則可能更無法取得提高階級所需的資源。"
-            }
-          ]
-        }
-      }
-    },
-    "receive-package": {
-      "title": "到超商取貨",
-      "description": "昨天網購的商品已經送到超商了，趕快把它領回來吧",
-      "steps": {
-        "step-1": {
-          "title": "超商取貨",
-          "description": "昨天網購的商品已經送到超商了，趕快把它領回來吧",
-          "npcId": "convenient-store-npc",
-          "nextStep": "step-2",
-          "dialog": [
-            {
-              "name": "$player",
-              "line": "你好，我要取貨"
             },
             {
-              "name": "店員",
-              "line": "電話後三碼 XXX 的包裹... 有了！ 麻煩掃描你的 eID ，我們需要核對身份..."
-            },
-            {
-              "name": "店員",
               "type": "input.text",
-              "question": "好的... 所以你的名字是？",
+              "question": "請問你的名字是？",
               "storeKey": "player_name"
             },
             {
-              "name": "店員",
               "type": "input.select",
-              "question": "嗯，沒錯。咦，系統顯示還需要核對職業，請問你的職業是？",
+              "question": "請問你的嘗試的職業是？",
               "storeKey": "player_occupation",
               "choices": [
                 {
@@ -73,20 +49,21 @@
               ]
             }
           ]
-        },
-        "step-2": {
-          "title": "回家",
-          "description": "貨品拿到了，可以回家休息了",
-          "moveTo": "HOME"
         }
       }
     },
     "student-scene-intro": {
       "depend": [
-        {
-          "storeKey": "player_occupation",
-          "value": "學生"
-        }
+        [
+          {
+            "storeKey": "player_occupation",
+            "value": "學生"
+          },
+          {
+            "storeKey": "intro/step-1/done",
+            "value": "true"
+          }
+        ]
       ],
       "title": "學生線",
       "description": "",
@@ -102,8 +79,13 @@
         },
         "step-2": {
           "nextStep": "step-3",
+          "locationId": "SCHOOL-ENTRY",
           "moveTo": "SCHOOL",
           "dialog": [
+            {
+              "type": "message",
+              "message": "終於到學校了..."
+            },
             {
               "type": "message",
               "message": "你在選課的時候遇到了問題，不確定是怎麼回事，和同學討論看看吧"
@@ -229,14 +211,16 @@
     },
     "student-scene-department-office": {
       "depend": [
-        {
-          "storeKey": "student_asked_followup_question",
-          "value": "true"
-        },
-        {
-          "storeKey": "student-scene-academic-affairs-office/step-1/done",
-          "value": "true"
-        }
+        [
+          {
+            "storeKey": "student_asked_followup_question",
+            "value": "true"
+          },
+          {
+            "storeKey": "student-scene-academic-affairs-office/step-1/done",
+            "value": "true"
+          }
+        ]
       ],
       "title": "系辦公室",
       "description": "到系辦公室詢問專班的選課設計",
@@ -274,19 +258,27 @@
         }
       }
     },
-    "student-scene-home-2": {
+    "student-scene-home": {
       "depend": [
-        {
-          "storeKey": "student-scene-department-office/step-1/done",
-          "value": "true"
-        }
+        [
+          {
+            "storeKey": "student-scene-department-office/step-1/done",
+            "value": "true"
+          }
+        ],
+        [
+          {
+            "storeKey": "student-intro-choice",
+            "value": "passive"
+          }
+        ]
       ],
       "steps": {
         "step-1": {
           "title": "回家",
           "nextStep": "step-2",
           "description": "...",
-          "moveTo": "HOME"
+          "moveTo": "MY-ROOM"
         },
         "step-2": {
           "nextStep": "step-3",
@@ -299,9 +291,10 @@
         },
         "step-3": {
           "npcId": "home-robot-npc",
+          "nextStep": "workshop-ready",
           "dialog": [
             {
-              "name": "主角",
+              "name": "$player",
               "line": "基因等級是什麼?"
             },
             {
@@ -309,7 +302,7 @@
               "line": "基因等級是政府依照人民的健康狀況來進行分級"
             },
             {
-              "name": "主角",
+              "name": "$player",
               "line": "既然是這樣那位甚麼我會因為基因等級而無法選課"
             },
             {
@@ -317,7 +310,7 @@
               "line": "...因為基因不僅能判斷人的健康狀況還可以知道一個人的各種特徵,剛開始以健康為主的基因分級,在幾年後就在教育上應用了,教育部在****年開始在學生成績內加入基因分數,應用的目的是為了培養有潛力的人才"
             },
             {
-              "name": "主角",
+              "name": "$player",
               "line": "那基因可以知道什麼特徵"
             },
             {
@@ -351,10 +344,75 @@
             {
               "name": "機器人",
               "line": "...10/10有一場關於基因的社群活動地點在\"***\""
-            },
+            }
+          ]
+        },
+        "workshop-ready": {
+          "dialog": [
             {
               "name": "$player",
               "line": "那一天剛好沒事來去看看好了"
+            }
+          ]
+        }
+      }
+    },
+    "digit-gene-workshop": {
+      "depend": [
+        "student-scene-home/workshop-ready/done"
+      ],
+      "steps": {
+        "step-1": {
+          "nextStep": "step-2",
+          "moveTo": "HOME",
+          "dialog": [
+            {
+              "type": "message",
+              "message": "出發前往活動場所吧，聽說他的店家就在這一條路上。"
+            }
+          ]
+        },
+        "step-2": {
+          "nextStep": "step-3",
+          "locationId": "SHOP",
+          "moveTo": "SHOP-INSIDE"
+        },
+        "step-3": {
+          "nextStep": "step-4",
+          "npcId": "shop-clerk-npc",
+          "dialog": [
+            {
+              "name": "$player",
+              "line": "請問 ＊＊＊ 是在這裡嗎?"
+            },
+            {
+              "name": "店員",
+              "line": "需要先確認你的身分喔<br>請把手放在儀器上~"
+            },
+            {
+              "name": "店員",
+              "line": "ＯＫ，沒問題了， ＊＊＊ 在地下室，復面轉角有樓梯可以下去"
+            },
+            {
+              "name": "$player",
+              "line": "好，謝謝。"
+            }
+          ]
+        },
+        "step-4": {
+          "moveTo": "SHOP-BASEMENT",
+          "dialog": [
+            {
+              "name": "主持人",
+              "line": "大家好，非常感謝各位抽空來參加「數位基因」這個活動，在活動的開始會由我們「＊＊＊」的執行長來開啟一些疑問及話題，之後就由各位在會場討論,會場內會有吃的喝的各位可以盡情的享用,櫃台可以報名活動最後的閃電秀,讓報名的人可以有幾分鐘上台,訴說自己的經歷或是說自己想說的話。"
+            },
+            {
+              "name": "主持人",
+              "line": "那現在就把麥克風交給 ＊＊＊ 。"
+            },
+            {
+              "name": "＊＊＊",
+              "line": "在人身上,基因是一把鑰匙；可以打開通往人類個體、群體與整個人類族群過去歷史的大門。<br> 而在現在基因與身分結合,你的基因不僅僅等於你的身分,也等於你在網路上,在虛擬世界的身分,這一切是從政府開始把身分數位化開始,2020年政府開始在沒有任何法律規範下就推出了數位身分證,法律是政府給人民最好的承諾,當年政府用簡單的幾個字,幾句話就再沒給人民實際的承諾下就推行了數位身分證,而到了今天這些制度規範就像溫水煮青蛙一樣慢慢的導致今天這個局面...<br> 在過去人們可以在網路上做一個另一個自己,而現在可以嗎?<br> 在過去沒人知道你的基因,沒人知道你的天賦和能力,在現在至少政府及其高層是知道的,對於基因給各位的限制,是否有那些疑問?<br> 在過去的網路可以自由的到各個網站瀏覽資料,通過網路跨過出生那條已經落後的起跑線,而現在無法隱藏身分的現代可以如此隨心所欲嗎?<br> 碳足跡的實施對於各位是否綁手綁腳的,政府所宣傳的透過販賣自己的碳足跡可以民眾的改善生活,事實上是如此嗎?<br> <br> 接下來就交給各位開始討論吧,除了在會場討論外,比較害羞的朋友可以掃描螢幕上的QR code,或是輸入網址在線上先進行討論,也歡迎各位來找我聊聊天"
             }
           ]
         }

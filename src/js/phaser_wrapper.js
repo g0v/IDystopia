@@ -4,6 +4,8 @@ import * as StoryLine from './story_line.js';
 
 export var tileMap;
 
+export var mapObjects = {};
+
 /*
  * tilemapTiledJSON: string, path to tilemap JSON file.
  * storylineJSON: string, path to storyline JSON file.
@@ -58,24 +60,28 @@ export function CreateGame({
     worldLayer.setDepth(DEPTH_WORLD_LAYER);
     aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
 
+    window.objectLayer = map.getObjectLayer('Objects');
     // Object layers in Tiled let you embed extra info into a map - like a spawn
-    // point or custom collision shapes. In the tmx file, there's an object
-    // layer with a point named "Spawn Point"
-    const spawnPoint = map.findObject(
-      "Objects", obj => obj.name === "Spawn Point");
+    // point or custom collision shapes.
+    map.getObjectLayer('Objects').objects.forEach(
+      obj => {mapObjects[obj.name] = obj});
 
     this.charDaemon = Hero.charDaemon;
     this.charDaemon.setPhaser(this);
 
     if (npcList) {
       for (const npcId in npcList) {
-        const {name, x, y, texture, frame} = npcList[npcId];
-        this.charDaemon.create(npcId, name, x, y, texture, frame);
+        const {name, texture, frame} = npcList[npcId];
+        if (npcId in mapObjects) {
+          const point = mapObjects[npcId];
+          this.charDaemon.create(npcId, name, point.x, point.y, texture, frame);
+        }
       }
     }
 
+    const home = mapObjects['HOME'];
     char = this.charDaemon.create(
-      'player', '???', spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front');
+      'player', '???', home.x, home.y, 'atlas', 'misa-front');
     sprite = char.player;
 
     // Watch the player and worldLayer for collisions, for the duration of the

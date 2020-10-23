@@ -9,7 +9,14 @@ import * as DataStore from './data_store.js';
  *   title: <mission-title>
  *   description: <...>
  *   depend:
- *     - "<mission-id>:<step-id>"  # repeated
+ *     A list of clauses.  If the list is empty, there is no dependency.
+ *     Otherwise, at least one of the clauses needs to be true to trigger this
+ *     mission (that is, disjunctive)
+ *     - clause: a list of expressions, the clause is true if and only if all
+ *     expressions are true.
+ *       - expression:
+ *            "<ANSWER_STORE_KEY>" |
+ *            { "storeKey": "<ANSWER_STORE_KEY>", "value": "<expected value>" }
  *   firstStep: <step-id>
  *   steps:
  *     ...
@@ -28,27 +35,43 @@ class Mission {
     this.steps[missionStep.id] = missionStep;
   }
 
-  isReady() {
-    console.log(`checking dependency of ${this.id}`);
-    if (!this.depend) return true;
-    for (const idx in this.depend) {
-      const d = this.depend[idx];
-      console.log(`condition: `, d);
+  _checkClause(clause) {
+    for (const i in clause) {
+      const expr = clause[i];
+      console.log(`condition: `, expr);
       let key;
       let expectedValue;
-      if (typeof(d) === 'string') {
-        key = d;
-      } else if (typeof(d) === 'object') {
-        key = d['storeKey'];
-        expectedValue = d['value'];
+      if (typeof(expr) === 'string') {
+        key = expr;
+      } else if (typeof(expr) === 'object') {
+        key = expr['storeKey'];
+        expectedValue = expr['value'];
       }
       if (!DataStore.AnswerStore.has(key)) return false;
       if (!expectedValue) continue;
       const actualValue = DataStore.AnswerStore.get(key);
       if (actualValue !== expectedValue) return false;
     }
-    console.log(`${this.id} is ready!`);
     return true;
+  }
+
+  isReady() {
+    console.log(`checking dependency of ${this.id}`, this.depend);
+    if (!this.depend || this.depend.length === 0) return true;
+
+    for (const idx in this.depend) {
+      let clause = this.depend[idx];
+      if (!(clause instanceof Array)) {
+        clause = [clause];
+      }
+
+      console.log(clause);
+      if (this._checkClause(clause)) {
+        console.log(`${this.id} is ready!`);
+        return true;
+      }
+    }
+    return false;
   }
 
   static fromDict(missionId, dict) {
@@ -82,6 +105,7 @@ class Mission {
  *   nextStep: <step-id>  # the default next step
  *   npcId: <npc-id>  # whom to find to trigger the dialog of this step.
  *                    # NPC can be an object (e.g. a box).
+ *   locationId: <location-id>  # where to go to trigger the dialog.
  *   dialog:
  *     - name: "NPC name" or $player  # who is talking
  *       line: "hello, $player"
@@ -99,12 +123,15 @@ class Mission {
  */
 class MissionStep {
   constructor({
-      id, title, description, nextStep, npcId, dialog, mission, moveTo}) {
+    id, title, description, nextStep, npcId, locationId, dialog, mission,
+    moveTo}) {
+
     this.id = id;
     this.title = title || 'Unnamed Step';
     this.description = description || '...';
     this.nextStep = nextStep;
     this.npcId = npcId;
+    this.locationId = locationId;
     this.dialog = dialog;
     this.mission = mission;
     this.moveTo = moveTo;
