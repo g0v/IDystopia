@@ -1,0 +1,20 @@
+{
+  "missions": {
+    "Register": {
+      "title": "Register",
+      "description": "Get user data",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "User Info",
+              "type": "input.text",
+              "question": "Username?",
+              "storeKey": "player_name"
+            }
+          ]
+        }
+      }
+    }
+  }
+}
