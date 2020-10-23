@@ -1,4 +1,5 @@
 import * as PhaserWrapper from './phaser_wrapper.js';
+import * as Hero from './hero.js';
 
 const npcList = {
   'speaker-npc': {
@@ -37,3 +38,7 @@ PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
   storylineJSON: 'regular.json',
   npcList});
+
+$( '#mission-panel' ).click( () => {
+  Hero.dialogDaemon.showHint();
+});
