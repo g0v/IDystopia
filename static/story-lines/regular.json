@@ -285,7 +285,7 @@
           "dialog": [
             {
               "type": "message",
-              "message": "What is a "gene grade" why can;t you enroll in a class because of a gene grade?<br> The new robot you bought recently seems to be AI enabled, maybe you should ask them"
+              "message": "What is a gene grade? why can;t you enroll in a class because of a gene grade?<br> The new robot you bought recently seems to be AI enabled, maybe you should ask them"
             }
           ]
         },
@@ -315,15 +315,15 @@
             },
             {
               "name": "robot§",
-              "line": "基因是遺傳的一個單位，也是構成每個人生命藍圖的“指令”。"
+              "line": "genes are a part of inherentence, they're the commands that make up the blueprint of every individual"
             },
             {
-              "name": "機器人",
-              "line": "這些指令是從父母傳承給孩子的，得以決定我們的許多身體，心理和社交等特徵。這些特徵包括身高，頭髮顏色，記憶力，溝通技巧等等。"
+              "name": "Robot",
+              "line": "these codes are given from parents to their children and they determine many bioligical psychological and social attributes。These include height, hair colour, memory, communication skills, and more"
             },
             {
-              "name": "機器人",
-              "line": "每個人的體內大約有2萬6000個基因存在,每個基因都由一種叫做DNA的核酸組成，它可以解釋為維持功能和生命所必需的遺傳資訊。 有4個核鹼基構成DNA的核酸：腺嘌呤（A）; 胸腺嘧啶（T）; 鳥嘌呤（G）; 和胞嘧啶（C）。"
+              "name": "Robot",
+              "line": "Every person has roughly 260,000 genes. Each gene is made  up of a nucleaic acid composition called DNA ，it provides all the information neccesary for life There are 4 nucleobases that make up the nucleic acid of DNA: adenine (A); thymine (T); guanine (G); and cytosine (C。"
             },
             {
               "name": "機器人",
