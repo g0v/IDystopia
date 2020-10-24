@@ -95,27 +95,29 @@ export class Char {
 
     if (this.messages.length > 0) {
       this._removeOutdatedMessage();
-      if (this.messages.length > 0) {
-        if (!this.messageBox) {
-          this.messageBox = this.phaser.add.text(
-            this.player.x, this.player.y - 16,
-            '',
-            {
-              font: '24px monospace',
-              fill: '#000',
-              align: 'center',
-              backgroundColor: 'white',
-            }
-          ).setOrigin(0.5, 1).setDepth(99);
-        }
-        let jointMessage = '';
-        for (const i in this.messages) {
-          jointMessage += this.messages[i].message + '\n';
-        }
-        this.messageBox.setText(jointMessage.slice(0, -1));
-      } else {
-        if (this.messageBox) this.messageBox.hide();
+    }
+
+    if (this.messages.length > 0) {
+      if (!this.messageBox) {
+        this.messageBox = this.phaser.add.text(
+          this.player.x, this.player.y - 16,
+          '',
+          {
+            font: '24px monospace',
+            fill: '#000',
+            align: 'center',
+            backgroundColor: 'white',
+          }
+        ).setOrigin(0.5, 1).setDepth(99);
       }
+      let jointMessage = '';
+      for (const i in this.messages) {
+        jointMessage += this.messages[i].message + '\n';
+      }
+      this.messageBox.setText(jointMessage.slice(0, -1));
+      this.messageBox.setVisible(true);
+    } else {
+      if (this.messageBox) this.messageBox.setVisible(false);
     }
 
     if (this.messageBox) {
