@@ -225,6 +225,7 @@ export function CreateGame({
 
     var tap = false;
     $("#joystick").on('touchmove','.touch-stick', function(e){
+      e.preventDefault(); 
       tap = false;
       var touch = e.originalEvent.targetTouches[0];
       var delta_x = (touch.pageX-center_x)/limit;
