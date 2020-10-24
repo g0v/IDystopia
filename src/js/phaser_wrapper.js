@@ -165,6 +165,14 @@ export function CreateGame({
       }
     });
 
+    $("#joypads").on('touchstart', '.touch-pad', () => {
+      if (this.dialogDaemon.hasOnGoingDialog) return;
+      const dialogId = this.dialogDaemon.findNearbyDialog(sprite);
+      if (dialogId !== null) {
+        this.dialogDaemon.startDialog(dialogId);
+      }
+    });
+
     // Help text that has a "fixed" position on the screen
     this.add
       .text(16, 16, 'Arrow keys to move\nPress "D" to show hitboxes', {
@@ -193,9 +201,70 @@ export function CreateGame({
         faceColor: new Phaser.Display.Color(40, 39, 37, 255),
       });
     });
+
+
+    // joystick
+    const stick = $("#joystick .touch-stick");
+    var limit = $("#joystick").width()/2;
+    var dead = 0.3;
+    var center_x = $("#joystick").position().left + $("#joystick").width()/2;
+    var center_y = $("#joystick").position().top + $("#joystick").height()/2;
+
+    function initjoystick() {
+      center_x = $("#joystick").position().left + $("#joystick").width()/2;
+      center_y = $("#joystick").position().top + $("#joystick").height()/2;
+      limit = $("#joystick").width()/2;
+    }
+    $(window).on('resize', function(){
+      initjoystick();
+    });
+    $("#joystick").on('touchmove','.touch-stick', function(e){
+      var touch = e.originalEvent.targetTouches[0];
+      var delta_x = (touch.pageX-center_x)/limit;
+      var delta_y = (touch.pageY-center_y)/limit;
+      delta_x = Math.min(Math.max(delta_x, -1), 1);
+      delta_y = Math.min(Math.max(delta_y, -1), 1);
+      $(this).css({"left": `${delta_x*50 + 50}%`, "top": `${delta_y*50 + 50}%`});
+
+      if(Math.abs(delta_x)<dead) {
+        delta_x = 0;
+        cursors.left.isDown = false;
+        cursors.right.isDown = false;
+      }
+      if(Math.abs(delta_y)<dead) {
+        delta_y = 0;
+        cursors.up.isDown = false;
+        cursors.down.isDown = false;
+      }
+      if(Math.abs(delta_x) >= Math.abs(delta_y)) {
+        if(delta_x > 0){
+          cursors.right.isDown = true;
+          cursors.left.isDown = false;
+        } else {
+          cursors.right.isDown = false;
+          cursors.left.isDown = true;
+        }
+      } else {
+        if(delta_y < 0){
+          cursors.up.isDown = true;
+          cursors.down.isDown = false;
+        } else {
+          cursors.up.isDown = false;
+          cursors.down.isDown = true;
+        }
+      }
+    });
+    $("#joystick").on('touchend','.touch-stick', function(e) {
+      $(this).css({"left": '50%', "top": '50%'});
+      cursors.up.isDown = false;
+      cursors.down.isDown = false;
+      cursors.left.isDown = false;
+      cursors.right.isDown = false;
+    });
   }
 
   function update(time, delta) {
+
     // let's check if we triggered any dialogs
     const dialogId = this.dialogDaemon.checkDialogToTrigger(sprite);
     if (dialogId !== null) {
@@ -229,6 +298,7 @@ export function CreateGame({
 
     // Update the animation last and give left/right animations precedence over
     // up/down animations
+
     if (cursors.left.isDown) {
       sprite.anims.play("misa-left-walk", true);
     } else if (cursors.right.isDown) {
@@ -275,4 +345,3 @@ export function CreateGame({
   const game = new Phaser.Game(config);
   return game;
 }
-

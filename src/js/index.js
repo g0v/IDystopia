@@ -33,7 +33,6 @@ const npcList = {
     frame: 'misa-right'
   }
 };
-
 PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
   storylineJSON: 'regular.json',

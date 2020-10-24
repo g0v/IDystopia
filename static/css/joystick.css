@@ -1,0 +1,57 @@
+body {
+  height: 100vh;
+  width: 100vw;
+  background-color: #333;
+  overflow: hidden;
+}
+
+#joystick, #joypads {
+  z-index: 9999999999999999;
+  display: none;
+}
+
+#joystick {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  border: 2px solid white;
+  border-radius: 50%;
+  height: 30vw;
+  width: 30vw;
+}
+
+#joystick .touch-stick {
+  position: relative;
+  height: 70%;
+  width: 70%;
+  border-radius: 50%;
+  background-color: #FFF;
+  left: 50%;
+  top: 50%;
+  margin-left: -35%;
+  margin-top: -35%;
+}
+
+#joypads {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  border: 2px solid white;
+  border-radius: 10px;
+}
+
+#joypads .touch-pad {
+  display: block;
+  position: relative;
+  height: 20vw;
+  width: 20vw;
+  margin: 10px;
+  border-radius: 50%;
+  background-color: #FFF;
+}
+
+@media (max-width: 992px) {
+  #joystick, #joypads {
+    display: block;
+  }
+}
