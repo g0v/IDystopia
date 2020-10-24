@@ -32,6 +32,8 @@ const initJitsiMeetJs = (
   }
 )();
 
+const TYPE_PLAYER_PROPERTY = 'eid-player-property';
+
 /**
  * A class to handle Jitsi connection of a room.
  */
@@ -39,8 +41,9 @@ export class JitsiConnection {
   constructor() {
     this.connection = null;
     this.room = null;
-    this.cameraTrack = null;
-    this.previousUpdateTime = 0;
+    this._lastSetLocalProperty = 0;
+    this._lastBroadcastLocalProperty = 0;
+    this._sentLocalProperty = {};
   }
 
   init() {
@@ -104,7 +107,7 @@ export class JitsiConnection {
   }
 
   onConnectionFailed() {
-
+    console.log('Failed to connect to Jitsi...')
   }
 
   _initConferenceRoom() {
@@ -122,12 +125,12 @@ export class JitsiConnection {
     this.room = this.connection.initJitsiConference(roomId, confOptions);
 
     this.room.setDisplayName('???');
-    this.setLocalParticipantProperty({
-      top: 0,
-      left: 0,
-      texture: 'atlas',
-      frame: 'misa-left',
-    });
+    //this.setLocalParticipantProperty({
+      //top: 0,
+      //left: 0,
+      //texture: 'atlas',
+      //frame: 'misa-left',
+    //});
     this.room.on(
       JitsiMeetJS.events.conference.CONFERENCE_JOINED,
       () => { this.onConferenceJoined(); });
@@ -138,8 +141,19 @@ export class JitsiConnection {
   }
 
   setLocalParticipantProperty(properties) {
+    const now = (new Date()).getTime();
+    const minDelta = 500;  // milliseconds
+    if (now - this._lastSetLocalProperty <= minDelta) {
+      return;
+    }
+    console.info('call setLocalParticipantProperty', properties);
+    this._lastSetLocalProperty = now;
     if (this.room) {
       for (const key in properties) {
+        if ((key in this._sentLocalProperty) &&
+            this._sentLocalProperty[key] === properties[key]) {
+          continue;
+        }
         this.room.setLocalParticipantProperty(key, properties[key]);
       }
     }
@@ -237,33 +251,59 @@ export class JitsiConnection {
       (id, /* user */) => {
         Hero.charDaemon.deleteChar(id);
       });
+
     this.room.on(
       JitsiMeetJS.events.conference.PARTICIPANT_PROPERTY_CHANGED,
       (user, key) => {
-        const id = user.getId();
-        const char = Hero.charDaemon.getChar(id);
-        if (!char) {
-          return;
-        }
-        if (!this.room || !this.connection) return;
-        const x = parseInt(user.getProperty('left'));
-        const y = parseInt(user.getProperty('top'));
-        if (!Number.isNaN(x) && !Number.isNaN(y)) {
-          char.setProperty('x', x);
-          char.setProperty('y', y);
-        }
+        //const id = user.getId();
+        //const char = Hero.charDaemon.getChar(id);
+        //if (!char) {
+          //return;
+        //}
+        //if (!this.room || !this.connection) return;
+        //const x = parseInt(user.getProperty('left'));
+        //const y = parseInt(user.getProperty('top'));
+        //if (!Number.isNaN(x) && !Number.isNaN(y)) {
+          //char.setProperty('x', x);
+          //char.setProperty('y', y);
+        //}
 
-        const texture = user.getProperty('texture');
-        const frame = user.getProperty('frame');
-        if (texture && frame &&
-            (frame !== char.frame || texture !== char.texture)) {
-          char.setProperty('texture', texture);
-          char.setProperty('frame', frame);
-        }
+        //const texture = user.getProperty('texture');
+        //const frame = user.getProperty('frame');
+        //if (texture && frame &&
+            //(frame !== char.frame || texture !== char.texture)) {
+          //char.setProperty('texture', texture);
+          //char.setProperty('frame', frame);
+        //}
       });
+
     this.room.on(
       JitsiMeetJS.events.conference.ENDPOINT_MESSAGE_RECEIVED,
-      (/* participant, message */) => {});
+      (participant, payload) => {
+        if (payload.type === TYPE_PLAYER_PROPERTY) {
+          const property = payload.property;
+          const id = participant.getId();
+          const char = Hero.charDaemon.getChar(id);
+          if (!char) {
+            return;
+          }
+          const x = parseInt(property.left);
+          const y = parseInt(property.top);
+          if (!Number.isNaN(x) && !Number.isNaN(y)) {
+            char.setProperty('x', x);
+            char.setProperty('y', y);
+          }
+
+          const texture = property.texture;
+          const frame = property.frame;
+          if (texture && frame &&
+            (frame !== char.frame || texture !== char.texture)) {
+            char.setProperty('texture', texture);
+            char.setProperty('frame', frame);
+          }
+        }
+      });
+
     this.room.on(
       JitsiMeetJS.events.conference.DISPLAY_NAME_CHANGED,
       (id, name) => {
@@ -277,17 +317,34 @@ export class JitsiConnection {
     this.room.sendTextMessage(message);
   }
 
-  update(time, delta, char) {
+  _broadcastLocalProperty(property) {
+    if (!this.room) return;
+
     const now = (new Date()).getTime();
-    const minDelta = 200;  // 0.2 seconds
-    if (now - this.previousUpdateTime > minDelta) {
-      this.previousUpdateTime = now;
-      this.setLocalParticipantProperty({
-        left: char.player.x,
-        top: char.player.y,
-        texture: char.player.texture.key,
-        frame: char.player.frame.name,
-      });
+    const minDelta = 500;
+    if (now - this._lastBroadcastLocalProperty <= minDelta) return;
+    this._lastBroadcastLocalProperty = now;
+    try {
+      this.room.broadcastEndpointMessage(
+        {type: TYPE_PLAYER_PROPERTY, property: property});
+    } catch (error) {
+      // I don't care...
+      console.error('failed to broadcast new property', error);
     }
+  }
+
+  update(time, delta, char) {
+    // this.setLocalParticipantProperty({
+    //   left: char.player.x,
+    //   top: char.player.y,
+    //   texture: char.player.texture.key,
+    //   frame: char.player.frame.name,
+    // });
+    this._broadcastLocalProperty({
+       left: char.player.x,
+       top: char.player.y,
+       texture: char.player.texture.key,
+       frame: char.player.frame.name,
+    });
   }
 }
