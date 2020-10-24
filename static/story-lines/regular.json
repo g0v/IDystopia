@@ -114,7 +114,7 @@
               "line": "那些都只是要騙你進來的話術而已啦"
             },
             {
-              "name": "$朋友",
+              "name": "朋友",
               "type": "input.select",
               "question":  "反正學校都幫我們選好課程了,就這樣照著上課就好了阿,不能選就不能選反正我們基因等級本來就比較低就算學了也不一定會。",
               "storeKey": "student-intro-choice",
