@@ -65,7 +65,7 @@
           }
         ]
       ],
-      "title": "學生線",
+      "title": "Student story line",
       "description": "",
       "steps": {
         "step-1": {
@@ -73,7 +73,7 @@
           "dialog": [
             {
               "type": "message",
-              "message": "啊，上學要遲到了，快點去學校吧~"
+              "message": "Oh no! I'm gonna be late to class, time to hurry up!"
             }
           ]
         },
@@ -84,38 +84,38 @@
           "dialog": [
             {
               "type": "message",
-              "message": "終於到學校了..."
+              "message": "Finally!"
             },
             {
               "type": "message",
-              "message": "你在選課的時候遇到了問題，不確定是怎麼回事，和同學討論看看吧"
+              "message": "You've had some difficulties enrolling in classes but you don't know what the issue is. You should probably ask a friend about it."
             }
           ]
         },
         "step-3": {
-          "title": "和朋友聊天",
-          "description": "你在選課的時候遇到了問題，不確定是怎麼回事，和同學討論看看吧",
+          "title": "Talking to friends",
+          "description": "You've had some difficulties enrolling in classes but you don't know what the issue is. You should probably ask a friend about it",
           "npcId": "classmate-npc",
           "dialog": [
             {
               "name": "$player",
-              "line": "我怎麼有些課都不能選？"
+              "line": "How come I can't enroll in these classes？"
             },
             {
-              "name": "朋友",
-              "line": "對阿，我之前有問過老師，好像是因為我們的基因等級比較低被分配到專班所以不能選。"
+              "name": "Friend",
+              "line": "Oh yeah, I asked our professor about that, I think we got put in the vocational classes because our gene grade wasn't high enough, so that means there are some classes we can't pick"
             },
             {
               "name": "$player",
-              "line": "是嗎?當初招生的時候不是說雖然是專班但還是可以選其他班級的課"
+              "line": "Wait really? Back at the open day didn't they say that students in the vocational class could still pick other classes?"
             },
             {
-              "name": "朋友",
-              "line": "那些都只是要騙你進來的話術而已啦"
+              "name": "Friend",
+              "line": "They only said that to get people to enroll"
             },
             {
-              "name": "朋友",
-              "line": "反正學校都幫我們選好課程了,就這樣照著上課就好了阿,不能選就不能選反正我們基因等級本來就比較低就算學了也不一定會。"
+              "name": "Friend",
+              "line": "Anyway the school has already enrolled us in classes, let's just take the classes we're assigned to, there's nothing we can do abut it. Anyway our gene grade isn't very high so even if we take other classes we probably won't actually understand them"
             },
             {
               "name": "朋友",
@@ -124,15 +124,15 @@
             {
               "name": "$player",
               "type": "input.select",
-              "question": "下午原本想要上的課沒選到，接下在要做什麼呢？",
+              "question": "you didn't get into the class you were going to take this afternoon, what do you want to do now?",
               "storeKey": "student-intro-choice",
               "choices": [
                 {
-                  "text": "回家",
+                  "text": "go home",
                   "value": "passive"
                 },
                 {
-                  "text": "去教務處問問",
+                  "text": "go to the office of academic affairs"",
                   "value": "proactive"
                 }
               ]
@@ -148,62 +148,62 @@
           "value": "proactive"
         }
       ],
-      "title": "教務處",
-      "description": "你打算到教務處問問看為什麼有些課會不能選",
+      "title": "academic affaits officer",
+      "description": "You're going to the office of academic affairs to ask about class enrollment",
       "steps": {
         "step-1": {
-          "title": "到教務處",
-          "description": "你打算到教務處問問看為什麼有些課會不能選..",
+          "title": "to the office",
+          "description": "You're going to the office of academic affairs to ask about class enrollment",
           "npcId": "academic-affairs-officer-npc",
           "dialog": [
             {
-              "name": "教職員",
-              "line": "請問有甚麼問題嗎?"
+              "name": "academic affairs officer",
+              "line": "How can I help you?"
             },
             {
               "name": "$player",
-              "line": "我有想選的課程但是無法選課(把手機給教職員看)"
+              "line": "I'm not allowed to enroll in the classes I wanna take (you show them your phone)"
             },
             {
-              "name": "教職員",
-              "line": "你是專班的學生嗎?"
-            },
-            {
-              "name": "$player",
-              "line": "對阿"
-            },
-            {
-              "name": "教職員",
-              "line": "專班的都規定不能選課"
+              "name": "academic affairs officer",
+              "line": "are you in the vocational class?"
             },
             {
               "name": "$player",
-              "line": "是嗎?可是當初招生的時候明明說可以選"
+              "line": "Yeah"
             },
             {
-              "name": "教職員",
-              "line": "就是不能選!這是學校規定的"
+              "name": "academic affairs officer",
+              "line": "vocational students are allowed to enroll in classes"
+            },
+            {
+              "name": "$player",
+              "line": "Really? but at the open day they sad that we could choose our classes"
+            },
+            {
+              "name": "academic affairs officer",
+              "line": "Well you can't. That's the schools rules"
             },
             {
               "name": "$player",
               "type": "input.select",
-              "question": "怎麼辦呢?",
+              "question": "what are you going to do?",
               "storeKey": "student_asked_followup_question",
               "choices": [
                 {
-                  "text": "好吧... (回家)",
+                  "text": "Fine (go home)",
                   "nextLine": "$EOD",
                   "value": "false"
                 },
                 {
-                  "text": "那為甚麼不能選?",
+                  "text": "But why can't I enroll?",
                   "value": "true"
                 }
               ]
             },
             {
-              "name": "教職員",
-              "line": "這要請你去問系辦，因為幫專班的學生選好課程是系辦要求的"
+              "name": "academic affiars officer",
+              "line": "You should ask your department's office，because enrollment for vocational students is sorted out by them"
             }
           ]
         }
@@ -222,37 +222,37 @@
           }
         ]
       ],
-      "title": "系辦公室",
-      "description": "到系辦公室詢問專班的選課設計",
+      "title": "department office",
+      "description": "Go to the department office to ask about class enrollment",
       "steps": {
         "step-1": {
-          "title": "到系辦公室",
+          "title": "department office",
           "description": "...",
           "npcId": "department-officer-npc",
           "dialog": [
             {
               "name": "$player",
-              "line": "我想問位甚麼我不能選課"
+              "line": "I want to ask why I can't enroll in classes"
             },
             {
-              "name": "教職員",
-              "line": "是專班的學生嗎？"
-            },
-            {
-              "name": "$player",
-              "line": "對"
-            },
-            {
-              "name": "教職員",
-              "line": "因為學校規定專班是不能選課的"
+              "name": "Department staff",
+              "line": "Your'e in the vocational class right?"
             },
             {
               "name": "$player",
-              "line": "可是當初招生的時候明明就說可以選其他的課程"
+              "line": "Yeah"
+            },
+            {
+              "name": "Department staff",
+              "line": "because vocational students aren't allowed to enroll in classes"
+            },
+            {
+              "name": "$player",
+              "line": "but back at the open day they said we could enroll"
             },
             {
               "name": "教職員",
-              "line": "沒辦法...因為你的基因等級比較低"
+              "line": "Well there's nothing I can do, because your gene grade is lower"
             }
           ]
         }
@@ -275,7 +275,7 @@
       ],
       "steps": {
         "step-1": {
-          "title": "回家",
+          "title": "Go home",
           "nextStep": "step-2",
           "description": "...",
           "moveTo": "MY-ROOM"
@@ -285,7 +285,7 @@
           "dialog": [
             {
               "type": "message",
-              "message": "基因等級是什麼?位甚麼會因為基因等級的不同,讓我不能選課呢?<br>對了最近新買的機器人似乎是人工智慧,來問問看她好了"
+              "message": "What is a "gene grade" why can;t you enroll in a class because of a gene grade?<br> The new robot you bought recently seems to be AI enabled, maybe you should ask them"
             }
           ]
         },
@@ -295,18 +295,18 @@
           "dialog": [
             {
               "name": "$player",
-              "line": "基因等級是什麼?"
+              "line": "What's a gene class?"
             },
             {
-              "name": "機器人",
-              "line": "基因等級是政府依照人民的健康狀況來進行分級"
+              "name": "robot",
+              "line": "gene class is a rank given to citizens by the government based on health data"
             },
             {
               "name": "$player",
-              "line": "既然是這樣那位甚麼我會因為基因等級而無法選課"
+              "line": "If that's what it means, why can't I enroll in class because of my gene grade?"
             },
             {
-              "name": "機器人",
+              "name": "robot",
               "line": "...因為基因不僅能判斷人的健康狀況還可以知道一個人的各種特徵,剛開始以健康為主的基因分級,在幾年後就在教育上應用了,教育部在****年開始在學生成績內加入基因分數,應用的目的是為了培養有潛力的人才"
             },
             {
