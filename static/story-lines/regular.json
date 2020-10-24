@@ -326,24 +326,24 @@
               "line": "Every person has roughly 260,000 genes. Each gene is made  up of a nucleaic acid composition called DNA ，it provides all the information neccesary for life There are 4 nucleobases that make up the nucleic acid of DNA: adenine (A); thymine (T); guanine (G); and cytosine (C。"
             },
             {
-              "name": "機器人",
+              "name": "Robot",
               "type": "input.select",
-              "question": "對基因感興趣嗎?還是對基因分級制度感興趣?",
+              "question": "Are you interested in genes or the gene grade system?",
               "storeKey": "student-gene-interested-in",
               "choices": [
                 {
-                  "text": "對基因感興趣",
+                  "text": "genes",
                   "value": "gene"
                 },
                 {
-                  "text": "對基因分級制度感興趣",
+                  "text": "gene grades",
                   "value": "system"
                 }
               ]
             },
             {
-              "name": "機器人",
-              "line": "...10/10有一場關於基因的社群活動地點在\"***\""
+              "name": "Robot",
+              "line": "On 10/10 there's a community event on genes, the location is \"***\""
             }
           ]
         },
@@ -351,7 +351,7 @@
           "dialog": [
             {
               "name": "$player",
-              "line": "那一天剛好沒事來去看看好了"
+              "line": "I'm free that day, I might as well go take a look"
             }
           ]
         }
@@ -368,7 +368,7 @@
           "dialog": [
             {
               "type": "message",
-              "message": "出發前往活動場所吧，聽說他的店家就在這一條路上。"
+              "message": "let's check out the event location before we head out，I heard it's on this street。"
             }
           ]
         },
@@ -383,19 +383,19 @@
           "dialog": [
             {
               "name": "$player",
-              "line": "請問 ＊＊＊ 是在這裡嗎?"
+              "line": "Excuse me ＊＊＊ is it here??"
             },
             {
-              "name": "店員",
-              "line": "需要先確認你的身分喔<br>請把手放在儀器上~"
+              "name": "Store clerk",
+              "line": "I need to check your identity first<br>please place your hand onto the censor~"
             },
             {
-              "name": "店員",
-              "line": "ＯＫ，沒問題了， ＊＊＊ 在地下室，復面轉角有樓梯可以下去"
+              "name": "Store clerk",
+              "line": "You're good to go， ＊＊＊ it's underground, there's a staircase next to the lift"
             },
             {
               "name": "$player",
-              "line": "好，謝謝。"
+              "line": "Ok, thank you"
             }
           ]
         },
@@ -403,16 +403,16 @@
           "moveTo": "SHOP-BASEMENT",
           "dialog": [
             {
-              "name": "主持人",
-              "line": "大家好，非常感謝各位抽空來參加「數位基因」這個活動，在活動的開始會由我們「＊＊＊」的執行長來開啟一些疑問及話題，之後就由各位在會場討論,會場內會有吃的喝的各位可以盡情的享用,櫃台可以報名活動最後的閃電秀,讓報名的人可以有幾分鐘上台,訴說自己的經歷或是說自己想說的話。"
+              "name": "Event host",
+              "line": "Hello，thank to everyone for attending our event「digital genes」，At the beginning our「＊＊＊」的執行長will begin some discussion，after this we will open the floor to discussiob, there is food and drink at this event, you can sign up for the lightning take that will happen at the end of the event at the front desk, if you sign up you can come to the stage ot talk, you can talk about your own experience all say what you want to say。"
             },
             {
-              "name": "主持人",
-              "line": "那現在就把麥克風交給 ＊＊＊ 。"
+              "name": "Event host",
+              "line": "well then, time to hand the microphone over to ＊＊＊ 。"
             },
             {
               "name": "＊＊＊",
-              "line": "在人身上,基因是一把鑰匙；可以打開通往人類個體、群體與整個人類族群過去歷史的大門。<br> 而在現在基因與身分結合,你的基因不僅僅等於你的身分,也等於你在網路上,在虛擬世界的身分,這一切是從政府開始把身分數位化開始,2020年政府開始在沒有任何法律規範下就推出了數位身分證,法律是政府給人民最好的承諾,當年政府用簡單的幾個字,幾句話就再沒給人民實際的承諾下就推行了數位身分證,而到了今天這些制度規範就像溫水煮青蛙一樣慢慢的導致今天這個局面...<br> 在過去人們可以在網路上做一個另一個自己,而現在可以嗎?<br> 在過去沒人知道你的基因,沒人知道你的天賦和能力,在現在至少政府及其高層是知道的,對於基因給各位的限制,是否有那些疑問?<br> 在過去的網路可以自由的到各個網站瀏覽資料,通過網路跨過出生那條已經落後的起跑線,而現在無法隱藏身分的現代可以如此隨心所欲嗎?<br> 碳足跡的實施對於各位是否綁手綁腳的,政府所宣傳的透過販賣自己的碳足跡可以民眾的改善生活,事實上是如此嗎?<br> <br> 接下來就交給各位開始討論吧,除了在會場討論外,比較害羞的朋友可以掃描螢幕上的QR code,或是輸入網址在線上先進行討論,也歡迎各位來找我聊聊天"
+              "line": "In life, genes are like a key, genes hold the tools to  help understand the history of every individual and group <br> and now because our genes are tied to our identity cards, your genes aren't only your biological identity, they're also your identity online and in virtual life. All this started with the governments digital ID card scheme. Starting in 2020, the government began to promote E-ID cards despite lacking any legal basis. The law is the government's promise to the people. At that time, the government started to promote E-ID cards without making any new promise to the public. From then till now, these systems have evolved and we've all been like frogs in slowly boiling water. <br> 在過去人們可以在網路上做一個另一個自己,而現在可以嗎?<br> 在過去沒人知道你的基因,沒人知道你的天賦和能力,在現在至少政府及其高層是知道的,對於基因給各位的限制,是否有那些疑問?<br> 在過去的網路可以自由的到各個網站瀏覽資料,通過網路跨過出生那條已經落後的起跑線,而現在無法隱藏身分的現代可以如此隨心所欲嗎?<br> 碳足跡的實施對於各位是否綁手綁腳的,政府所宣傳的透過販賣自己的碳足跡可以民眾的改善生活,事實上是如此嗎?<br> <br> 接下來就交給各位開始討論吧,除了在會場討論外,比較害羞的朋友可以掃描螢幕上的QR code,或是輸入網址在線上先進行討論,也歡迎各位來找我聊聊天"
             }
           ]
         }
