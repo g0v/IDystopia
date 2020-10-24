@@ -165,25 +165,29 @@ export function CreateGame({
       }
     });
 
-    $("#joypads").on('touchstart', '.touch-pad', () => {
-      if (this.dialogDaemon.hasOnGoingDialog) return;
-      const dialogId = this.dialogDaemon.findNearbyDialog(sprite);
-      if (dialogId !== null) {
-        this.dialogDaemon.startDialog(dialogId);
-      }
-    });
-
     // Help text that has a "fixed" position on the screen
-    this.add
-      .text(16, 16, 'Arrow keys to move\nPress "D" to show hitboxes', {
-        font: "18px monospace",
-        fill: "#000000",
-        padding: { x: 20, y: 10 },
-        backgroundColor: "#ffffff"
-      })
-      .setScrollFactor(0)
-      .setDepth(30);
-
+    if($("#joystick").css("display") == "block") {
+      this.add
+        .text(16, 16, 'Use joysticks to move\nPress the stick to interact', {
+          font: "18px monospace",
+          fill: "#000000",
+          padding: { x: 20, y: 10 },
+          backgroundColor: "#ffffff"
+        })
+        .setScrollFactor(0)
+        .setDepth(30);
+    }
+    else {
+      this.add
+        .text(16, 16, 'Arrow keys to move\nPress "Enter" to interact', {
+          font: "18px monospace",
+          fill: "#000000",
+          padding: { x: 20, y: 10 },
+          backgroundColor: "#ffffff"
+        })
+        .setScrollFactor(0)
+        .setDepth(30);
+    }
     // Debug graphics
     this.input.keyboard.once("keydown_D", event => {
       // Turn on physics debugging to show player's hitbox
@@ -218,7 +222,10 @@ export function CreateGame({
     $(window).on('resize', function(){
       initjoystick();
     });
+
+    var tap = false;
     $("#joystick").on('touchmove','.touch-stick', function(e){
+      tap = false;
       var touch = e.originalEvent.targetTouches[0];
       var delta_x = (touch.pageX-center_x)/limit;
       var delta_y = (touch.pageY-center_y)/limit;
@@ -254,12 +261,22 @@ export function CreateGame({
         }
       }
     });
-    $("#joystick").on('touchend','.touch-stick', function(e) {
-      $(this).css({"left": '50%', "top": '50%'});
+    $("#joystick").on('touchstart','.touch-stick', function(e) {
+      tap = true;
+    });
+    $("#joystick").on('touchend','.touch-stick', () => {
+      $("#joystick .touch-stick").css({"left": '50%', "top": '50%'});
       cursors.up.isDown = false;
       cursors.down.isDown = false;
       cursors.left.isDown = false;
       cursors.right.isDown = false;
+      if(tap) {
+        if (this.dialogDaemon.hasOnGoingDialog) return;
+        const dialogId = this.dialogDaemon.findNearbyDialog(sprite);
+        if (dialogId !== null) {
+          this.dialogDaemon.startDialog(dialogId);
+        }
+      }
     });
   }
 
