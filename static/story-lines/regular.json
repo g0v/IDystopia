@@ -295,11 +295,11 @@
           "dialog": [
             {
               "name": "$player",
-              "line": "What's a gene class?"
+              "line": "What's a gene grade?"
             },
             {
               "name": "robot",
-              "line": "gene class is a rank given to citizens by the government based on health data"
+              "line": "gene grade is a rank given to citizens by the government based on health data"
             },
             {
               "name": "$player",
@@ -307,14 +307,14 @@
             },
             {
               "name": "robot",
-              "line": "...因為基因不僅能判斷人的健康狀況還可以知道一個人的各種特徵,剛開始以健康為主的基因分級,在幾年後就在教育上應用了,教育部在****年開始在學生成績內加入基因分數,應用的目的是為了培養有潛力的人才"
+              "line": "..because gene grades not only tell us about a person's health, they can also be used to understand many atributes of every indivudal. The system was originally designed for marking health status, but it became used in the education system a few years later. The Minister of Education in xxxx started to add gene scores onto students' grades, the hope being to cultivate those with the most potential"
             },
             {
               "name": "$player",
-              "line": "那基因可以知道什麼特徵"
+              "line": "So what attributes can gene grades tell you?"
             },
             {
-              "name": "機器人",
+              "name": "robot§",
               "line": "基因是遺傳的一個單位，也是構成每個人生命藍圖的“指令”。"
             },
             {
