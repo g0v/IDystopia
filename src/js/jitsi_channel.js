@@ -137,7 +137,7 @@ export class JitsiConnection {
 
   setLocalParticipantProperty(properties) {
     const now = (new Date()).getTime();
-    const minDelta = 500;  // milliseconds
+    const minDelta = 60 * 1000;  // milliseconds
     if (now - this._lastSetLocalProperty <= minDelta) {
       return;
     }
@@ -219,6 +219,7 @@ export class JitsiConnection {
         // Normally, at this point, we won't be able to get properties.
         // We will get property update very soon in the
         // "PARTICIPANT_PROPERTY_CHANGED" event later.
+        console.log(`user joined`, user);
         Hero.charDaemon.createRemotePlayer(id, user.getDisplayName());
       });
 
@@ -250,26 +251,26 @@ export class JitsiConnection {
     this.room.on(
       JitsiMeetJS.events.conference.PARTICIPANT_PROPERTY_CHANGED,
       (user, key) => {
-        //const id = user.getId();
-        //const char = Hero.charDaemon.getChar(id);
-        //if (!char) {
-          //return;
-        //}
-        //if (!this.room || !this.connection) return;
-        //const x = parseInt(user.getProperty('left'));
-        //const y = parseInt(user.getProperty('top'));
-        //if (!Number.isNaN(x) && !Number.isNaN(y)) {
-          //char.setProperty('x', x);
-          //char.setProperty('y', y);
-        //}
+        const id = user.getId();
+        const char = Hero.charDaemon.getChar(id);
+        if (!char) {
+          return;
+        }
+        if (!this.room || !this.connection) return;
+        const x = parseInt(user.getProperty('left'));
+        const y = parseInt(user.getProperty('top'));
+        if (!Number.isNaN(x) && !Number.isNaN(y)) {
+          char.setProperty('x', x);
+          char.setProperty('y', y);
+        }
 
-        //const texture = user.getProperty('texture');
-        //const frame = user.getProperty('frame');
-        //if (texture && frame &&
-            //(frame !== char.frame || texture !== char.texture)) {
-          //char.setProperty('texture', texture);
-          //char.setProperty('frame', frame);
-        //}
+        const texture = user.getProperty('texture');
+        const frame = user.getProperty('frame');
+        if (texture && frame &&
+            (frame !== char.frame || texture !== char.texture)) {
+          char.setProperty('texture', texture);
+          char.setProperty('frame', frame);
+        }
       });
 
     this.room.on(
@@ -278,6 +279,7 @@ export class JitsiConnection {
         if (payload.type === TYPE_PLAYER_PROPERTY) {
           const property = payload.property;
           const id = participant.getId();
+          console.log('received payload: ', id, property);
           const char = Hero.charDaemon.getChar(id);
           if (!char) {
             return;
@@ -316,7 +318,7 @@ export class JitsiConnection {
     if (!this.room) return;
 
     const now = (new Date()).getTime();
-    const minDelta = 500;
+    const minDelta = 200;  // ms
     if (now - this._lastBroadcastLocalProperty <= minDelta) return;
     this._lastBroadcastLocalProperty = now;
     try {
@@ -329,12 +331,12 @@ export class JitsiConnection {
   }
 
   update(time, delta, char) {
-    // this.setLocalParticipantProperty({
-    //   left: char.player.x,
-    //   top: char.player.y,
-    //   texture: char.player.texture.key,
-    //   frame: char.player.frame.name,
-    // });
+    this.setLocalParticipantProperty({
+      left: char.player.x,
+      top: char.player.y,
+      texture: char.player.texture.key,
+      frame: char.player.frame.name,
+    });
     this._broadcastLocalProperty({
        left: char.player.x,
        top: char.player.y,

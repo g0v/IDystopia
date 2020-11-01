@@ -338,7 +338,7 @@ export function CreateGame({
     if (connection) {
       connection.update(time, delta, char);
     }
-    this.charDaemon.update();
+    this.charDaemon.update(time, delta);
   }
 
   const config = {

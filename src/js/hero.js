@@ -88,7 +88,7 @@ export class Char {
     this.messages = this.messages.slice(0, end);
   }
 
-  update() {
+  update(time, delta) {
     // this is stupid, but I can't find a better way.
     this.text.setX(this.player.x);
     this.text.setY(this.player.y + 45);
@@ -136,7 +136,7 @@ export class RemotePlayer extends Char {
 
   constructor(phaser, id, name, x, y, texture, frame) {
     super(phaser, id, name, x, y, texture, frame);
-    this.jitsiProperty = {};
+    this.dest = {};
   }
 
   setProperty(key, value) {
@@ -153,19 +153,37 @@ export class RemotePlayer extends Char {
         this.name = value;
         break;
       case 'x':
-        this.x = value;
+        if (this.x !== value) this.dest.x = value;
+        // this.x = value;
         break;
       case 'y':
-        this.y = value;
+        if (this.y !== value) this.dest.y = value;
+        // this.y = value;
         break;
     }
   }
 
-  update() {
-    super.update();
+  update(time, delta) {
+    // delta ~= 16ms, roughly 60 FPS
+    super.update(time, delta);
 
-    this.player.setX(this.x);
-    this.player.setY(this.y);
+    // set it higher than local speed, since we need to catch up.
+    const speed = 175 * 1.2;
+    const dest = Math.hypot(
+      this.player.x - this.dest.x, this.player.y - this.dest.y);
+    const minGap = Math.max(Const.TILE_SIZE * 0.1, speed * 0.05);
+
+    this.player.setVelocity(0);
+    if (dest < Const.TILE_SIZE * 5 && dest > minGap) {
+      this.player.setVelocityX((this.dest.x - this.x) * 2);
+      this.player.setVelocityY((this.dest.y - this.y) * 2);
+      // this.player.body.velocity.normalize().scale(speed);
+    } else {
+      this.player.setX(this.dest.x);
+      this.player.setY(this.dest.y);
+    }
+    this.x = this.player.x;
+    this.y = this.player.y;
   }
 }
 
