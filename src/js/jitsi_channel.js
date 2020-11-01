@@ -60,7 +60,8 @@ export class JitsiConnection {
         muc: 'conference.jitsi.jothon.online',
         focus: 'focus.jitsi.jothon.online',
       },
-      bosh: 'wss://jitsi.jothon.online/xmpp-websocket',
+      externalConnectUrl: 'https://jitsi.jothon.online/http-pre-bind',
+      bosh: 'https://jitsi.jothon.online/http-bind?room=eid',
       websocket: 'wss://jitsi.jothon.online/xmpp-websocket',
 
       // The name of client node advertised in XEP-0115 'c' stanza
@@ -125,12 +126,6 @@ export class JitsiConnection {
     this.room = this.connection.initJitsiConference(roomId, confOptions);
 
     this.room.setDisplayName('???');
-    //this.setLocalParticipantProperty({
-      //top: 0,
-      //left: 0,
-      //texture: 'atlas',
-      //frame: 'misa-left',
-    //});
     this.room.on(
       JitsiMeetJS.events.conference.CONFERENCE_JOINED,
       () => { this.onConferenceJoined(); });
