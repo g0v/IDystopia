@@ -184,7 +184,7 @@ export class JitsiConnection {
     for (const id in participants) {
       const user = participants[id];
 
-      console.log(id, user);
+      console.log('load user: ', id, user);
 
       const char = Hero.charDaemon.getChar(id);
       if (char) continue;
@@ -233,7 +233,7 @@ export class JitsiConnection {
     this.room.on(
       JitsiMeetJS.events.conference.MESSAGE_RECEIVED,
       (id, text, timestamp) => {
-        console.log({id, text, timestamp});
+        console.log('message received: ', {id, text, timestamp});
         if (timestamp === undefined) {
           timestamp = (new Date()).getTime();
         } else if (typeof(timestamp) === 'string' ||
