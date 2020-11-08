@@ -11,7 +11,8 @@ export var mapObjects = {};
  * storylineJSON: string, path to storyline JSON file.
  */
 export function CreateGame({
-    tilemapTiledJSON, storylineJSON, connection, npcList}) {
+    tilemapTiledJSON, storylineJSON, connection, npcList,
+    postBootCallback}) {
   const WINDOW_WIDTH = window.innerWidth;
   const WINDOW_HEIGHT = window.innerHeight;
   const DEPTH_BELOW_LAYER = 0;
@@ -357,6 +358,9 @@ export function CreateGame({
       preload: preload,
       create: create,
       update: update
+    },
+    callbacks: {
+      postBoot: postBootCallback || (() => {}),
     }
   };
 

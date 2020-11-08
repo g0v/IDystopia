@@ -6,15 +6,16 @@ export const connection = new JitsiChannel.JitsiConnection();
 window.connection = connection;  // for debugging
 
 function initJitsi() {
+  console.log('initJitsi');
   connection.init();
 }
 
 PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
   storylineJSON: 'online_event.json',
-  connection});
-
-initJitsi();
+  connection,
+  postBootCallback: initJitsi,
+});
 
 DataStore.AnswerStore.listen('player_name', () => {
   connection.setDisplayName(DataStore.AnswerStore.get('player_name'));
