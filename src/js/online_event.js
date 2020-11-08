@@ -32,7 +32,9 @@ $( '#control-panel' ).draggable({
       right: "auto",
     });
   }
-}).click(() => {
+});
+
+$( '#emoji-send' ).click(() => {
   const select = document.getElementById('emoji-select');
   connection.sendMessage(select.value);
 });
