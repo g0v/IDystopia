@@ -150,6 +150,7 @@ export class JitsiConnection {
           continue;
         }
         this.room.setLocalParticipantProperty(key, properties[key]);
+        this._sentLocalProperty[key] = properties[key];
       }
     }
   }
@@ -220,7 +221,13 @@ export class JitsiConnection {
         // We will get property update very soon in the
         // "PARTICIPANT_PROPERTY_CHANGED" event later.
         console.log(`user joined`, user);
-        Hero.charDaemon.createRemotePlayer(id, user.getDisplayName());
+        Hero.charDaemon.createRemotePlayer(
+          id,
+          user.getDisplayName(),
+          0, 0,
+          user.getProperty('texture'),
+          user.getProperty('frame')
+        );
       });
 
     this.room.on(
@@ -279,7 +286,6 @@ export class JitsiConnection {
         if (payload.type === TYPE_PLAYER_PROPERTY) {
           const property = payload.property;
           const id = participant.getId();
-          console.log('received payload: ', id, property);
           const char = Hero.charDaemon.getChar(id);
           if (!char) {
             return;
