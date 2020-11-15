@@ -18,6 +18,7 @@ export function CreateGame({
   const DEPTH_BELOW_LAYER = 0;
   const DEPTH_WORLD_LAYER = 10;
   const DEPTH_ABOVE_LAYER = 20;
+  const DEPTH_DIALOG_LAYER = 99;
 
   let showDebug = false;
   let cursors;
@@ -25,10 +26,16 @@ export function CreateGame({
   let char;
 
   function preload() {
+    // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-dialog/
+    this.load.scenePlugin({
+      key: 'rexuiplugin',
+      url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
+      sceneKey: 'rexUI',
+    }); 
+
     this.load.setPath('assets/');
     this.load.image("tiles", "tiles/world.png");
     this.load.tilemapTiledJSON("map", tilemapTiledJSON);
-
     // An atlas is a way to pack multiple images together into one texture. I'm
     // using it to load all the player animations (walking left, walking right,
     // etc.) in one image. For more info see:
@@ -206,7 +213,6 @@ export function CreateGame({
         faceColor: new Phaser.Display.Color(40, 39, 37, 255),
       });
     });
-
 
     // joystick
     const stick = $("#joystick .touch-stick");
