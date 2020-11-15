@@ -18,11 +18,11 @@ export function CreateGame({
   const DEPTH_BELOW_LAYER = 0;
   const DEPTH_WORLD_LAYER = 10;
   const DEPTH_ABOVE_LAYER = 20;
+  const DEPTH_MASK_LAYER = 30;
   const DEPTH_DIALOG_LAYER = 99;
 
   let showDebug = false;
   let cursors;
-  let sprite;
   let char;
 
   function preload() {
@@ -35,14 +35,15 @@ export function CreateGame({
 
     this.load.setPath('assets/');
     this.load.image("tiles", "tiles/world.png");
+    this.load.image("vision", "symbols/mask.png");
     this.load.tilemapTiledJSON("map", tilemapTiledJSON);
     // An atlas is a way to pack multiple images together into one texture. I'm
     // using it to load all the player animations (walking left, walking right,
     // etc.) in one image. For more info see:
     // https://labs.phaser.io/view.html?src=src/animation/texture%20atlas%20animation.js
-    // If you don't use an atlas, you can do the same thing with a spritesheet,
+    // If you don't use an atlas, you can do the same thing with a this.playersheet,
     // see:
-    // https://labs.phaser.io/view.html?src=src/animation/single%20sprite%20sheet.js
+    // https://labs.phaser.io/view.html?src=src/animation/single%20this.player%20sheet.js
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
   }
 
@@ -68,6 +69,11 @@ export function CreateGame({
     this.worldLayer.setDepth(DEPTH_WORLD_LAYER);
     this.aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
 
+    const rt = this.make.renderTexture({ width: map.widthInPixels, height: map.heightInPixels }, true);
+    rt.fill(0x000000, 1);
+    rt.setTint(0x0a2948);
+    rt.setDepth(DEPTH_MASK_LAYER);
+
     window.objectLayer = map.getObjectLayer('Objects');
     // Object layers in Tiled let you embed extra info into a map - like a spawn
     // point or custom collision shapes.
@@ -90,7 +96,17 @@ export function CreateGame({
     const home = mapObjects['HOME'];
     char = this.charDaemon.create(
       'player', '???', home.x, home.y, 'atlas', 'misa-front');
-    sprite = char.player;
+    this.player = char.player;
+
+    this.vision = this.make.image({
+      x: this.player.x,
+      y: this.player.y,
+      key: 'vision',
+      add: false
+    });
+  
+    rt.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
+    rt.mask.invertAlpha = true
 
     // Watch the player and worldLayer for collisions, for the duration of the
     // scene:
@@ -127,7 +143,7 @@ export function CreateGame({
       char.name = DataStore.AnswerStore.get('player_name');
     });
     // Create the player's walking animations from the texture atlas. These are
-    // stored in the global animation manager so any sprite can access them.
+    // stored in the global animation manager so any this.player can access them.
     const anims = this.anims;
     anims.create({
       key: "misa-left-walk",
@@ -159,7 +175,7 @@ export function CreateGame({
     });
 
     const camera = this.cameras.main;
-    camera.startFollow(sprite);
+    camera.startFollow(this.player);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
     cursors = this.input.keyboard.createCursorKeys();
@@ -167,7 +183,7 @@ export function CreateGame({
       Phaser.Input.Keyboard.KeyCodes.ENTER);
     enterKey.on('down',(key, event) => {
       if (this.dialogDaemon.hasOnGoingDialog) return;
-      const dialogId = this.dialogDaemon.findNearbyDialog(sprite);
+      const dialogId = this.dialogDaemon.findNearbyDialog(this.player);
       if (dialogId !== null) {
         this.dialogDaemon.startDialog(dialogId);
       }
@@ -280,7 +296,7 @@ export function CreateGame({
       cursors.right.isDown = false;
       if(tap) {
         if (this.dialogDaemon.hasOnGoingDialog) return;
-        const dialogId = this.dialogDaemon.findNearbyDialog(sprite);
+        const dialogId = this.dialogDaemon.findNearbyDialog(this.player);
         if (dialogId !== null) {
           this.dialogDaemon.startDialog(dialogId);
         }
@@ -289,56 +305,61 @@ export function CreateGame({
   }
 
   function update(time, delta) {
+    if (this.vision) {
+      this.vision.x = this.player.x;
+      this.vision.y = this.player.y;
+    }
+
     // let's check if we triggered any dialogs
-    const dialogId = this.dialogDaemon.checkDialogToTrigger(sprite);
+    const dialogId = this.dialogDaemon.checkDialogToTrigger(this.player);
     if (dialogId !== null) {
       this.dialogDaemon.startDialog(dialogId);
       return;
     }
 
     const speed = 175;
-    const prevVelocity = sprite.body.velocity.clone();
+    const prevVelocity = this.player.body.velocity.clone();
 
     // Stop any previous movement from the last frame
-    sprite.body.setVelocity(0);
+    this.player.body.setVelocity(0);
 
     // Horizontal movement
     if (cursors.left.isDown) {
-      sprite.body.setVelocityX(-speed);
+      this.player.body.setVelocityX(-speed);
     } else if (cursors.right.isDown) {
-      sprite.body.setVelocityX(speed);
+      this.player.body.setVelocityX(speed);
     }
 
     // Vertical movement
     if (cursors.up.isDown) {
-      sprite.body.setVelocityY(-speed);
+      this.player.body.setVelocityY(-speed);
     } else if (cursors.down.isDown) {
-      sprite.body.setVelocityY(speed);
+      this.player.body.setVelocityY(speed);
     }
 
     // Normalize and scale the velocity so that player can't move faster along a
     // diagonal
-    sprite.body.velocity.normalize().scale(speed);
+    this.player.body.velocity.normalize().scale(speed);
 
     // Update the animation last and give left/right animations precedence over
     // up/down animations
 
     if (cursors.left.isDown) {
-      sprite.anims.play("misa-left-walk", true);
+      this.player.anims.play("misa-left-walk", true);
     } else if (cursors.right.isDown) {
-      sprite.anims.play("misa-right-walk", true);
+      this.player.anims.play("misa-right-walk", true);
     } else if (cursors.up.isDown) {
-      sprite.anims.play("misa-back-walk", true);
+      this.player.anims.play("misa-back-walk", true);
     } else if (cursors.down.isDown) {
-      sprite.anims.play("misa-front-walk", true);
+      this.player.anims.play("misa-front-walk", true);
     } else {
-      sprite.anims.stop();
+      this.player.anims.stop();
 
       // If we were moving, pick and idle frame to use
-      if (prevVelocity.x < 0) sprite.setTexture("atlas", "misa-left");
-      else if (prevVelocity.x > 0) sprite.setTexture("atlas", "misa-right");
-      else if (prevVelocity.y < 0) sprite.setTexture("atlas", "misa-back");
-      else if (prevVelocity.y > 0) sprite.setTexture("atlas", "misa-front");
+      if (prevVelocity.x < 0) this.player.setTexture("atlas", "misa-left");
+      else if (prevVelocity.x > 0) this.player.setTexture("atlas", "misa-right");
+      else if (prevVelocity.y < 0) this.player.setTexture("atlas", "misa-back");
+      else if (prevVelocity.y > 0) this.player.setTexture("atlas", "misa-front");
     }
 
     if (connection) {
