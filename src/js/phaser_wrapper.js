@@ -54,19 +54,19 @@ export function CreateGame({
     const tileset = map.addTilesetImage("world", "tiles");
 
     // Parameters: layer name (or index) from Tiled, tileset, x, y
-    const belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
-    const worldLayer = map.createStaticLayer("World", tileset, 0, 0);
-    const aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
+    this.belowLayer = map.createStaticLayer("Below Player", tileset, 0, 0);
+    this.worldLayer = map.createStaticLayer("World", tileset, 0, 0);
+    this.aboveLayer = map.createStaticLayer("Above Player", tileset, 0, 0);
 
-    worldLayer.setCollisionByProperty({ collides: true });
+    this.worldLayer.setCollisionByProperty({ collides: true });
 
     // By default, everything gets depth sorted on the screen in the order we
     // created things. Here, we want the "Above Player" layer to sit on top of
     // the player, so we explicitly give it a depth.  Higher depths will sit on
     // top of lower depth objects.
-    belowLayer.setDepth(DEPTH_BELOW_LAYER);
-    worldLayer.setDepth(DEPTH_WORLD_LAYER);
-    aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
+    this.belowLayer.setDepth(DEPTH_BELOW_LAYER);
+    this.worldLayer.setDepth(DEPTH_WORLD_LAYER);
+    this.aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
 
     window.objectLayer = map.getObjectLayer('Objects');
     // Object layers in Tiled let you embed extra info into a map - like a spawn
@@ -109,7 +109,7 @@ export function CreateGame({
     }
 
     this.physics.add.collider(group, group);
-    this.physics.add.collider(group, worldLayer);
+    this.physics.add.collider(group, this.worldLayer);
 
     this.dialogDaemon = Hero.dialogDaemon;
 
@@ -207,7 +207,7 @@ export function CreateGame({
         .graphics()
         .setAlpha(0.75)
         .setDepth(20);
-      worldLayer.renderDebug(graphics, {
+      this.worldLayer.renderDebug(graphics, {
         tileColor: null,
         collidingTileColor: new Phaser.Display.Color(243, 134, 48, 255),
         faceColor: new Phaser.Display.Color(40, 39, 37, 255),
@@ -289,7 +289,6 @@ export function CreateGame({
   }
 
   function update(time, delta) {
-
     // let's check if we triggered any dialogs
     const dialogId = this.dialogDaemon.checkDialogToTrigger(sprite);
     if (dialogId !== null) {
