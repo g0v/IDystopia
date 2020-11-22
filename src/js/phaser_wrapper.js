@@ -6,37 +6,73 @@ export var tileMap;
 
 export var mapObjects = {};
 
-/*
- * tilemapTiledJSON: string, path to tilemap JSON file.
- * storylineJSON: string, path to storyline JSON file.
- */
-export function CreateGame({
-    tilemapTiledJSON, storylineJSON, connection, npcList,
-    postBootCallback}) {
-  const WINDOW_WIDTH = window.innerWidth;
-  const WINDOW_HEIGHT = window.innerHeight;
-  const DEPTH_BELOW_LAYER = 0;
-  const DEPTH_WORLD_LAYER = 10;
-  const DEPTH_ABOVE_LAYER = 20;
-  const DEPTH_MASK_LAYER = 30;
-  const DEPTH_DIALOG_LAYER = 99;
+let char;
+var config = {};
+let showDebug = false;
+let cursors = {
+  left: { isDown: false },
+  right: { isDown: false },
+  up: { isDown: false },
+  down: { isDown: false },
+};
+const WINDOW_WIDTH = window.innerWidth;
+const WINDOW_HEIGHT = window.innerHeight;
+const DEPTH_BELOW_LAYER = 0;
+const DEPTH_WORLD_LAYER = 10;
+const DEPTH_ABOVE_LAYER = 20;
+const DEPTH_MASK_LAYER = 30;
+const DEPTH_DIALOG_LAYER = 99;
 
-  let showDebug = false;
-  let cursors = {
-      left: { isDown: false },
-      right: { isDown: false },
-      up: { isDown: false },
-      down: { isDown: false },
-    };
-  let char;
+class Background extends Phaser.Scene {
+  constructor () {
+    super('Background');
+  }
 
-  function preload() {
+  preload() {
+    this.load.setPath('assets/');
+    this.load.video('intro', 'media/idystopia.mp4');
+    // XXX
+    this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
+  }
+
+  create() {
+    this.scene.start('Game');
+    return;
+
+    // XXX: not working yet
+    const video = this.add.video(0, 0, 800, 600);
+    video.loadURL('assets/media/idystopia.mp4')
+
+    this.add.image(120, 160, 'atlas');
+    console.log("playing video");
+    video.on('created', function(video, width, height){
+      console.log("video created");
+      video.play();
+    });
+    video.play();
+
+    this.input.on('pointerup', function (pointer) {
+      this.scene.start('Game');
+    }, this);
+
+  }
+
+}
+
+
+class Game extends Phaser.Scene {
+  constructor () {
+    super('Game');
+  }
+
+  preload() {
     // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-dialog/
     this.load.scenePlugin({
       key: 'rexuiplugin',
       url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
       sceneKey: 'rexUI',
     }); 
+    const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
 
     this.load.setPath('assets/');
     this.load.image("tiles", "tiles/world.png");
@@ -50,9 +86,11 @@ export function CreateGame({
     // see:
     // https://labs.phaser.io/view.html?src=src/animation/single%20this.player%20sheet.js
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
+
   }
 
-  function create() {
+  create() {
+    const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
     const map = this.make.tilemap({ key: "map" });
 
     // Parameters are the name you gave the tileset in Tiled and then the key of
@@ -342,13 +380,14 @@ export function CreateGame({
     });
   }
 
-  function update(time, delta) {
+  update(time, delta) {
     if (this.vision) {
       this.vision.x = this.player.x;
       this.vision.y = this.player.y;
     }
 
     // let's check if we triggered any dialogs
+
     const dialogId = this.dialogDaemon.checkDialogToTrigger(this.player);
     if (dialogId !== null) {
       this.dialogDaemon.startDialog(dialogId);
@@ -409,12 +448,20 @@ export function CreateGame({
       else if (prevVelocity.y > 0) this.player.setTexture("atlas", "misa-front");
     }
 
-    if (connection) {
-      connection.update(time, delta, char);
+    if (config.connection) {
+      config.connection.update(time, delta, char);
     }
     this.charDaemon.update(time, delta);
   }
+}
 
+/*
+ * tilemapTiledJSON: string, path to tilemap JSON file.
+ * storylineJSON: string, path to storyline JSON file.
+ */
+export function CreateGame({
+    tilemapTiledJSON, storylineJSON, connection, npcList,
+    postBootCallback}) {
   const postBoot = () => {
     // TODO(stimim): properly load game status
     DataStore.AnswerStore.clearAll();
@@ -435,28 +482,28 @@ export function CreateGame({
     }
   };
 
-  const config = {
+  config = {
     type: Phaser.AUTO,
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
     parent: "game-container",
-    pixelArt: true,
     physics: {
       default: "arcade",
       arcade: {
         gravity: { y: 0 }
       }
     },
-    scene: {
-      preload: preload,
-      create: create,
-      update: update
-    },
+    scene: [Background, Game],
     callbacks: {
       postBoot: postBoot,
-    }
+    },
+    tilemapTiledJSON,
+    storylineJSON,
+    connection,
+    npcList
   };
 
   const game = new Phaser.Game(config);
   return game;
+
 }
