@@ -303,6 +303,10 @@ export class DialogDaemon {
     this.dialogToTrigger = [];
   }
 
+  get phaser() {
+    return this.charDaemon.phaser;
+  }
+
   showHint() {
     let message = '';
     for (const key in this.dialogs) {
@@ -499,7 +503,6 @@ export class DialogDaemon {
     }
 
     console.info(`startDialog: ${dialogId}`, tuple.dialog);
-
     const {dialog} = tuple;
 
     if (dialog.missionStep.moveTo) {

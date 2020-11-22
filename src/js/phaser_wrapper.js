@@ -22,7 +22,12 @@ export function CreateGame({
   const DEPTH_DIALOG_LAYER = 99;
 
   let showDebug = false;
-  let cursors;
+  let cursors = {
+      left: { isDown: false },
+      right: { isDown: false },
+      up: { isDown: false },
+      down: { isDown: false },
+    };
   let char;
 
   function preload() {
@@ -129,19 +134,6 @@ export function CreateGame({
 
     this.dialogDaemon = Hero.dialogDaemon;
 
-    // TODO(stimim): properly load game status
-    DataStore.AnswerStore.clearAll();
-
-    StoryLine.loadStoryLine(storylineJSON).then(
-      (storyLine) => {
-        this.storyLineDaemon = Hero.storyLineDaemon;
-        this.storyLineDaemon.init(storyLine);
-      }
-    );
-
-    DataStore.AnswerStore.listen('player_name', (e) => {
-      char.name = DataStore.AnswerStore.get('player_name');
-    });
     // Create the player's walking animations from the texture atlas. These are
     // stored in the global animation manager so any this.player can access them.
     const anims = this.anims;
@@ -178,10 +170,56 @@ export function CreateGame({
     camera.startFollow(this.player);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
 
-    cursors = this.input.keyboard.createCursorKeys();
+    // cursors = this.input.keyboard.createCursorKeys();
+
+    const cursorKeys = [
+      Phaser.Input.Keyboard.KeyCodes.LEFT,
+      Phaser.Input.Keyboard.KeyCodes.RIGHT,
+      Phaser.Input.Keyboard.KeyCodes.UP,
+      Phaser.Input.Keyboard.KeyCodes.DOWN,
+    ];
+
+    for (const keyCode of cursorKeys) {
+      const key = this.input.keyboard.addKey(keyCode, false);
+      key.on('down', (key, event) => {
+        if (this.dialogDaemon.hasOnGoingDialog) return;
+        switch (event.keyCode) {
+          case Phaser.Input.Keyboard.KeyCodes.LEFT:
+            cursors.left.isDown = true;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.RIGHT:
+            cursors.right.isDown = true;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.UP:
+            cursors.up.isDown = true;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.DOWN:
+            cursors.down.isDown = true;
+            break;
+        }
+      });
+      key.on('up', (key, event) => {
+        if (this.dialogDaemon.hasOnGoingDialog) return;
+        switch (event.keyCode) {
+          case Phaser.Input.Keyboard.KeyCodes.LEFT:
+            cursors.left.isDown = false;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.RIGHT:
+            cursors.right.isDown = false;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.UP:
+            cursors.up.isDown = false;
+            break;
+          case Phaser.Input.Keyboard.KeyCodes.DOWN:
+            cursors.down.isDown = false;
+            break;
+        }
+      });
+    }
+
     const enterKey = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.ENTER);
-    enterKey.on('down',(key, event) => {
+      Phaser.Input.Keyboard.KeyCodes.ENTER, false);
+    enterKey.on('down', () => {
       if (this.dialogDaemon.hasOnGoingDialog) return;
       const dialogId = this.dialogDaemon.findNearbyDialog(this.player);
       if (dialogId !== null) {
@@ -323,34 +361,43 @@ export function CreateGame({
     // Stop any previous movement from the last frame
     this.player.body.setVelocity(0);
 
-    // Horizontal movement
-    if (cursors.left.isDown) {
-      this.player.body.setVelocityX(-speed);
-    } else if (cursors.right.isDown) {
-      this.player.body.setVelocityX(speed);
+    let vX = 0;
+    let vY = 0;
+
+    if (!this.dialogDaemon.hasOnGoingDialog) {
+      // Horizontal movement
+      if (cursors.left.isDown) {
+        vX = -speed;
+      } else if (cursors.right.isDown) {
+        vX = speed;
+      }
+
+      // Vertical movement
+      if (cursors.up.isDown) {
+        vY = -speed;
+      } else if (cursors.down.isDown) {
+        vY = speed;
+      }
     }
 
-    // Vertical movement
-    if (cursors.up.isDown) {
-      this.player.body.setVelocityY(-speed);
-    } else if (cursors.down.isDown) {
-      this.player.body.setVelocityY(speed);
+    this.player.body.setVelocityX(vX);
+    this.player.body.setVelocityY(vY);
+    if (vX || vY) {
+      // Normalize and scale the velocity so that player can't move faster along a
+      // diagonal
+      this.player.body.velocity.normalize().scale(speed);
     }
-
-    // Normalize and scale the velocity so that player can't move faster along a
-    // diagonal
-    this.player.body.velocity.normalize().scale(speed);
 
     // Update the animation last and give left/right animations precedence over
     // up/down animations
 
-    if (cursors.left.isDown) {
+    if (vX < 0) {
       this.player.anims.play("misa-left-walk", true);
-    } else if (cursors.right.isDown) {
+    } else if (vX > 0) {
       this.player.anims.play("misa-right-walk", true);
-    } else if (cursors.up.isDown) {
+    } else if (vY < 0) {
       this.player.anims.play("misa-back-walk", true);
-    } else if (cursors.down.isDown) {
+    } else if (vY > 0) {
       this.player.anims.play("misa-front-walk", true);
     } else {
       this.player.anims.stop();
@@ -367,6 +414,26 @@ export function CreateGame({
     }
     this.charDaemon.update(time, delta);
   }
+
+  const postBoot = () => {
+    // TODO(stimim): properly load game status
+    DataStore.AnswerStore.clearAll();
+
+    StoryLine.loadStoryLine(storylineJSON).then(
+      (storyLine) => {
+        this.storyLineDaemon = Hero.storyLineDaemon;
+        this.storyLineDaemon.init(storyLine);
+      }
+    );
+
+    DataStore.AnswerStore.listen('player_name', () => {
+      char.name = DataStore.AnswerStore.get('player_name');
+    });
+
+    if (postBootCallback) {
+      postBootCallback();
+    }
+  };
 
   const config = {
     type: Phaser.AUTO,
@@ -386,7 +453,7 @@ export function CreateGame({
       update: update
     },
     callbacks: {
-      postBoot: postBootCallback || (() => {}),
+      postBoot: postBoot,
     }
   };
 
