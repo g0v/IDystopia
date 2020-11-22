@@ -4,8 +4,8 @@ import * as DataStore from './data_store.js';
 import * as PhaserWrapper from './phaser_wrapper.js';
 
 export class Char {
-  constructor(phaser, id, name, x, y, texture, frame) {
-    this.phaser = phaser;
+  constructor(scene, id, name, x, y, texture, frame) {
+    this.scene = scene;
     if (Number.isNaN(x)) x = 0;
     if (Number.isNaN(y)) y = 0;
     this.id = id;
@@ -24,14 +24,14 @@ export class Char {
     // Create a sprite with physics enabled via the physics system. The image
     // used for the sprite has a bit of whitespace, so I'm using setSize &
     // setOffset to control the size of the player's body.
-    this.player = this.phaser.physics.add.sprite(
+    this.player = this.scene.physics.add.sprite(
       this.x, this.y, this.texture, this.frame)
       .setSize(32, 40)
       .setOffset(0, 24);
 
     this.player.setDepth(2);
 
-    this.text = this.phaser.add.text(this.x, this.y, this.name, {
+    this.text = this.scene.add.text(this.x, this.y, this.name, {
       font: '18px monospace',
       fill: '#fff',
       align: 'center',
@@ -99,7 +99,7 @@ export class Char {
 
     if (this.messages.length > 0) {
       if (!this.messageBox) {
-        this.messageBox = this.phaser.add.text(
+        this.messageBox = this.scene.add.text(
           this.player.x, this.player.y - 16,
           '',
           {
@@ -134,8 +134,8 @@ export class Char {
 
 export class RemotePlayer extends Char {
 
-  constructor(phaser, id, name, x, y, texture, frame) {
-    super(phaser, id, name, x, y, texture, frame);
+  constructor(scene, id, name, x, y, texture, frame) {
+    super(scene, id, name, x, y, texture, frame);
     this.dest = {};
   }
 
@@ -189,12 +189,12 @@ export class RemotePlayer extends Char {
 
 export class CharDaemon {
   constructor() {
-    this.phaser = null;
+    this.scene = null;
     this.chars = {};
   }
 
-  setPhaser(phaser) {
-    this.phaser = phaser;
+  setScene(scene) {
+    this.scene = scene;
   }
 
   create(id, name, x, y, texture, frame) {
@@ -204,7 +204,7 @@ export class CharDaemon {
       return;
     }
     const char = new Char(
-      this.phaser,
+      this.scene,
       id, name, x, y, texture, frame);
 
     this.chars[id] = char;
@@ -219,7 +219,7 @@ export class CharDaemon {
     }
 
     const char = new RemotePlayer(
-      this.phaser,
+      this.scene,
       id, name, x, y, texture, frame);
 
     this.chars[id] = char;
@@ -303,8 +303,8 @@ export class DialogDaemon {
     this.dialogToTrigger = [];
   }
 
-  get phaser() {
-    return this.charDaemon.phaser;
+  get scene() {
+    return this.charDaemon.scene;
   }
 
   showHint() {

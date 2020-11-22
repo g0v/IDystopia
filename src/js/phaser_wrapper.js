@@ -86,7 +86,7 @@ export function CreateGame({
       obj => {mapObjects[obj.name] = obj});
 
     this.charDaemon = Hero.charDaemon;
-    this.charDaemon.setPhaser(this);
+    this.charDaemon.setScene(this);
 
     if (npcList) {
       for (const npcId in npcList) {
@@ -109,7 +109,7 @@ export function CreateGame({
       key: 'vision',
       add: false
     });
-  
+
     rt.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
     rt.mask.invertAlpha = true
 
