@@ -237,7 +237,6 @@ class Game extends Phaser.Scene {
         }
       });
       key.on('up', (key, event) => {
-        if (this.dialogDaemon.hasOnGoingDialog) return;
         switch (event.keyCode) {
           case Phaser.Input.Keyboard.KeyCodes.LEFT:
             cursors.left.isDown = false;
