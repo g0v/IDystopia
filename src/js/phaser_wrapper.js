@@ -1,6 +1,7 @@
 import * as Hero from './hero.js';
 import * as DataStore from './data_store.js';
 import * as StoryLine from './story_line.js';
+import * as Const from './const.js';
 
 export var tileMap;
 
@@ -129,8 +130,16 @@ class Game extends Phaser.Scene {
     if (npcList) {
       for (const npcId in npcList) {
         const {name, texture, frame} = npcList[npcId];
-        if (npcId in mapObjects) {
-          const point = mapObjects[npcId];
+        if (!(npcId in mapObjects)) {
+          continue;
+        }
+        const point = mapObjects[npcId];
+
+        if (npcList[npcId].movements) {
+          this.charDaemon.createMovingNPC(
+            npcId, name, point.x, point.y, texture, frame,
+            npcList[npcId].movements);
+        } else {
           this.charDaemon.create(npcId, name, point.x, point.y, texture, frame);
         }
       }
@@ -393,7 +402,6 @@ class Game extends Phaser.Scene {
       return;
     }
 
-    const speed = 175;
     const prevVelocity = this.player.body.velocity.clone();
 
     // Stop any previous movement from the last frame
@@ -405,16 +413,16 @@ class Game extends Phaser.Scene {
     if (!this.dialogDaemon.hasOnGoingDialog) {
       // Horizontal movement
       if (cursors.left.isDown) {
-        vX = -speed;
+        vX = -Const.SPEED;
       } else if (cursors.right.isDown) {
-        vX = speed;
+        vX = Const.SPEED;
       }
 
       // Vertical movement
       if (cursors.up.isDown) {
-        vY = -speed;
+        vY = -Const.SPEED;
       } else if (cursors.down.isDown) {
-        vY = speed;
+        vY = Const.SPEED;
       }
     }
 
@@ -423,7 +431,7 @@ class Game extends Phaser.Scene {
     if (vX || vY) {
       // Normalize and scale the velocity so that player can't move faster along a
       // diagonal
-      this.player.body.velocity.normalize().scale(speed);
+      this.player.body.velocity.normalize().scale(Const.SPEED);
     }
 
     // Update the animation last and give left/right animations precedence over

@@ -46,10 +46,6 @@ export class Char {
     return 32;
   }
 
-  get SPEED() {
-    return 256;
-  }
-
   get name() {
     return this._name;
   }
@@ -132,10 +128,53 @@ export class Char {
   }
 }
 
+export class MovingNPC extends Char {
+  constructor(scene, id, name, x, y, texture, frame, movements) {
+    super(scene, id, name, x, y, texture, frame);
+
+    this.points = [];
+    this.points.push({x: x, y: y});
+
+    for (const {dx, dy} of movements) {
+      const px = this.points[this.points.length - 1].x;
+      const py = this.points[this.points.length - 1].y;
+      this.points.push({x: px + dx, y: py + dy});
+    }
+
+    if (this.points.length > 1) {
+      this.nextPoint = 1;
+    }
+  }
+
+  update(time, delta) {
+    const px = this.points[this.nextPoint].x;
+    const py = this.points[this.nextPoint].y;
+    const dest = Math.hypot(px - this.player.x, py - this.player.y);
+    const minGap = Math.max(Const.TILE_SIZE * 0.1, Const.SPEED * delta / 1000);
+
+    if (dest < minGap) {
+      this.player.setVelocity(0);
+      this.player.setX(px);
+      this.player.setY(py);
+
+      this.nextPoint = (this.nextPoint + 1) % this.points.length;
+    } else {
+      this.player.setVelocityX(px - this.x);
+      this.player.setVelocityY(py - this.y);
+      this.player.body.velocity.normalize().scale(Const.SPEED);
+    }
+    this.x = this.player.x;
+    this.y = this.player.y;
+
+    super.update(time, delta);
+  }
+}
+
 export class RemotePlayer extends Char {
 
   constructor(scene, id, name, x, y, texture, frame) {
     super(scene, id, name, x, y, texture, frame);
+
     this.dest = {};
   }
 
@@ -154,21 +193,19 @@ export class RemotePlayer extends Char {
         break;
       case 'x':
         if (this.x !== value) this.dest.x = value;
-        // this.x = value;
         break;
       case 'y':
         if (this.y !== value) this.dest.y = value;
-        // this.y = value;
         break;
     }
   }
 
   update(time, delta) {
-    // delta ~= 16ms, roughly 60 FPS
+    // delta ~= 16 (ms), roughly 60 FPS
     super.update(time, delta);
 
     // set it higher than local speed, since we need to catch up.
-    const speed = 175 * 1.2;
+    const speed = Const.SPEED * 1.2;
     const dest = Math.hypot(
       this.player.x - this.dest.x, this.player.y - this.dest.y);
     const minGap = Math.max(Const.TILE_SIZE * 0.1, speed * 0.05);
@@ -177,7 +214,6 @@ export class RemotePlayer extends Char {
     if (dest < Const.TILE_SIZE * 5 && dest > minGap) {
       this.player.setVelocityX((this.dest.x - this.x) * 2);
       this.player.setVelocityY((this.dest.y - this.y) * 2);
-      // this.player.body.velocity.normalize().scale(speed);
     } else {
       this.player.setX(this.dest.x);
       this.player.setY(this.dest.y);
@@ -206,6 +242,21 @@ export class CharDaemon {
     const char = new Char(
       this.scene,
       id, name, x, y, texture, frame);
+
+    this.chars[id] = char;
+    return char;
+  }
+
+  createMovingNPC(id, name, x, y, texture, frame, movements) {
+    if (id in this.chars) {
+      console.error(`Character ID "${id}" is already declared:`);
+      console.error(this.chars[id]);
+      return;
+    }
+
+    const char = new MovingNPC(
+      this.scene,
+      id, name, x, y, texture, frame, movements);
 
     this.chars[id] = char;
     return char;

@@ -21,6 +21,12 @@ const npcList = {
     name: '教務處職員',
     texture: 'atlas',
     frame: 'misa-left',
+    movements: [
+      {
+        dx: 175,
+        dy: 175,
+      },
+    ]
   },
   'department-officer-npc': {
     name: '系辦公室職員',
