@@ -32,32 +32,37 @@ class Background extends Phaser.Scene {
   preload() {
     this.load.setPath('assets/');
     this.load.video('intro', 'media/idystopia.mp4');
-    // XXX
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
   }
 
   create() {
-    this.scene.start('Game');
-    return;
+    // Dimension of the video is 1920x1080
+    const video = this.add.video(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'intro');
+    const scale = Math.min(WINDOW_WIDTH / 1920, WINDOW_HEIGHT / 1080);
+    video.setScale(scale);
 
-    // XXX: not working yet
-    const video = this.add.video(0, 0, 800, 600);
-    video.loadURL('assets/media/idystopia.mp4')
-
-    this.add.image(120, 160, 'atlas');
     console.log("playing video");
-    video.on('created', function(video, width, height){
-      console.log("video created");
-      video.play();
-    });
     video.play();
 
-    this.input.on('pointerup', function (pointer) {
+    video.on('complete', video => {
+      video.play(true, 6, 8);
+    });
+
+    this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 0.9,
+      'Touch screen or press ENTER to continue...', {
+      font: '18px monospace',
+      fill: '#ffffff',
+      padding: {x: 20, y: 20},
+    }).setDepth(DEPTH_DIALOG_LAYER).setOrigin(0.5);
+
+    this.input.keyboard.once('keydown_ENTER', () => {
+      this.scene.start('Game');
+    });
+
+    this.input.on('pointerup', () => {
       this.scene.start('Game');
     }, this);
-
   }
-
 }
 
 
