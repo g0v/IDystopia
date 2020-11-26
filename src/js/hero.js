@@ -532,12 +532,23 @@ export class DialogDaemon {
     this.add(`${mission.id}/${nextStep.id}`, nextStep);
   }
 
-  moveTo(where) {
+  moveTo(where, callback) {
     const me = this.charDaemon.getChar('player');
     if (where in PhaserWrapper.mapObjects) {
       const loc = PhaserWrapper.mapObjects[where];
-      me.player.x = loc.x;
-      me.player.y = loc.y;
+      const camera = this.scene.cameras.main;
+      // in milliseconds
+      camera.fadeOut(750, 0, 0, 0, (_, progressFadeOut) => {
+        if (progressFadeOut < 1) return;
+        me.player.x = loc.x;
+        me.player.y = loc.y;
+        camera.fadeIn(750, 0, 0, 0, (_, progressFadeIn) => {
+          if (progressFadeIn < 1) return;
+          callback();
+        });
+      });
+    } else {
+      callback();
     }
   }
 
@@ -557,11 +568,14 @@ export class DialogDaemon {
     const {dialog} = tuple;
 
     if (dialog.missionStep.moveTo) {
-      this.moveTo(dialog.missionStep.moveTo);
+      this.moveTo(dialog.missionStep.moveTo, () => {
+        const iterator = dialog.getIterator();
+        this.showDialog(iterator);
+      });
+    } else {
+      const iterator = dialog.getIterator();
+      this.showDialog(iterator);
     }
-
-    const iterator = dialog.getIterator();
-    this.showDialog(iterator);
   }
 
   checkDialogToTrigger(me) {
