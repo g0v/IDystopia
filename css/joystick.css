@@ -50,9 +50,3 @@ body {
   border-radius: 50%;
   background-color: #FFF;
 }
-
-@media (max-width: 992px) {
-  #joystick, #joypads {
-    display: block;
-  }
-}
