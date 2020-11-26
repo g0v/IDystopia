@@ -40,7 +40,6 @@ class Background extends Phaser.Scene {
   }
 
   create() {
-    // Dimension of the video is 1920x1080
     const video = this.add.video(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'intro');
     video.setMute(true);
 
@@ -55,12 +54,21 @@ class Background extends Phaser.Scene {
       video.play(true, 6, 8);
     });
 
-    this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 0.9,
-      'Touch screen or press ENTER to continue...', {
-      font: '18px monospace',
-      fill: '#ffffff',
-      padding: {x: 20, y: 20},
-    }).setDepth(DEPTH_DIALOG_LAYER).setOrigin(0.5);
+    if (this.sys.game.device.os.desktop) {
+      this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 0.9,
+        'press ENTER to continue...', {
+          font: '18px monospace',
+          fill: '#ffffff',
+          padding: {x: 20, y: 20},
+        }).setDepth(DEPTH_DIALOG_LAYER).setOrigin(0.5);
+    } else {
+      this.add.text(WINDOW_WIDTH / 2, WINDOW_HEIGHT * 0.9,
+        'Touch screen to continue...', {
+          font: '18px monospace',
+          fill: '#ffffff',
+          padding: {x: 20, y: 20},
+        }).setDepth(DEPTH_DIALOG_LAYER).setOrigin(0.5);
+    }
 
     this.input.keyboard.once('keydown_ENTER', () => {
       this.scene.start('Game');
