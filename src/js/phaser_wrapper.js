@@ -282,9 +282,10 @@ class Game extends Phaser.Scene {
     });
 
     // Help text that has a "fixed" position on the screen
-    if($("#joystick").css("display") == "block") {
+    if (this.sys.game.device.os.desktop) {
+      $('#joystick').hide();
       this.add
-        .text(16, 16, 'Use joysticks to move\nPress the stick to interact', {
+        .text(16, 16, 'Arrow keys to move\nPress "Enter" to interact', {
           font: "18px monospace",
           fill: "#000000",
           padding: { x: 20, y: 10 },
@@ -292,10 +293,10 @@ class Game extends Phaser.Scene {
         })
         .setScrollFactor(0)
         .setDepth(30);
-    }
-    else {
+    } else {
+      $('#joystick').show();
       this.add
-        .text(16, 16, 'Arrow keys to move\nPress "Enter" to interact', {
+        .text(16, 16, 'Use joysticks to move\nPress the stick to interact', {
           font: "18px monospace",
           fill: "#000000",
           padding: { x: 20, y: 10 },
