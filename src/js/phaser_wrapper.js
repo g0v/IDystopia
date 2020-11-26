@@ -31,7 +31,11 @@ class Background extends Phaser.Scene {
 
   preload() {
     this.load.setPath('assets/');
-    this.load.video('intro', 'media/idystopia.mp4');
+    if (this.sys.game.device.os.desktop) {
+      this.load.video('intro', 'media/idystopia.mp4');
+    } else {
+      this.load.video('intro', 'media/idystopia_480p.mp4');
+    }
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
   }
 
