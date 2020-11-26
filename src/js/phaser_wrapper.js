@@ -38,9 +38,12 @@ class Background extends Phaser.Scene {
   create() {
     // Dimension of the video is 1920x1080
     const video = this.add.video(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2, 'intro');
-    const scale = Math.min(WINDOW_WIDTH / 1920, WINDOW_HEIGHT / 1080);
-    video.setScale(scale);
+    video.setMute(true);
 
+    const width = video.width;
+    const height = video.height;
+    const scale = Math.min(WINDOW_WIDTH / width, WINDOW_HEIGHT / height);
+    video.setScale(scale);
     console.log("playing video");
     video.play();
 
