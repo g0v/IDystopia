@@ -420,7 +420,7 @@ export class DialogDaemon {
         });
       }
 
-      bootbox.prompt({
+      const box = bootbox.prompt({
         title: talker,
         message: question,
         inputType: 'select',
@@ -439,6 +439,11 @@ export class DialogDaemon {
             this.doneDialog(iterator);
           }
           return true;
+        }
+      });
+      box.keypress(e => {
+        if (e.keyCode === 13) {
+          $('button.bootbox-accept').click();
         }
       });
     } else if (item instanceof StoryLine.DialogItemPrompt) {
