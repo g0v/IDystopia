@@ -382,6 +382,16 @@ export class DialogDaemon {
     return null;
   }
 
+  showNextDialog(iterator, result = undefined) {
+    this.hasOnGoingDialog = false;
+    const next = iterator.nextDialogItem(result);
+    if (next) {
+      this.showDialog(iterator);
+    } else {
+      this.doneDialog(iterator);
+    }
+  }
+
   showDialog(iterator) {
     const item = iterator.getCurrentDialogItem();
     if (!item) {
@@ -400,13 +410,7 @@ export class DialogDaemon {
         title: talker,
         message: content,
         callback: () => {
-          this.hasOnGoingDialog = false;
-          const next = iterator.nextDialogItem();
-          if (next) {
-            this.showDialog(iterator);
-          } else {
-            this.doneDialog(iterator);
-          }
+          this.showNextDialog(iterator);
         }
       });
     } else if (item instanceof StoryLine.DialogItemSelect) {
@@ -432,13 +436,7 @@ export class DialogDaemon {
           if (result === null) {
             return false;
           }
-          this.hasOnGoingDialog = false;
-          const next = iterator.nextDialogItem(result);
-          if (next) {
-            this.showDialog(iterator);
-          } else {
-            this.doneDialog(iterator);
-          }
+          this.showNextDialog(iterator, result);
           return true;
         }
       });
@@ -459,13 +457,7 @@ export class DialogDaemon {
           if (!result) {
             return false;
           }
-          this.hasOnGoingDialog = false;
-          const next = iterator.nextDialogItem(result);
-          if (next) {
-            this.showDialog(iterator);
-          } else {
-            this.doneDialog(iterator);
-          }
+          this.showNextDialog(iterator, result);
           return true;
         }
       });
@@ -475,13 +467,7 @@ export class DialogDaemon {
         title: "",
         message: message,
         callback: () => {
-          this.hasOnGoingDialog = false;
-          const next = iterator.nextDialogItem();
-          if (next) {
-            this.showDialog(iterator);
-          } else {
-            this.doneDialog(iterator);
-          }
+          this.showNextDialog(iterator);
         }
       });
     } else if (item instanceof StoryLine.DialogItemIframe) {
