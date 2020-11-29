@@ -357,29 +357,38 @@ class GameScene extends Phaser.Scene {
       initJoystick();
     });
 
-    var tap = false;
-    $("#joystick").on('touchmove','.touch-stick', function(e){
-      e.preventDefault(); 
+    let tap = false;
+    $("#joystick").on('touchmove','.touch-stick', (e) => {
+      e.preventDefault();
       tap = false;
-      var touch = e.originalEvent.targetTouches[0];
-      var delta_x = (touch.pageX-center_x)/limit;
-      var delta_y = (touch.pageY-center_y)/limit;
-      delta_x = Math.min(Math.max(delta_x, -1), 1);
-      delta_y = Math.min(Math.max(delta_y, -1), 1);
-      $(this).css({"left": `${delta_x*50 + 50}%`, "top": `${delta_y*50 + 50}%`});
 
-      if(Math.abs(delta_x)<dead) {
-        delta_x = 0;
+      if (this.dialogDaemon.hasOnGoingDialog) {
+        cursors.left.isDown = false;
+        cursors.right.isDown = false;
+        cursors.up.isDown = false;
+        cursors.down.isDown = false;
+        return;
+      }
+
+      const touch = e.originalEvent.targetTouches[0];
+      let deltaX = (touch.pageX - center_x) / limit;
+      let deltaY = (touch.pageY - center_y) / limit;
+      deltaX = Math.min(Math.max(deltaX, -1), 1);
+      deltaY = Math.min(Math.max(deltaY, -1), 1);
+      $(this).css({"left": `${deltaX*50 + 50}%`, "top": `${deltaY*50 + 50}%`});
+
+      if(Math.abs(deltaX) < dead) {
+        deltaX = 0;
         cursors.left.isDown = false;
         cursors.right.isDown = false;
       }
-      if(Math.abs(delta_y)<dead) {
-        delta_y = 0;
+      if(Math.abs(deltaY) < dead) {
+        deltaY = 0;
         cursors.up.isDown = false;
         cursors.down.isDown = false;
       }
-      if(Math.abs(delta_x) >= Math.abs(delta_y)) {
-        if(delta_x > 0){
+      if(Math.abs(deltaX) >= Math.abs(deltaY)) {
+        if(deltaX > 0){
           cursors.right.isDown = true;
           cursors.left.isDown = false;
         } else {
@@ -387,7 +396,7 @@ class GameScene extends Phaser.Scene {
           cursors.left.isDown = true;
         }
       } else {
-        if(delta_y < 0){
+        if(deltaY < 0){
           cursors.up.isDown = true;
           cursors.down.isDown = false;
         } else {
@@ -396,7 +405,7 @@ class GameScene extends Phaser.Scene {
         }
       }
     });
-    $("#joystick").on('touchstart','.touch-stick', function(e) {
+    $("#joystick").on('touchstart','.touch-stick', () => {
       tap = true;
     });
     $("#joystick").on('touchend','.touch-stick', () => {

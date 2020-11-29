@@ -393,6 +393,7 @@ export class DialogDaemon {
     const me = this.charDaemon.getChar('player');
     const talker = item.name.replace(_RE_PLAYER, me.name);
 
+    console.log('iterator: ', iterator);
     if (item instanceof StoryLine.DialogItemLine) {
       const content = item.line.replace(_RE_PLAYER, me.name);
       bootbox.alert({
@@ -518,6 +519,7 @@ export class DialogDaemon {
   }
 
   doneDialog(iterator) {
+    this.hasOnGoingDialog = false;
     const dialog = iterator.dialog;
     const missionStep = dialog.missionStep;
     const mission = missionStep.mission;
@@ -571,6 +573,7 @@ export class DialogDaemon {
 
     console.info(`startDialog: ${dialogId}`, tuple.dialog);
     const {dialog} = tuple;
+    this.hasOnGoingDialog = true;
 
     if (dialog.missionStep.moveTo) {
       this.moveTo(dialog.missionStep.moveTo, () => {
