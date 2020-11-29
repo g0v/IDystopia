@@ -24,9 +24,9 @@ const DEPTH_ABOVE_LAYER = 20;
 const DEPTH_MASK_LAYER = 30;
 const DEPTH_DIALOG_LAYER = 99;
 
-class Background extends Phaser.Scene {
+class IntroScene extends Phaser.Scene {
   constructor () {
-    super('Background');
+    super('Intro');
   }
 
   preload() {
@@ -36,7 +36,6 @@ class Background extends Phaser.Scene {
     } else {
       this.load.video('intro', 'media/idystopia_480p.mp4');
     }
-    this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
   }
 
   create() {
@@ -71,28 +70,29 @@ class Background extends Phaser.Scene {
     }
 
     this.input.keyboard.once('keydown_ENTER', () => {
-      this.scene.start('Game');
+      this.startNextScene();
     });
 
     this.input.on('pointerup', () => {
-      this.scene.start('Game');
+      this.startNextScene();
     }, this);
+  }
+
+  startNextScene() {
+    // this.scene.add('Game', Game, true);
+    this.scene.start('Game');
+    this.scene.remove('Intro');
   }
 }
 
 
-class Game extends Phaser.Scene {
+class GameScene extends Phaser.Scene {
   constructor () {
     super('Game');
   }
 
   preload() {
-    // https://rexrainbow.github.io/phaser3-rex-notes/docs/site/ui-dialog/
-    this.load.scenePlugin({
-      key: 'rexuiplugin',
-      url: 'https://raw.githubusercontent.com/rexrainbow/phaser3-rex-notes/master/dist/rexuiplugin.min.js',
-      sceneKey: 'rexUI',
-    }); 
+    console.log('Preload Game scene');
     const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
 
     this.load.setPath('assets/');
@@ -111,6 +111,7 @@ class Game extends Phaser.Scene {
   }
 
   create() {
+    console.log('Create Game scene');
     const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
     const map = this.make.tilemap({ key: "map" });
 
@@ -132,11 +133,6 @@ class Game extends Phaser.Scene {
     this.belowLayer.setDepth(DEPTH_BELOW_LAYER);
     this.worldLayer.setDepth(DEPTH_WORLD_LAYER);
     this.aboveLayer.setDepth(DEPTH_ABOVE_LAYER);
-
-    const rt = this.make.renderTexture({ width: map.widthInPixels, height: map.heightInPixels }, true);
-    rt.fill(0x000000, 1);
-    rt.setTint(0x0a2948);
-    rt.setDepth(DEPTH_MASK_LAYER);
 
     window.objectLayer = map.getObjectLayer('Objects');
     // Object layers in Tiled let you embed extra info into a map - like a spawn
@@ -177,8 +173,20 @@ class Game extends Phaser.Scene {
       add: false
     });
 
-    rt.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
-    rt.mask.invertAlpha = true
+    console.log('create texture');
+    this.mask = this.make.renderTexture({
+      x: this.player.x,
+      y: this.player.y,
+      width: 2 * this.scale.width,
+      height: 2 * this.scale.height,
+    }, true);
+    this.mask.fill(0x000000, 1);
+    this.mask.setTint(0x0a2948);
+    this.mask.setDepth(DEPTH_MASK_LAYER);
+    this.mask.setOrigin(0.5);
+
+    this.mask.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
+    this.mask.mask.invertAlpha = true
 
     // Watch the player and worldLayer for collisions, for the duration of the
     // scene:
@@ -236,8 +244,6 @@ class Game extends Phaser.Scene {
     const camera = this.cameras.main;
     camera.startFollow(this.player);
     camera.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-    // cursors = this.input.keyboard.createCursorKeys();
 
     const cursorKeys = [
       Phaser.Input.Keyboard.KeyCodes.LEFT,
@@ -342,13 +348,13 @@ class Game extends Phaser.Scene {
     var center_x = $("#joystick").position().left + $("#joystick").width()/2;
     var center_y = $("#joystick").position().top + $("#joystick").height()/2;
 
-    function initjoystick() {
+    function initJoystick() {
       center_x = $("#joystick").position().left + $("#joystick").width()/2;
       center_y = $("#joystick").position().top + $("#joystick").height()/2;
       limit = $("#joystick").width()/2;
     }
     $(window).on('resize', function(){
-      initjoystick();
+      initJoystick();
     });
 
     var tap = false;
@@ -410,9 +416,11 @@ class Game extends Phaser.Scene {
   }
 
   update(time, delta) {
-    if (this.vision) {
+    if (this.vision && this.mask) {
       this.vision.x = this.player.x;
       this.vision.y = this.player.y;
+      this.mask.x = this.player.x;
+      this.mask.y = this.player.y;
     }
 
     // let's check if we triggered any dialogs
@@ -521,7 +529,7 @@ export function CreateGame({
         gravity: { y: 0 }
       }
     },
-    scene: [Background, Game],
+    scene: [IntroScene, GameScene],
     callbacks: {
       postBoot: postBoot,
     },
