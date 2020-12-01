@@ -352,12 +352,12 @@ class GameScene extends Phaser.Scene {
     const stick = $("#joystick .touch-stick");
     var limit = $("#joystick").width()/2;
     var dead = 0.3;
-    var center_x = $("#joystick").position().left + $("#joystick").width()/2;
-    var center_y = $("#joystick").position().top + $("#joystick").height()/2;
+    var centerX = $("#joystick").position().left + $("#joystick").width()/2;
+    var centerY = $("#joystick").position().top + $("#joystick").height()/2;
 
     function initJoystick() {
-      center_x = $("#joystick").position().left + $("#joystick").width()/2;
-      center_y = $("#joystick").position().top + $("#joystick").height()/2;
+      centerX = $("#joystick").position().left + $("#joystick").width()/2;
+      centerY = $("#joystick").position().top + $("#joystick").height()/2;
       limit = $("#joystick").width()/2;
     }
     $(window).on('resize', function(){
@@ -365,7 +365,7 @@ class GameScene extends Phaser.Scene {
     });
 
     let tap = false;
-    $("#joystick").on('touchmove','.touch-stick', (e) => {
+    $("#joystick").on('touchmove', (e) => {
       e.preventDefault();
       tap = false;
 
@@ -378,11 +378,11 @@ class GameScene extends Phaser.Scene {
       }
 
       const touch = e.originalEvent.targetTouches[0];
-      let deltaX = (touch.pageX - center_x) / limit;
-      let deltaY = (touch.pageY - center_y) / limit;
+      let deltaX = (touch.pageX - centerX) / limit;
+      let deltaY = (touch.pageY - centerY) / limit;
       deltaX = Math.min(Math.max(deltaX, -1), 1);
       deltaY = Math.min(Math.max(deltaY, -1), 1);
-      $(this).css({"left": `${deltaX*50 + 50}%`, "top": `${deltaY*50 + 50}%`});
+      stick.css({"left": `${deltaX*50 + 50}%`, "top": `${deltaY*50 + 50}%`});
 
       if(Math.abs(deltaX) < dead) {
         deltaX = 0;
