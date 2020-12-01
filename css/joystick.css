@@ -50,12 +50,3 @@ body {
   border-radius: 50%;
   background-color: #FFF;
 }
-
-@media (orientation: landscape) {
-  #joystick {
-    height: 30vh;
-    width: 30vh;
-    left: 10vh;
-    bottom: 10vh;
-  }
-}
