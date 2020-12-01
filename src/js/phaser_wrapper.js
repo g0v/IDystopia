@@ -175,24 +175,33 @@ class GameScene extends Phaser.Scene {
     this.vision.setScale(1.5);
 
     console.log('create texture');
-    this.mask = this.make.renderTexture({
-      x: this.player.x,
-      y: this.player.y,
-      width: 2 * this.scale.width,
-      height: 2 * this.scale.height,
-    }, true);
-    this.mask.fill(0x000000, 1);
-    this.mask.setTint(0x0a2948);
-    this.mask.setDepth(DEPTH_MASK_LAYER);
-    this.mask.setOrigin(0.5);
+    const makeMask = () => {
+      if (this.mask) {
+        if (this.mask.mask) {
+          this.mask.mask.destroy();
+        }
+        this.mask.destroy();
+      }
 
-    this.mask.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
-    this.mask.mask.invertAlpha = true
+      this.mask = this.make.renderTexture({
+        x: this.player.x,
+        y: this.player.y,
+        width: 2 * this.scale.width,
+        height: 2 * this.scale.height,
+      }, true);
+      this.mask.fill(0x000000, 1);
+      this.mask.setTint(0x0a2948);
+      this.mask.setDepth(DEPTH_MASK_LAYER);
+      this.mask.setOrigin(0.5);
 
+      this.mask.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
+      this.mask.mask.invertAlpha = true
+    };
+
+    makeMask();
     this.scale.on('resize', () => {
       console.log('resize', this.scale.width, this.scale.height);
-      this.mask.resize(2 * this.scale.width, 2 * this.scale.height);
-      this.mask.fill(0x000000, 1);
+      makeMask();
     });
 
     // Watch the player and worldLayer for collisions, for the duration of the
