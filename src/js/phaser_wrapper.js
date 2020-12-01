@@ -172,6 +172,7 @@ class GameScene extends Phaser.Scene {
       key: 'vision',
       add: false
     });
+    this.vision.setScale(1.5);
 
     console.log('create texture');
     this.mask = this.make.renderTexture({
@@ -187,6 +188,12 @@ class GameScene extends Phaser.Scene {
 
     this.mask.mask = new Phaser.Display.Masks.BitmapMask(this, this.vision)
     this.mask.mask.invertAlpha = true
+
+    this.scale.on('resize', () => {
+      console.log('resize', this.scale.width, this.scale.height);
+      this.mask.resize(2 * this.scale.width, 2 * this.scale.height);
+      this.mask.fill(0x000000, 1);
+    });
 
     // Watch the player and worldLayer for collisions, for the duration of the
     // scene:
@@ -537,6 +544,11 @@ export function CreateGame({
       arcade: {
         gravity: { y: 0 }
       }
+    },
+    scale: {
+      mode: Phaser.Scale.RESIZE,
+      width: '100%',
+      height: '100%',
     },
     scene: [IntroScene, GameScene],
     callbacks: {
