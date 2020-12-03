@@ -3,6 +3,11 @@ import * as StoryLine from './story_line.js';
 import * as DataStore from './data_store.js';
 import * as PhaserWrapper from './phaser_wrapper.js';
 
+bootbox.setDefaults({
+  closeButton: false,
+});
+
+
 export class Char {
   constructor(scene, id, name, x, y, texture, frame) {
     this.scene = scene;
@@ -432,6 +437,12 @@ export class DialogDaemon {
         onEscape: false,
         backdrop: true,
         inputOptions: inputOptions,
+        buttons: {
+          cancel: {
+            label: 'Cancel',
+            className: 'dialog-prompt-cancel',
+          }
+        },
         callback: result => {
           if (result === null) {
             return false;
@@ -453,6 +464,12 @@ export class DialogDaemon {
         inputType: 'text',
         onEscape: false,
         backdrop: true,
+        buttons: {
+          cancel: {
+            label: 'Cancel',
+            className: 'dialog-prompt-cancel',
+          }
+        },
         callback: result => {
           if (!result) {
             return false;
