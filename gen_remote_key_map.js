@@ -3,7 +3,7 @@ import fs from 'fs';
 import * as StoryLine from './src/js/story_line.js';
 import {KEY_MAP, REV_KEY_MAP} from './src/js/remote_key_map.js';
 
-const STORY_FILE = 'static/story-lines/regular.json';
+const STORY_FILE = 'static/story-lines/This_biography.json';
 
 const content = fs.readFileSync(STORY_FILE);
 
