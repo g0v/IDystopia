@@ -53,7 +53,7 @@
                             "line":"幾歲呢？"
                         },
                         {
-                            "type":"input.age",
+                            "type":"input.text",
                             "question":"今年剛滿",
                             "storeKey":"player_age"
                         },
