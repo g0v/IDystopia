@@ -41,7 +41,7 @@ const npcList = {
 };
 PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
-  storylineJSON: 'regular.json',
+  storylineJSON: 'This-biography.json',
   npcList});
 
 $( '#mission-panel' ).click( () => {

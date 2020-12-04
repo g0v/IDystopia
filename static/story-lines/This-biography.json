@@ -10,7 +10,7 @@
                     "dialag":[
                         {
                             "type":"message",
-                            "message":""
+                            "message":"xyz"
                         },
                         {
                             "name":"$player",
@@ -36,6 +36,8 @@
             "tiele":"跟醫生談話",
             "description":"",
             "npcId":"doctor-npc",
+            "steps":{
+                "step-1":{
             "dialog":[
                 {
                     "name":"醫生",
@@ -72,6 +74,7 @@
                     "line":"現在是2020年"
                 }
             ]
+}}
         }
     }
 }
