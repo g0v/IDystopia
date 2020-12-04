@@ -37,7 +37,12 @@ const npcList = {
     name: '家用機器人',
     texture: 'atlas',
     frame: 'misa-right'
-  }
+  },
+  'doctor-npc': {
+    name: '醫生',
+    texture: 'atlas',
+    frame: 'misa-right'
+  },
 };
 PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',

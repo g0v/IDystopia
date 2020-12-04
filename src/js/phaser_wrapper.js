@@ -161,6 +161,17 @@ class GameScene extends Phaser.Scene {
       }
     }
 
+    StoryLine.loadStoryLine(storylineJSON).then(
+      (storyLine) => {
+        this.storyLineDaemon = Hero.storyLineDaemon;
+        this.storyLineDaemon.init(storyLine);
+      }
+    );
+
+    DataStore.AnswerStore.listen('player_name', () => {
+      char.name = DataStore.AnswerStore.get('player_name');
+    });
+
     const home = mapObjects['HOME'];
     char = this.charDaemon.create(
       'player', '???', home.x, home.y, 'atlas', 'misa-front');

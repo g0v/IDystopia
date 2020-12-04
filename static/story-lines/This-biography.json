@@ -3,14 +3,14 @@
         "intro+start": {
             "title":"start-1",
             "description":"....",
-            "steps":{
-                "step-1":{
+            "steps": {
+                "step-1": {
                     "title":"遊戲玩法",
                     "description":"...",
-                    "dialag":[
+                    "dialog": [
                         {
                             "type":"message",
-                            "message":"xyz"
+                            "message":"玩法教學"
                         },
                         {
                             "name":"$player",
@@ -35,46 +35,47 @@
         "doctor-enters-ward":{
             "tiele":"跟醫生談話",
             "description":"",
-            "npcId":"doctor-npc",
-            "steps":{
-                "step-1":{
-            "dialog":[
-                {
-                    "name":"醫生",
-                    "line":"您好！我是你的主治醫師 你叫什麼名字呢？"
-                },
-                {
-                    "type":"input.text",
-                    "question":"我的名字叫",
-                    "storeKey":"player_name"
-                },
-                {
-                    "name":"醫生",
-                    "line":"幾歲呢？"
-                },
-                {
-                    "type":"input.age",
-                    "question":"今年剛滿",
-                    "storeKey":"player_age"
-                },
-                {
-                    "name":"醫生",
-                    "line":"你記得自己的基因等級嗎？"
-                },
-                {
-                    "name":"$player",
-                    "line":"基因等級？那是什麼？"
-                },
-                {
-                    "name":"醫生",
-                    "line":"那你記得現在是哪一年嗎？"
-                },
-                {
-                    "name":"$player",
-                    "line":"現在是2020年"
+            "steps": {
+                "step-1": {
+                    "npcId": "doctor-npc",
+                    "dialog":[
+                        {
+                            "name":"醫生",
+                            "line":"您好！我是你的主治醫師 你叫什麼名字呢？"
+                        },
+                        {
+                            "type":"input.text",
+                            "question":"我的名字叫",
+                            "storeKey":"player_name"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"幾歲呢？"
+                        },
+                        {
+                            "type":"input.age",
+                            "question":"今年剛滿",
+                            "storeKey":"player_age"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"你記得自己的基因等級嗎？"
+                        },
+                        {
+                            "name":"$player",
+                            "line":"基因等級？那是什麼？"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"那你記得現在是哪一年嗎？"
+                        },
+                        {
+                            "name":"$player",
+                            "line":"現在是2020年"
+                        }
+                    ]
                 }
-            ]
-}}
+            }
         }
     }
 }

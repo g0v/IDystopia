@@ -585,6 +585,7 @@ export class DialogDaemon {
       });
     } else {
       const iterator = dialog.getIterator();
+      console.info(iterator);
       this.showDialog(iterator);
     }
   }
@@ -595,6 +596,7 @@ export class DialogDaemon {
     for (const idx in this.dialogToTrigger) {
       const {dialogId} = this.dialogToTrigger[idx];
       this.dialogToTrigger.shift();
+      console.info(`will trigger ${dialogId}`);
       return dialogId;
     }
 
@@ -651,7 +653,7 @@ export class DialogDaemon {
         return;
       }
     } else {
-      console.warn(`adding ${dialogId} to dialogToTrigger`);
+      console.info(`adding ${dialogId} to dialogToTrigger`);
       // trigger this in next frame
       this.dialogToTrigger.push({
         dialogId,

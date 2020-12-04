@@ -399,6 +399,7 @@ export function loadStoryLineFromObject(obj) {
   const missions = obj['missions'];
   const loadedMissions = {};
   if (!missions) {
+    console.info('no mission defined');
     return loadedMissions;
   }
 
