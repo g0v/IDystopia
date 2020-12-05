@@ -1,32 +1,32 @@
 {
-    "mission": {
+    "missions": {
         "intro+start": {
             "title":"start-1",
             "description":"....",
-            "steps":{
-                "step-1":{
+            "steps": {
+                "step-1": {
                     "title":"遊戲玩法",
                     "description":"...",
-                    "dialag":[
+                    "dialog": [
                         {
-                            "type":"message",
-                            "message":""
+                            "name": "玩法教學",
+                            "line": "電腦版：用方向鍵移動，按 ENTER 觸發對話<br>手機版：用螢幕上的搖桿移動，點擊搖桿觸發對話"
                         },
                         {
                             "name":"$player",
-                            "Line":"這裡是...醫院？"
+                            "line":"這裡是...醫院？"
                         },
                         {
                             "name":"護士",
-                            "Line":"醒來了嗎？您現在感覺如何"
+                            "line":"醒來了嗎？您現在感覺如何"
                         },
                         {
                             "name":"$player",
-                            "Line":"我怎麼會在這裡...你是誰？"
+                            "line":"我怎麼會在這裡...你是誰？"
                         },
                         {
                             "name":"護士",
-                            "Line":"你因為...已經昏迷好幾天了,你先休息一下,等等醫生就會來了"
+                            "line":"你因為在路邊昏倒,已經昏迷好幾天了,你先休息一下,等等醫生就會來了"
                         }
                     ]
                 }
@@ -35,43 +35,75 @@
         "doctor-enters-ward":{
             "tiele":"跟醫生談話",
             "description":"",
-            "npcId":"doctor-npc",
-            "dialog":[
-                {
-                    "name":"醫生",
-                    "Line":"您好！我是你的主治醫師 你叫什麼名字呢？"
-                },
-                {
-                    "type":"input.text",
-                    "question":"我的名字叫",
-                    "storeKey":"player_name"
-                },
-                {
-                    "name":"醫生",
-                    "Line":"幾歲呢？"
-                },
-                {
-                    "type":"input.age",
-                    "question":"今年剛滿",
-                    "storeKey":"player_age"
-                },
-                {
-                    "name":"醫生",
-                    "Line":"你記得自己的基因等級嗎？"
-                },
-                {
-                    "name":"$player",
-                    "Line":"基因等級？那是什麼？"
-                },
-                {
-                    "name":"醫生",
-                    "Line":"那你記得現在是哪一年嗎？"
-                },
-                {
-                    "name":"$player",
-                    "Line":"現在是2020年"
+            "steps": {
+                "step-1": {
+                    "npcId": "doctor-npc",
+                    "dialog":[
+                        {
+                            "name":"醫生",
+                            "line":"您好！我是你的主治醫師 你叫什麼名字呢？"
+                        },
+                        {
+                            "name": "$player",
+                            "type":"input.text",
+                            "question":"我的名字叫",
+                            "storeKey":"player_name"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是你的基因等級"
+                        },
+                        {
+                            "name":"$player",
+                            "line":"基因等級...那是什麼？"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"基因等級是政府依照人民的健康檢測基因的部分作為判斷的標準 分成A,B,C,D 4個等級,A級代表比較有潛力可以拿到比較多資源甚至被特別栽培,D級代表沒有潛力不被重視有些資源也得不到"
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"你現在幾歲呢？"
+                        },
+                        {
+                            "name":"$player",
+                            "type":"input.select",
+                            "question":"好像是...",
+                            "storeKey":"player_occupation",
+                            "choices":[
+                                {
+                                    "text":"15~24",
+                                    "value":"15~24"
+                                },{
+                                    "text":"25~44歲",
+                                    "value":"25~44"
+                                },{
+                                    "text":"45~64歲",
+                                    "value":"45~54"
+                                },{
+                                    "text":"65以上",
+                                    "value":"65UP"
+                                }
+                            ]
+                        },
+                        {
+                            "name":"醫生",
+                            "line":""
+                        },
+                        {
+
+                        },
+                        {
+                            "name":"醫生",
+                            "line":"那你記得現在是哪一年嗎？"
+                        },
+                        {
+                            "name":"$player",
+                            "line":"現在是2020年"
+                        }
+                    ]
                 }
-            ]
+            }
         }
     }
 }
