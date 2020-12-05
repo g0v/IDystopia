@@ -5,12 +5,12 @@ const npcList = {
   'speaker-npc': {
     name: '演講者',
     texture: 'atlas',
-    frame: 'misa-down',
+    frame: 'misa-front',
   },
   'shop-clerk-npc': {
     name: '店員',
     texture: 'atlas',
-    frame: 'misa-down',
+    frame: 'misa-front',
   },
   'classmate-npc': {
     name: '同學',
