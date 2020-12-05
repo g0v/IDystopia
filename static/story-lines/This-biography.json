@@ -67,9 +67,9 @@
                         },
                         {
                             "name":"$player",
-                            "type":"input-age.select",
+                            "type":"input.select",
                             "question":"好像是...",
-                            "storeKey":"player_occupation",
+                            "storeKey":"player_age",
                             "choices":[
                                 {
                                     "text":"15~24",
