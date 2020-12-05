@@ -70,16 +70,16 @@
                             "storeKey":"player_occupation",
                             "choices":[
                                 {
-                                    "text":"10",
+                                    "text":"10歲",
                                     "value":"10歲"
                                 },{
-                                    "text":"11",
+                                    "text":"11歲",
                                     "value":"11歲"
                                 },{
-                                    "text":"12",
+                                    "text":"12歲",
                                     "value":"12歲"
                                 },{
-                                    "text":"13",
+                                    "text":"13歲",
                                     "value":"13歲"
                                 },{
                                     "text":"14",
@@ -131,6 +131,36 @@
                                     "value":"29歲"
                                 },{
                                     "text":"30",
+                                    "value":"30歲"
+                                },{
+                                    "text":"31",
+                                    "value":"31歲"
+                                },{
+                                    "text":"32",
+                                    "value":"32歲"
+                                },{
+                                    "text":"33",
+                                    "value":"33歲"
+                                },{
+                                    "text":"34",
+                                    "value":"34歲"
+                                },{
+                                    "text":"35",
+                                    "value":"35歲"
+                                },{
+                                    "text":"36",
+                                    "value":"36歲"
+                                },{
+                                    "text":"37",
+                                    "value":"37歲"
+                                },{
+                                    "text":"38",
+                                    "value":"38歲"
+                                },{
+                                    "text":"39",
+                                    "value":"30歲"
+                                },{
+                                    "text":"40",
                                     "value":"30歲"
                                 }
                             ]
