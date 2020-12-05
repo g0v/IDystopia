@@ -65,7 +65,7 @@
                             "line":"你現在幾歲呢？"
                         },
                         {
-                            "type":"input-age.select",
+                            "type":"input.select",
                             "question":"今年剛滿",
                             "storeKey":"player_occupation",
                             "choices":[
