@@ -9,8 +9,8 @@
                     "description":"...",
                     "dialog": [
                         {
-                            "type":"message",
-                            "message":"玩法教學"
+                            "name": "玩法教學",
+                            "line": "電腦版：用方向鍵移動，按 ENTER 觸發對話<br>手機版：用螢幕上的搖桿移動，點擊搖桿觸發對話"
                         },
                         {
                             "name":"$player",
@@ -44,6 +44,7 @@
                             "line":"您好！我是你的主治醫師 你叫什麼名字呢？"
                         },
                         {
+                            "name": "$player",
                             "type":"input.text",
                             "question":"我的名字叫",
                             "storeKey":"player_name"
@@ -65,6 +66,7 @@
                             "line":"你現在幾歲呢？"
                         },
                         {
+                            "name":"$player",
                             "type":"input.select",
                             "question":"今年剛滿",
                             "storeKey":"player_occupation",
