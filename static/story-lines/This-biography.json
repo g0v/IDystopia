@@ -70,67 +70,67 @@
                             "storeKey":"player_occupation",
                             "choices":[
                                 {
-                                    "test":"10",
+                                    "text":"10",
                                     "value":"10歲"
                                 },{
-                                    "test":"11",
+                                    "text":"11",
                                     "value":"11歲"
                                 },{
-                                    "test":"12",
+                                    "text":"12",
                                     "value":"12歲"
                                 },{
-                                    "test":"13",
+                                    "text":"13",
                                     "value":"13歲"
                                 },{
-                                    "test":"14",
+                                    "text":"14",
                                     "value":"14歲"
                                 },{
-                                    "test":"15",
+                                    "text":"15",
                                     "value":"15歲"
                                 },{
-                                    "test":"16",
+                                    "text":"16",
                                     "value":"16歲"
                                 },{
-                                    "test":"17",
+                                    "text":"17",
                                     "value":"17歲"
                                 },{
-                                    "test":"18",
+                                    "text":"18",
                                     "value":"18歲"
                                 },{
-                                    "test":"19",
+                                    "text":"19",
                                     "value":"19歲"
                                 },{
-                                    "test":"20",
+                                    "text":"20",
                                     "value":"20歲"
                                 },{
-                                    "test":"21",
+                                    "text":"21",
                                     "value":"21歲"
                                 },{
-                                    "test":"22",
+                                    "text":"22",
                                     "value":"22歲"
                                 },{
-                                    "test":"23",
+                                    "text":"23",
                                     "value":"23歲"
                                 },{
-                                    "test":"24",
+                                    "text":"24",
                                     "value":"24歲"
                                 },{
-                                    "test":"25",
+                                    "text":"25",
                                     "value":"25歲"
                                 },{
-                                    "test":"26",
+                                    "text":"26",
                                     "value":"26歲"
                                 },{
-                                    "test":"27",
+                                    "text":"27",
                                     "value":"27歲"
                                 },{
-                                    "test":"28",
+                                    "text":"28",
                                     "value":"28歲"
                                 },{
-                                    "test":"29",
+                                    "text":"29",
                                     "value":"29歲"
                                 },{
-                                    "test":"30",
+                                    "text":"30",
                                     "value":"30歲"
                                 }
                             ]
