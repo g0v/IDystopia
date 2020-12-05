@@ -67,7 +67,7 @@
                         },
                         {
                             "name":"$player",
-                            "type":"input.select",
+                            "type":"input-age.select",
                             "question":"好像是...",
                             "storeKey":"player_occupation",
                             "choices":[
