@@ -6,7 +6,7 @@
  <properties>
   <property name="edges" value="clamped"/>
  </properties>
- <tileset firstgid="1" name="world" tilewidth="32" tileheight="32" spacing="2" margin="1" tilecount="4320" columns="67">
+ <tileset firstgid="1" name="world" tilewidth="32" tileheight="32" spacing="2" margin="1" tilecount="2010" columns="67">
   <grid orientation="orthogonal" width="16" height="16"/>
   <image source="../tiles/world.png" width="2304" height="1020"/>
   <terraintypes>
@@ -3643,7 +3643,7 @@
   <object id="275" name="HOME" x="240.249" y="1975.05">
    <point/>
   </object>
-  <object id="277" name="SHOP" x="690.62" y="2003.02">
+  <object id="277" name="doctor-npc" x="690.62" y="2003.02">
    <point/>
   </object>
   <object id="278" name="SCHOOL-ENTRY" x="542.667" y="1776">
