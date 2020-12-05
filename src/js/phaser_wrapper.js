@@ -99,7 +99,7 @@ class GameScene extends Phaser.Scene {
     this.load.image("tiles", "tiles/world.png");
     this.load.image("vision", "symbols/mask.png");
     this.load.audio('hospital', 'audio/hospital.mp3');
-    this.load.tilemapTiledJSON("map", tilemapTiledJSON);
+    this.load.tilemapTiledJSON("map", `${tilemapTiledJSON}?v=202012051335`);
     // An atlas is a way to pack multiple images together into one texture. I'm
     // using it to load all the player animations (walking left, walking right,
     // etc.) in one image. For more info see:
