@@ -69,7 +69,7 @@
                             "name":"$player",
                             "type":"input.select",
                             "question":"好像是...",
-                            "storeKey":"player_occupation",
+                            "storeKey":"player_age",
                             "choices":[
                                 {
                                     "text":"15~24",
@@ -94,7 +94,7 @@
                 "depend":[
                     [
                         {
-                            "storeKey":"player_occupation",
+                            "storeKey":"player_age",
                             "value":"15~24"
                         },
                         {
@@ -110,7 +110,7 @@
                         "nextStep":"step-2",
                         "dialog":[
                             {
-                                 "name":"醫生",
+                                "name":"醫生",
                                 "line":"那你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是最近發生的事情"
                             },
                             {
