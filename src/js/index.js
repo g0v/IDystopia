@@ -44,11 +44,24 @@ const npcList = {
     frame: 'misa-right'
   },
 };
-PhaserWrapper.CreateGame({
+
+const game = PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
   storylineJSON: 'This-biography.json',
   npcList});
 
-$( '#mission-panel' ).click( () => {
+window.game = game;
+
+$( '#button-sound' ).click(() => {
+  let newMute = !game.sound.mute;
+  game.sound.setMute(newMute);
+
+  if (newMute) {
+    $('#button-sound').text('🔇');
+  } else {
+    $('#button-sound').text('🔊');
+  }
+});
+$( '#button-show-mission' ).click( () => {
   Hero.dialogDaemon.showHint();
 });
