@@ -180,7 +180,8 @@ export class RemotePlayer extends Char {
   constructor(scene, id, name, x, y, texture, frame) {
     super(scene, id, name, x, y, texture, frame);
 
-    this.dest = {};
+    // we don't want to be moved to (0, 0) on the next frame.
+    this.dest = { x, y };
   }
 
   setProperty(key, value) {

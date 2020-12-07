@@ -111,6 +111,29 @@ class GameScene extends Phaser.Scene {
 
   }
 
+  onDoneCreate() {
+    const {storylineJSON} = config;
+    const {gameSceneConfig} = config;
+    const {postBootCallback} = gameSceneConfig;
+
+    DataStore.AnswerStore.clearAll();
+
+    StoryLine.loadStoryLine(storylineJSON).then(
+      (storyLine) => {
+        this.storyLineDaemon = Hero.storyLineDaemon;
+        this.storyLineDaemon.init(storyLine);
+      }
+    );
+
+    DataStore.AnswerStore.listen('player_name', () => {
+      char.name = DataStore.AnswerStore.get('player_name');
+    });
+
+    if (postBootCallback) {
+      postBootCallback();
+    }
+  }
+
   create() {
     this.hospitalBackgroundMusic = this.sound.add('hospital', {
       loop: true,
@@ -125,7 +148,7 @@ class GameScene extends Phaser.Scene {
     }
 
     console.log('Create Game scene');
-    const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
+    const {npcList} = config;
     const map = this.make.tilemap({ key: "map" });
 
     // Parameters are the name you gave the tileset in Tiled and then the key of
@@ -173,17 +196,6 @@ class GameScene extends Phaser.Scene {
         }
       }
     }
-
-    StoryLine.loadStoryLine(storylineJSON).then(
-      (storyLine) => {
-        this.storyLineDaemon = Hero.storyLineDaemon;
-        this.storyLineDaemon.init(storyLine);
-      }
-    );
-
-    DataStore.AnswerStore.listen('player_name', () => {
-      char.name = DataStore.AnswerStore.get('player_name');
-    });
 
     const home = mapObjects['HOME'];
     char = this.charDaemon.create(
@@ -462,6 +474,8 @@ class GameScene extends Phaser.Scene {
         }
       }
     });
+
+    this.onDoneCreate();
   }
 
   update(time, delta) {
@@ -547,26 +561,6 @@ class GameScene extends Phaser.Scene {
 export function CreateGame({
     tilemapTiledJSON, storylineJSON, connection, npcList,
     postBootCallback}) {
-  const postBoot = () => {
-    // TODO(stimim): properly load game status
-    DataStore.AnswerStore.clearAll();
-
-    StoryLine.loadStoryLine(storylineJSON).then(
-      (storyLine) => {
-        this.storyLineDaemon = Hero.storyLineDaemon;
-        this.storyLineDaemon.init(storyLine);
-      }
-    );
-
-    DataStore.AnswerStore.listen('player_name', () => {
-      char.name = DataStore.AnswerStore.get('player_name');
-    });
-
-    if (postBootCallback) {
-      postBootCallback();
-    }
-  };
-
   config = {
     type: Phaser.AUTO,
     width: WINDOW_WIDTH,
@@ -584,8 +578,8 @@ export function CreateGame({
       height: '100%',
     },
     scene: [IntroScene, GameScene],
-    callbacks: {
-      postBoot: postBoot,
+    gameSceneConfig: {
+      postBootCallback
     },
     tilemapTiledJSON,
     storylineJSON,

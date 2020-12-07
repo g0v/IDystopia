@@ -119,7 +119,7 @@ export class JitsiConnection {
       return this.room;
     }
     const confOptions = {
-      openBridgeChannel: true,
+      openBridgeChannel: 'websocket',
       confID: `jitsi.jothon.online/${roomId}`,
     };
 
@@ -187,13 +187,16 @@ export class JitsiConnection {
       console.log('load user: ', id, user);
 
       const char = Hero.charDaemon.getChar(id);
-      if (char) continue;
+      if (char) {
+        console.log(`user ${id} already created, skip`);
+        continue;
+      }
 
       Hero.charDaemon.createRemotePlayer(
         id,
         user.getDisplayName(),
-        parseInt(user.getProperty('left')),
-        parseInt(user.getProperty('top')),
+        Number(user.getProperty('left')),
+        Number(user.getProperty('top')),
         user.getProperty('texture'),
         user.getProperty('frame'),
       );
@@ -290,8 +293,8 @@ export class JitsiConnection {
           if (!char) {
             return;
           }
-          const x = parseInt(property.left);
-          const y = parseInt(property.top);
+          const x = Number(property.left);
+          const y = Number(property.top);
           if (!Number.isNaN(x) && !Number.isNaN(y)) {
             char.setProperty('x', x);
             char.setProperty('y', y);
