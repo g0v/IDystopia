@@ -85,12 +85,51 @@
                                     "value":"65UP"
                                 }
                             ]
+                        }
+
+                    ]
+                }
+            },
+            "15~24":{
+                "depend":[
+                    [
+                        {
+                            "storeKey":"player_age",
+                            "value":"15~24"
                         },
                         {
-                            "name":"醫生",
-                            "line":"那你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是最近發生的事情"
+                            "stopeKey":"intro/step-1/done",
+                            "value":"true"
                         }
                     ]
+                ],
+                "title":"15~24",
+                "description":"",
+                "steps":{
+                    "step-1":{
+                        "nextStep":"step-2",
+                        "dialog":[
+                            {
+                                "name":"醫生",
+                                "line":"那你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是最近發生的事情"
+                            },
+                            {
+                                "name":"$player",
+                                "type":"input.select",
+                                "question":"最近...",
+                                "storeKey":"player_occupation",
+                                "choices":[
+                                    {
+                                        "text":"我記得最近有一波疫情已經快持續一年了",
+                                        "value":"疫情"
+                                    },
+                                    {
+                                        "text":""
+                                    }
+                                ]
+                            }
+                        ]
+                    }
                 }
             }
         }
