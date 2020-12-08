@@ -158,10 +158,11 @@
         "last": {
           "title": "On the street",
           "description": "...",
+          "npcId": "doctor-npc",
           "dialog": [
             {
-              "type": "message",
-              "message": "機器人呢？"
+              "name": "XX",
+              "line": "機器人呢？"
             }
           ]
         }
@@ -187,6 +188,7 @@
         "last": {
           "title": "Wistoria",
           "description": "...",
+          "npcId": "shop-clerk-npc",
           "dialog": [
             {
               "name": "$player",
@@ -207,6 +209,7 @@
           "moveTo": "MY-ROOM",
           "title": "Home",
           "description": "...",
+          "npcId": "home-robot-npc",
           "dialog": [
             {
               "name": "$player",

@@ -1,85 +1,85 @@
----
 missions:
   intro+start:
     title: start-1
-    description: "...."
+    description: ....
     steps:
       step-1:
         title: 遊戲玩法
-        description: "..."
+        description: ...
         dialog:
-        - name: 玩法教學
-          line: 電腦版：用方向鍵移動，按 ENTER 觸發對話<br>手機版：用螢幕上的搖桿移動，點擊搖桿觸發對話
-        - name: "$player"
-          line: 這裡是...醫院？
-        - name: 護士
-          line: 醒來了嗎？您現在感覺如何
-        - name: "$player"
-          line: 我怎麼會在這裡...你是誰？
-        - name: 護士
-          line: 你因為在路邊昏倒,已經昏迷好幾天了,你先休息一下,等等醫生就會來了
+          - name: 玩法教學
+            line: 電腦版：用方向鍵移動，按 ENTER 觸發對話<br>手機版：用螢幕上的搖桿移動，點擊搖桿觸發對話
+          - name: $player
+            line: 這裡是...醫院？
+          - name: 護士
+            line: 醒來了嗎？您現在感覺如何
+          - name: $player
+            line: 我怎麼會在這裡...你是誰？
+          - name: 護士
+            line: 你因為在路邊昏倒,已經昏迷好幾天了,你先休息一下,等等醫生就會來了
   doctor-enters-ward:
     title: 跟醫生談話
-    description: ''
+    description: ""
     steps:
       step-1:
         npcId: doctor-npc
         dialog:
-        - name: 醫生
-          line: 您好！我是你的主治醫師 你叫什麼名字呢？
-        - name: "$player"
-          type: input.text
-          question: 我的名字叫
-          storeKey: player_name
-        - name: 醫生
-          line: 你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是你的基因等級
-        - name: "$player"
-          line: 基因等級...那是什麼？
-        - name: 醫生
-          line: 基因等級是政府依照人民的健康檢測基因的部分作為判斷的標準 分成A,B,C,D 4個等級,A級代表比較有潛力可以拿到比較多資源甚至被特別栽培,D級代表沒有潛力不被重視有些資源也得不到
-        - name: 醫生
-          line: 你現在幾歲呢？
-        - name: "$player"
-          type: input.select
-          question: 好像是...
-          storeKey: player_age
-          choices:
-            - text: 15~24
-              value: 15~24
-            - text: 25~44歲
-              value: 25~44
-            - text: 45~64歲
-              value: 45~54
-            - text: 65以上
-              value: 65UP
-        - name: 醫生
-          line: OK...
+          - name: 醫生
+            line: 您好！我是你的主治醫師 你叫什麼名字呢？
+          - name: $player
+            type: input.text
+            question: 我的名字叫
+            storeKey: player_name
+          - name: 醫生
+            line: 你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是你的基因等級
+          - name: $player
+            line: 基因等級...那是什麼？
+          - name: 醫生
+            line: 基因等級是政府依照人民的健康檢測基因的部分作為判斷的標準 分成A,B,C,D
+              4個等級,A級代表比較有潛力可以拿到比較多資源甚至被特別栽培,D級代表沒有潛力不被重視有些資源也得不到
+          - name: 醫生
+            line: 你現在幾歲呢？
+          - name: $player
+            type: input.select
+            question: 好像是...
+            storeKey: player_age
+            choices:
+              - text: 15~24
+                value: 15~24
+              - text: 25~44歲
+                value: 25~44
+              - text: 45~64歲
+                value: 45~54
+              - text: 65以上
+                value: 65UP
+          - name: 醫生
+            line: OK...
   15~24:
     depend:
-    - - storeKey: player_ageXXX
-        value: 15~24
-      - storeKey: doctor-enters-ward/step-1/done
-        value: 'true'
+      - - storeKey: player_ageXXX
+          value: 15~24
+        - storeKey: doctor-enters-ward/step-1/done
+          value: "true"
     title: 15~24
-    description: ''
+    description: ""
     steps:
       step-1:
         dialog:
-        - name: 醫生
-          line: 那你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是最近發生的事情
-        - name: "$player"
-          type: input.select
-          question: 最近...
-          storeKey: player_occupation
-          choices:
-          - text: 我記得最近有一波疫情已經快持續一年了
-            value: 疫情
-          - text: ''
+          - name: 醫生
+            line: 那你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是最近發生的事情
+          - name: $player
+            type: input.select
+            question: 最近...
+            storeKey: player_occupation
+            choices:
+              - text: 我記得最近有一波疫情已經快持續一年了
+                value: 疫情
+              - text: ""
   street:
     depend:
       - doctor-enters-ward/step-1/done
-    title: "On the street"
-    description: "...."
+    title: On the street
+    description: ....
     firstStep: last
     steps:
       step-1:
@@ -88,40 +88,42 @@ missions:
           - type: message
             message: 機器人呢？
       last:
-        title: "On the street"
-        description: "..."
+        title: On the street
+        description: ...
+        npcId: doctor-npc
         dialog:
-          - type: message
-            message: 機器人呢？
-
+          - name: XX
+            line: 機器人呢？
   wistoria:
     depend:
-     - street/last/done
-    title: "Wistoria"
-    description: "...."
+      - street/last/done
+    title: Wistoria
+    description: ....
     steps:
       step-1:
         nextStep: last
         moveTo: SHOP-INSIDE
         dialog:
-        - name: "$player"
-          line: 這是哪？
+          - name: $player
+            line: 這是哪？
       last:
-        title: "Wistoria"
-        description: "..."
+        title: Wistoria
+        description: ...
+        npcId: shop-clerk-npc
         dialog:
-        - name: "$player"
-          line: oh這是哪？
+          - name: $player
+            line: oh這是哪？
   ending-vo:
     depend:
-     - wistoria/last/done
-    title: "back to home"
-    description: "...."
+      - wistoria/last/done
+    title: back to home
+    description: ....
     steps:
       step-1:
         moveTo: MY-ROOM
-        title: "Home"
-        description: "..."
+        title: Home
+        description: ...
+        npcId: home-robot-npc
         dialog:
-        - name: "$player"
-          line: 我是誰？我在哪裡？我在做什麼？
+          - name: $player
+            line: 我是誰？我在哪裡？我在做什麼？
