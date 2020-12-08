@@ -77,7 +77,8 @@ missions:
             choices:
               - text: 我記得最近有一波疫情已經快持續一年了
                 value: 疫情
-              - text: ""
+              - text: 因為疫情的關係所以數位身分證要改到明年換發
+                value: 數位身分證
   street:
     depend:
       - doctor-enters-ward/step-1/done
