@@ -44,17 +44,19 @@ missions:
           question: 好像是...
           storeKey: player_age
           choices:
-          - text: 15~24
-            value: 15~24
-          - text: 25~44歲
-            value: 25~44
-          - text: 45~64歲
-            value: 45~54
-          - text: 65以上
-            value: 65UP
+            - text: 15~24
+              value: 15~24
+            - text: 25~44歲
+              value: 25~44
+            - text: 45~64歲
+              value: 45~54
+            - text: 65以上
+              value: 65UP
+        - name: 醫生
+          line: OK...
   15~24:
     depend:
-    - - storeKey: player_age
+    - - storeKey: player_ageXXX
         value: 15~24
       - storeKey: doctor-enters-ward/step-1/done
         value: 'true'
@@ -75,11 +77,16 @@ missions:
           - text: ''
   street:
     depend:
-    - - storeKey: doctor-enters-ward/step-1/done
-        value: "true"
+      - doctor-enters-ward/step-1/done
     title: "On the street"
     description: "...."
+    firstStep: last
     steps:
+      step-1:
+        nextStep: last
+        dialog:
+          - type: message
+            message: 機器人呢？
       last:
         title: "On the street"
         description: "..."
@@ -89,25 +96,30 @@ missions:
 
   wistoria:
     depend:
-    - - storeKey: street/last/done
-        value: "true"
+     - street/last/done
     title: "Wistoria"
     description: "...."
     steps:
+      step-1:
+        nextStep: last
+        moveTo: SHOP-INSIDE
+        dialog:
+        - name: "$player"
+          line: 這是哪？
       last:
         title: "Wistoria"
         description: "..."
         dialog:
         - name: "$player"
-          line: 這是哪？
+          line: oh這是哪？
   ending-vo:
     depend:
-    - - storeKey: wistoria/last/done
-        value: "true"
+     - wistoria/last/done
     title: "back to home"
     description: "...."
     steps:
       step-1:
+        moveTo: MY-ROOM
         title: "Home"
         description: "..."
         dialog:
