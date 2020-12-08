@@ -509,6 +509,7 @@ export class DialogDaemon {
         onHidden: () => {
           // this function is called when user press "x" to close the dialog.
           console.log('on hidden');
+          this.showNextDialog(iterator);
         }
       });
       // We can use iframe.contentWindow.postMessage()" to send a message to
