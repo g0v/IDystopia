@@ -15,6 +15,7 @@
     "npm": ">=1.2.2"
   },
   "scripts": {
+    "story": "yaml-convert src/story.yaml -p >  ./static/story-lines/This-biography.json",
     "build": "node ./gen_remote_key_map.js && webpack --mode production --config ./webpack.config.cjs",
     "start": "webpack-dev-server --open --config ./webpack.config.cjs"
   },
@@ -26,6 +27,7 @@
     "eslint": "^7.10.0",
     "webpack": "^4.44.1",
     "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "webpack-dev-server": "^3.11.0",
+    "yaml-convert": "^1.0.0"
   }
 }
