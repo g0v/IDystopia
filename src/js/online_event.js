@@ -10,7 +10,7 @@ function initJitsi() {
   connection.init();
 }
 
-PhaserWrapper.CreateGame({
+const game = PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
   storylineJSON: 'online_event.json',
   connection,
@@ -35,6 +35,19 @@ $( '#control-panel' ).draggable({
   }
 });
 
+$( '#button-sound' ).click(() => {
+  const soundButton = $('#button-sound');
+  let newMute = !game.sound.mute;
+  game.sound.setMute(newMute);
+  // Move focus to other place, so next ENTER won't toggle mute state again.
+  soundButton.blur();
+
+  if (newMute) {
+    soundButton.text('🔇');
+  } else {
+    soundButton.text('🔊');
+  }
+});
 $( '#emoji-send' ).click(() => {
   const select = document.getElementById('emoji-select');
   connection.sendMessage(select.value);

@@ -53,13 +53,16 @@ const game = PhaserWrapper.CreateGame({
 window.game = game;
 
 $( '#button-sound' ).click(() => {
+  const soundButton = $('#button-sound');
   let newMute = !game.sound.mute;
   game.sound.setMute(newMute);
+  // Move focus to other place, so next ENTER won't toggle mute state again.
+  soundButton.blur();
 
   if (newMute) {
-    $('#button-sound').text('🔇');
+    soundButton.text('🔇');
   } else {
-    $('#button-sound').text('🔊');
+    soundButton.text('🔊');
   }
 });
 $( '#button-show-mission' ).click( () => {
