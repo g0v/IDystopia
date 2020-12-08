@@ -409,7 +409,7 @@ export class DialogDaemon {
     const me = this.charDaemon.getChar('player');
     const talker = item.name.replace(_RE_PLAYER, me.name);
 
-    console.log('iterator: ', iterator);
+    console.log('showing iterator: ', iterator);
     if (item instanceof StoryLine.DialogItemLine) {
       const content = item.line.replace(_RE_PLAYER, me.name);
       bootbox.alert({
@@ -523,6 +523,14 @@ export class DialogDaemon {
     DataStore.RemoteStore.increase(`MISSION/${recordKey}`);
   }
 
+  isDialogDonePreviously(iterator) {
+    const dialog = iterator.dialog;
+    const missionStep = dialog.missionStep;
+    const mission = missionStep.mission;
+    const key = `${mission.id}/${missionStep.id}/done`;
+    return (DataStore.AnswerStore.get(key) === "true");
+  }
+
   doneDialog(iterator) {
     this.hasOnGoingDialog = false;
     const dialog = iterator.dialog;
@@ -580,13 +588,18 @@ export class DialogDaemon {
     const {dialog} = tuple;
     this.hasOnGoingDialog = true;
 
+    const iterator = dialog.getIterator();
+    if (this.isDialogDonePreviously(iterator)) {
+      console.log('we have been here before');
+      this.doneDialog(iterator);
+      return;
+    }
+
     if (dialog.missionStep.moveTo) {
       this.moveTo(dialog.missionStep.moveTo, () => {
-        const iterator = dialog.getIterator();
         this.showDialog(iterator);
       });
     } else {
-      const iterator = dialog.getIterator();
       console.info(iterator);
       this.showDialog(iterator);
     }
