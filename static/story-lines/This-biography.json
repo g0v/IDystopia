@@ -101,7 +101,7 @@
       "depend": [
         [
           {
-            "storeKey": "player_ageXXX",
+            "storeKey": "player_age",
             "value": "15~24"
           },
           {
