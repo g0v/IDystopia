@@ -1,6 +1,7 @@
 :root {
   --bgcolor: #091833;
   --fgcolor: #0abdc6;
+  --purple: #ea00d9;
 }
 
 .modal-content {
@@ -11,7 +12,7 @@
 }
 
 .modal-header {
-  border-bottom: 1px solid #ea00d9;
+  border-bottom: 1px solid var(--purple);
 }
 
 .modal-body {
@@ -19,7 +20,7 @@
 }
 
 .modal-footer {
-  border-top: 1px solid #ea00d9;
+  border-top: 1px solid var(--purple);
 }
 
 .dialog-prompt-cancel {
@@ -33,4 +34,9 @@
   border: none;
 }
 
+.bootbox-close-button {
+  color: var(--purple);
+  opacity: 1;
+  text-shadow: none;
+}
 
