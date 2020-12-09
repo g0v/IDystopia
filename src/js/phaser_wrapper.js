@@ -550,6 +550,7 @@ class GameScene extends Phaser.Scene {
     if (config.connection) {
       config.connection.update(time, delta, char);
     }
+
     this.charDaemon.update(time, delta);
   }
 }

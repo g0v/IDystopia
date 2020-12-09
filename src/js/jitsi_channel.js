@@ -290,23 +290,17 @@ export class JitsiConnection {
           const property = payload.property;
           const id = participant.getId();
           const char = Hero.charDaemon.getChar(id);
-          if (!char) {
-            return;
-          }
+          if (!char) return;
+
           const x = Number(property.left);
           const y = Number(property.top);
-          if (!Number.isNaN(x) && !Number.isNaN(y)) {
-            char.setProperty('x', x);
-            char.setProperty('y', y);
+          if (Number.isNaN(x) === false && Number.isNaN(y) === false) {
+            char.x = x;
+            char.y = y;
           }
 
-          const texture = property.texture;
-          const frame = property.frame;
-          if (texture && frame &&
-            (frame !== char.frame || texture !== char.texture)) {
-            char.setProperty('texture', texture);
-            char.setProperty('frame', frame);
-          }
+          if (property.texture) char.texture = property.texture;
+          if (property.frame) char.frame = property.frame;
         }
       });
 
@@ -323,34 +317,34 @@ export class JitsiConnection {
     this.room.sendTextMessage(message);
   }
 
-  _broadcastLocalProperty(property) {
+  broadcastLocalProperty(property) {
     if (!this.room) return;
 
-    const now = (new Date()).getTime();
-    const minDelta = 200;  // ms
-    if (now - this._lastBroadcastLocalProperty <= minDelta) return;
-    this._lastBroadcastLocalProperty = now;
+    // const now = (new Date()).getTime();
+    // const minDelta = 200;  // ms
+    // if (now - this._lastBroadcastLocalProperty <= minDelta) return;
+    // this._lastBroadcastLocalProperty = now;
     try {
       this.room.broadcastEndpointMessage(
         {type: TYPE_PLAYER_PROPERTY, property: property});
     } catch (error) {
       // I don't care...
-      console.error('failed to broadcast new property', error);
+      // console.error('failed to broadcast new property', error);
     }
   }
 
   update(time, delta, char) {
-    this.setLocalParticipantProperty({
-      left: char.player.x,
-      top: char.player.y,
-      texture: char.player.texture.key,
-      frame: char.player.frame.name,
-    });
-    this._broadcastLocalProperty({
-       left: char.player.x,
-       top: char.player.y,
-       texture: char.player.texture.key,
-       frame: char.player.frame.name,
+    // this.setLocalParticipantProperty({
+    //   left: char.player.x,
+    //   top: char.player.y,
+    //   texture: char.player.texture.key,
+    //   frame: char.player.frame.name,
+    // });
+    this.broadcastLocalProperty({
+        left: char.player.x,
+        top: char.player.y,
+        texture: char.player.texture.key,
+        frame: char.player.frame.name,
     });
   }
 }

@@ -188,20 +188,20 @@ export class RemotePlayer extends Char {
     switch (key) {
       case 'texture':
         this.texture = value;
-        this.player.setTexture(value);
+        // this.player.setTexture(value);
         break;
       case 'frame':
-        this.frame = value;
-        this.player.setFrame(value);
+        // this.frame = value;
+        // this.player.setFrame(value);
         break;
       case 'name':
         this.name = value;
         break;
       case 'x':
-        if (this.x !== value) this.dest.x = value;
+        this.x = value;
         break;
       case 'y':
-        if (this.y !== value) this.dest.y = value;
+        this.y = value;
         break;
     }
   }
@@ -211,21 +211,11 @@ export class RemotePlayer extends Char {
     super.update(time, delta);
 
     // set it higher than local speed, since we need to catch up.
-    const speed = Const.SPEED * 1.2;
-    const dest = Math.hypot(
-      this.player.x - this.dest.x, this.player.y - this.dest.y);
-    const minGap = Math.max(Const.TILE_SIZE * 0.1, speed * 0.05);
-
     this.player.setVelocity(0);
-    if (dest < Const.TILE_SIZE * 5 && dest > minGap) {
-      this.player.setVelocityX((this.dest.x - this.x) * 2);
-      this.player.setVelocityY((this.dest.y - this.y) * 2);
-    } else {
-      this.player.setX(this.dest.x);
-      this.player.setY(this.dest.y);
-    }
-    this.x = this.player.x;
-    this.y = this.player.y;
+    this.player.setX(this.x);
+    this.player.setY(this.y);
+    this.player.setTexture(this.texture);
+    this.player.setFrame(this.frame);
   }
 }
 
@@ -291,10 +281,7 @@ export class CharDaemon {
   }
 
   getChar(id) {
-    if (id in this.chars) {
-      return this.chars[id];
-    }
-    return null;
+    return this.chars[id] || null;
   }
 
   update(time, delta) {
