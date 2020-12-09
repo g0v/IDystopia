@@ -295,12 +295,16 @@ export class JitsiConnection {
           const x = Number(property.left);
           const y = Number(property.top);
           if (Number.isNaN(x) === false && Number.isNaN(y) === false) {
-            char.x = x;
-            char.y = y;
+            const t = (new Date()).getTime() + 100;
+            char.setProperty('position', {x, y, t});
+            //char.x = x;
+            //char.y = y;
           }
 
-          if (property.texture) char.texture = property.texture;
-          if (property.frame) char.frame = property.frame;
+          char.setProperty(
+            'texture', {texture: property.texture, frame: property.frame});
+          //if (property.texture) char.texture = property.texture;
+          //if (property.frame) char.frame = property.frame;
         }
       });
 
@@ -320,10 +324,10 @@ export class JitsiConnection {
   broadcastLocalProperty(property) {
     if (!this.room) return;
 
-    // const now = (new Date()).getTime();
-    // const minDelta = 200;  // ms
-    // if (now - this._lastBroadcastLocalProperty <= minDelta) return;
-    // this._lastBroadcastLocalProperty = now;
+    const now = (new Date()).getTime();
+    const minDelta = 100;  // ms
+    if (now - this._lastBroadcastLocalProperty <= minDelta) return;
+    this._lastBroadcastLocalProperty = now;
     try {
       this.room.broadcastEndpointMessage(
         {type: TYPE_PLAYER_PROPERTY, property: property});

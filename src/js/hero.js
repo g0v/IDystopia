@@ -181,14 +181,18 @@ export class RemotePlayer extends Char {
     super(scene, id, name, x, y, texture, frame);
 
     // we don't want to be moved to (0, 0) on the next frame.
-    this.dest = { x, y };
+    this.ps = [ { x, y, t: 0}, {x, y, t: 0} ];
   }
 
   setProperty(key, value) {
     switch (key) {
       case 'texture':
-        this.texture = value;
-        // this.player.setTexture(value);
+        const {texture, frame} = value;
+        if (!this.texture) {
+          this.texture = texture;
+          this.frame = frame;
+          this.player.setTexture(texture);
+        }
         break;
       case 'frame':
         // this.frame = value;
@@ -197,12 +201,9 @@ export class RemotePlayer extends Char {
       case 'name':
         this.name = value;
         break;
-      case 'x':
-        this.x = value;
-        break;
-      case 'y':
-        this.y = value;
-        break;
+      case 'position':
+        // const {x, y, t} = value;
+        this.ps = [this.ps[1], value]
     }
   }
 
@@ -210,12 +211,40 @@ export class RemotePlayer extends Char {
     // delta ~= 16 (ms), roughly 60 FPS
     super.update(time, delta);
 
-    // set it higher than local speed, since we need to catch up.
-    this.player.setVelocity(0);
-    this.player.setX(this.x);
-    this.player.setY(this.y);
-    this.player.setTexture(this.texture);
-    this.player.setFrame(this.frame);
+    const now = (new Date()).getTime();
+
+    if (now > this.ps[1].t) {
+      return;
+    }
+
+    const dx = this.ps[1].x - this.ps[0].x;
+    const dy = this.ps[1].y - this.ps[0].y;
+    const dT = this.ps[1].t - this.ps[0].t;
+
+    if (dT <= 0) return;
+
+    const dt = now - this.ps[0].t;
+    this.player.setX(this.ps[0].x + dx / dT * dt);
+    this.player.setY(this.ps[0].y + dy / dT * dt);
+
+    const faceLR = Math.abs(dx) >= Math.abs(dy);
+    if (faceLR && dx < 0) {
+      this.player.anims.play("misa-left-walk", true);
+    } else if (faceLR && dx > 0) {
+      this.player.anims.play("misa-right-walk", true);
+    } else if (dy < 0) {
+      this.player.anims.play("misa-back-walk", true);
+    } else if (dy > 0) {
+      this.player.anims.play("misa-front-walk", true);
+    } else {
+      this.player.anims.stop();
+      const frameName = this.player.frame.name;
+      const idx = frameName.search('walk');
+      if (idx > 0) {
+        const newFrameName = frameName.substr(0, idx - 1);
+        this.player.setFrame(newFrameName);
+      }
+    }
   }
 }
 
