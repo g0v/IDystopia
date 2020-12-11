@@ -112,7 +112,7 @@
               "name": "$player",
               "type": "input.select",
               "question": "你還記得什麼事情嗎？例如你的興趣或是你的家人之類的,或是你的基因等級",
-              "storeKey": "player_question_1",
+              "storeKey": "player_question",
               "choices": [
                 {
                   "text": "最近...爆發了疫情，已經持續快一年了",
@@ -136,7 +136,7 @@
       "depend": [
         [
           {
-            "storeKey": "player_question_1",
+            "storeKey": "player_question",
             "value": "gene-level"
           },
           {
@@ -177,6 +177,10 @@
             {
               "name": "醫生",
               "line": "旁邊的護士就是(機器人頭上會顯示＃)你可以看他衣服背後的編號有編號代表是機器人,還有在你昏迷期間對你做的檢查報告可以在手機裡查詢,我先去看其他病人了,依你現在的情況是因為過勞昏倒導致腦部長時間缺氧而失憶,身體其他地方沒有什麼傷害,你覺得沒事就可以出院了"
+            },
+            {
+              "type": "message",
+              "message": "先去辦出院手續好了"
             }
           ]
         }
