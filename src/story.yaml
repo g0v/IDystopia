@@ -79,7 +79,7 @@ missions:
         - storeKey: doctor-enters-ward/step-1/done
           value: "true"
     title: gene-level
-    description: ""
+    description: "ru "
     steps:
       step-1:
         dialog:
