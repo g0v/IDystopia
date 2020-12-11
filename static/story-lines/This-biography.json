@@ -62,7 +62,7 @@
               "name": "$player",
               "type": "input.select",
               "question": "好像是...",
-              "storeKey": "player_age",
+              "storeKey": "player_agex",
               "choices": [
                 {
                   "text": "15~24",
@@ -90,7 +90,7 @@
       "depend": [
         [
           {
-            "storeKey": "player_age",
+            "storeKey": "player_agex",
             "value": "15~24"
           },
           {

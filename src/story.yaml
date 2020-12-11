@@ -38,7 +38,7 @@ missions:
           - name: $player
             type: input.select
             question: 好像是...
-            storeKey: player_age
+            storeKey: player_agex
             choices:
               - text: 15~24
                 value: 15~24
@@ -50,7 +50,7 @@ missions:
                 value: 65UP
   15~24:
     depend:
-      - - storeKey: player_age
+      - - storeKey: player_agex
           value: 15~24
         - storeKey: doctor-enters-ward/step-1/done
           value: "true"
