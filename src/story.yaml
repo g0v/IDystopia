@@ -176,6 +176,8 @@ missions:
         moveTo: MY-ROOM
         title: Home
         description: ...
+        nextStep: step-2
+      step-2:
         npcId: home-robot-npc
         dialog:
           - name: $player
