@@ -108,7 +108,6 @@ class GameScene extends Phaser.Scene {
     // see:
     // https://labs.phaser.io/view.html?src=src/animation/single%20this.player%20sheet.js
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
-
   }
 
   onDoneCreate() {
@@ -307,6 +306,7 @@ class GameScene extends Phaser.Scene {
     for (const keyCode of cursorKeys) {
       const key = this.input.keyboard.addKey(keyCode, false);
       key.on('down', (key, event) => {
+        this.lastUserInputTimestamp = (new Date()).getTime();
         if (this.dialogDaemon.hasOnGoingDialog) return;
         switch (event.keyCode) {
           case Phaser.Input.Keyboard.KeyCodes.LEFT:
@@ -324,6 +324,7 @@ class GameScene extends Phaser.Scene {
         }
       });
       key.on('up', (key, event) => {
+        this.lastUserInputTimestamp = (new Date()).getTime();
         switch (event.keyCode) {
           case Phaser.Input.Keyboard.KeyCodes.LEFT:
             cursors.left.isDown = false;
@@ -344,6 +345,7 @@ class GameScene extends Phaser.Scene {
     const enterKey = this.input.keyboard.addKey(
       Phaser.Input.Keyboard.KeyCodes.ENTER, false);
     enterKey.on('down', () => {
+      this.lastUserInputTimestamp = (new Date()).getTime();
       if (this.dialogDaemon.hasOnGoingDialog) return;
       const dialogId = this.dialogDaemon.findNearbyDialog(this.player);
       if (dialogId !== null) {
@@ -526,6 +528,36 @@ class GameScene extends Phaser.Scene {
       this.player.body.velocity.normalize().scale(Const.SPEED);
     }
 
+    if (config.isCLabEnv) {
+      const now = (new Date()).getTime();
+      if (!this.lastUserInputTimestamp) {
+        this.lastUserInputTimestamp = now;
+      } else if (now - this.lastUserInputTimestamp > 5 * 60 * 1000) {
+        // Idle for more than 5 minutes.
+        this.scene.pause();
+        bootbox.confirm({
+          title: 'Timed out',
+          message: '太久沒有操作，是否重新開始遊戲？',
+          buttons: {
+            cancel: {
+              label: '繼續遊戲',
+            },
+            confirm: {
+              label: '重新開始',
+            }
+          },
+          callback: (result) => {
+            if (result) {
+            location.reload();
+            } else {
+              this.lastUserInputTimestamp = (new Date()).getTime();
+              this.scene.resume();
+            }
+          }
+        });
+      }
+    }
+
     // Update the animation last and give left/right animations precedence over
     // up/down animations
 
@@ -561,7 +593,7 @@ class GameScene extends Phaser.Scene {
  */
 export function CreateGame({
     tilemapTiledJSON, storylineJSON, connection, npcList,
-    postBootCallback}) {
+    postBootCallback, isCLabEnv}) {
   config = {
     type: Phaser.AUTO,
     width: WINDOW_WIDTH,
@@ -585,7 +617,8 @@ export function CreateGame({
     tilemapTiledJSON,
     storylineJSON,
     connection,
-    npcList
+    npcList,
+    isCLabEnv,
   };
 
   const game = new Phaser.Game(config);
