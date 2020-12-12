@@ -140,13 +140,13 @@
             "value": "基因等級"
           },
           {
-            "storeKey": "doctor-enters-ward/step-1/done",
+            "storeKey": "15~24/step-1/done",
             "value": "true"
           }
         ]
       ],
       "title": "gene-level",
-      "description": "ru ",
+      "description": "",
       "steps": {
         "step-1": {
           "dialog": [
