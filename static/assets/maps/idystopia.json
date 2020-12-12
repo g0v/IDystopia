@@ -60,7 +60,7 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":240.249,
+                 "x":3748.7766714236,
                  "y":1975.05
                 }, 
                 {
@@ -72,8 +72,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":690.62,
-                 "y":2003.02
+                 "x":3896.32831883049,
+                 "y":1856.83134702402
                 }, 
                 {
                  "height":0,
@@ -144,8 +144,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":3701.81,
-                 "y":1806.51
+                 "x":1714.34045596937,
+                 "y":2279.88278106509
                 }, 
                 {
                  "height":0,
@@ -206,6 +206,30 @@
                  "width":0,
                  "x":6794.14,
                  "y":2120.79
+                }, 
+                {
+                 "height":0,
+                 "id":293,
+                 "name":"Ward-door",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":4030.55411068569,
+                 "y":1981.63612252001
+                }, 
+                {
+                 "height":0,
+                 "id":294,
+                 "name":"counder",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":5332.32925861469,
+                 "y":1891.13838496345
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -213,8 +237,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":11,
- "nextobjectid":292,
+ "nextlayerid":12,
+ "nextobjectid":295,
  "orientation":"orthogonal",
  "properties":[
         {
