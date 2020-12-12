@@ -186,6 +186,45 @@
         }
       }
     },
+    "Out-of-the-ward": {
+      "depend": [
+        "gene-level/step-1/done"
+      ],
+      "title": "走出病房",
+      "description": "走出病房到醫院櫃臺辦出院手續",
+      "steps": {
+        "step-1": {
+          "locationId": "Ward-door",
+          "moveTo": "counder",
+          "dialog": [
+            {
+              "name": "櫃檯護士",
+              "line": "這樣就好了"
+            },
+            {
+              "name": "路人Ａ",
+              "line": "我發現機器人好像有其他隱藏功能誒"
+            },
+            {
+              "name": "路人B",
+              "line": "是嗎？哪個功能"
+            },
+            {
+              "name": "路人Ａ",
+              "line": "就是跟機器人問到一些敏感議題的時候機器人不都會回『我現在不太想討論這議題...』然後後面會再加一個關鍵字,我之前聽到的關鍵字是『樓梯間』然後我走到樓梯間的時候遇到另一個機器人,我再問他敏感話題他就會回復我的問題誒"
+            },
+            {
+              "name": "路人Ｂ",
+              "line": "真的嗎？"
+            },
+            {
+              "type": "message",
+              "message": "剛剛醫生似乎有說有什麼問題都可以問機器人看看不然找機器人對話看看好了"
+            }
+          ]
+        }
+      }
+    },
     "street": {
       "depend": [
         "doctor-enters-ward/step-1/done"
