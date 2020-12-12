@@ -548,7 +548,9 @@ class GameScene extends Phaser.Scene {
           },
           callback: (result) => {
             if (result) {
-            location.reload();
+              this.lastUserInputTimestamp = (new Date()).getTime();
+              this.scene.resume();
+              location.reload();
             } else {
               this.lastUserInputTimestamp = (new Date()).getTime();
               this.scene.resume();
