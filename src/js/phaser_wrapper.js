@@ -138,6 +138,9 @@ class GameScene extends Phaser.Scene {
       loop: true,
       volume: 0.5,
     });
+    if (config.isCLabEnv) {
+      this.sound.pauseOnBlur = false;
+    }
     if (this.sound.locked) {
       this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
         this.hospitalBackgroundMusic.play();
