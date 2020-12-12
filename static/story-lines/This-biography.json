@@ -27,11 +27,6 @@
             {
               "name": "護士",
               "line": "你因為在路邊昏倒,已經昏迷好幾天了,你先休息一下,等等醫生就會來了"
-            },
-            {
-              "type": "iframe",
-              "url": "https://idystopia.art/assets/img/main_w.jpg",
-              "style": "transform: scale(0.5);"
             }
           ]
         }
@@ -42,6 +37,13 @@
       "description": "",
       "steps": {
         "step-1": {
+          "nextStep": "step-2",
+          "moveTo": {
+            "npcId": "doctor-npc",
+            "location": "$player"
+          }
+        },
+        "step-2": {
           "npcId": "doctor-npc",
           "dialog": [
             {
@@ -94,7 +96,7 @@
             "value": "15~24"
           },
           {
-            "storeKey": "doctor-enters-ward/step-1/done",
+            "storeKey": "doctor-enters-ward/step-2/done",
             "value": "true"
           }
         ]
@@ -227,7 +229,7 @@
     },
     "street": {
       "depend": [
-        "doctor-enters-ward/step-1/done"
+        "doctor-enters-ward/step-2/done"
       ],
       "title": "On the street",
       "description": "....",

@@ -568,24 +568,43 @@ export class DialogDaemon {
     this.add(`${mission.id}/${nextStep.id}`, nextStep);
   }
 
-  moveTo(where, callback) {
-    const me = this.charDaemon.getChar('player');
-    if (where in PhaserWrapper.mapObjects) {
-      const loc = PhaserWrapper.mapObjects[where];
-      const camera = this.scene.cameras.main;
-      // in milliseconds
-      camera.fadeOut(750, 0, 0, 0, (_, progressFadeOut) => {
-        if (progressFadeOut < 1) return;
-        me.player.x = loc.x;
-        me.player.y = loc.y;
-        camera.fadeIn(750, 0, 0, 0, (_, progressFadeIn) => {
-          if (progressFadeIn < 1) return;
-          callback();
-        });
-      });
-    } else {
-      callback();
+  moveTo(movement, callback) {
+    if (typeof(movement) === 'string') {
+      movement = {location: movement};
     }
+
+    const me = this.charDaemon.getChar('player');
+    let {npcId, location} = movement;
+    if (!npcId) {
+      npcId = 'player';
+    }
+    console.log('who: ', npcId, 'location: ', location);
+    const char = this.charDaemon.getChar(npcId);
+    if (!char) return;
+    if (!location ||
+        !(location in PhaserWrapper.mapObjects) ||
+        location === '$player') {
+      location = {
+        x: me.player.x,
+        y: me.player.y - 2 * Const.TILE_SIZE,
+      }
+      // TODO(stimim): need to handle different texture
+      char.player.setFrame('misa-front');
+    } else {
+      location = PhaserWrapper.mapObjects[location]
+    }
+
+    const camera = this.scene.cameras.main;
+    // in milliseconds
+    camera.fadeOut(750, 0, 0, 0, (_, progressFadeOut) => {
+      if (progressFadeOut < 1) return;
+      char.x = char.player.x = location.x;
+      char.y = char.player.y = location.y;
+      camera.fadeIn(750, 0, 0, 0, (_, progressFadeIn) => {
+        if (progressFadeIn < 1) return;
+        callback();
+      });
+    });
   }
 
   startDialog(dialogId) {
