@@ -43,6 +43,11 @@ const npcList = {
     texture: 'atlas',
     frame: 'misa-right'
   },
+  'nurse-npc': {
+    name: '護士',
+    texture: 'atlas',
+    frame: 'misa-right'
+  },
 };
 
 const game = PhaserWrapper.CreateGame({
