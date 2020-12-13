@@ -60,8 +60,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":3754.58720092915,
-                 "y":1964.88739837398
+                 "x":3776.31390190114,
+                 "y":1960.31335606409
                 }, 
                 {
                  "height":0,
@@ -230,6 +230,18 @@
                  "width":0,
                  "x":5332.33,
                  "y":1891.14
+                }, 
+                {
+                 "height":0,
+                 "id":295,
+                 "name":"nurse-npc",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":3731.66447684391,
+                 "y":1979.18563178959
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -237,8 +249,8 @@
          "x":0,
          "y":0
         }],
- "nextlayerid":12,
- "nextobjectid":295,
+ "nextlayerid":13,
+ "nextobjectid":296,
  "orientation":"orthogonal",
  "properties":[
         {
