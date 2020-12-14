@@ -7,6 +7,7 @@ bootbox.setDefaults({
   closeButton: false,
 });
 
+const MAX_NUM_MESSAGES = 3;
 
 export class Char {
   constructor(scene, id, name, x, y, texture, frame) {
@@ -62,7 +63,9 @@ export class Char {
 
   addMessage(message, expireTime) {
     if (expireTime === undefined) expireTime = Infinity;
-    this.messages.push({message, expireTime});
+    if (this.messages.push({message, expireTime}) > MAX_NUM_MESSAGES) {
+      this.messages.shift();
+    }
   }
 
   clearMessage() {
