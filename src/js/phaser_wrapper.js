@@ -1,6 +1,7 @@
 import * as Hero from './hero.js';
 import * as DataStore from './data_store.js';
 import * as StoryLine from './story_line.js';
+import * as JitsiChannel from './jitsi_channel.js';
 import * as Const from './const.js';
 
 export var tileMap;
@@ -9,7 +10,6 @@ export var mapObjects = {};
 
 let char;
 var config = {};
-let showDebug = false;
 let cursors = {
   left: { isDown: false },
   right: { isDown: false },
@@ -93,7 +93,7 @@ class GameScene extends Phaser.Scene {
 
   preload() {
     console.log('Preload Game scene');
-    const {tilemapTiledJSON, storylineJSON, connection, npcList} = config;
+    const {tilemapTiledJSON, storylineJSON, npcList} = config;
 
     this.load.setPath('assets/');
     this.load.image("tiles", "tiles/world.png");
@@ -111,6 +111,9 @@ class GameScene extends Phaser.Scene {
   }
 
   onDoneCreate() {
+    $( '#button-show-mission' ).show();
+    $( '#button-join-online-event' ).show();
+
     const {storylineJSON} = config;
     const {gameSceneConfig} = config;
     const {postBootCallback} = gameSceneConfig;
@@ -627,6 +630,15 @@ export function CreateGame({
   };
 
   const game = new Phaser.Game(config);
+  game.joinOnlineEvent = () => {
+    const conn = new JitsiChannel.JitsiConnection();
+    conn.init();
+    config.connection = conn;
+    conn.setDisplayName(DataStore.AnswerStore.get('player_name'));
+    DataStore.AnswerStore.listen('player_name', () => {
+      conn.setDisplayName(DataStore.AnswerStore.get('player_name'));
+    });
+  };
   return game;
 
 }

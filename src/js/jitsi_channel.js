@@ -44,6 +44,7 @@ export class JitsiConnection {
     this._lastSetLocalProperty = 0;
     this._lastBroadcastLocalProperty = 0;
     this._sentLocalProperty = {};
+    this._displayName = '???';
   }
 
   init() {
@@ -125,7 +126,7 @@ export class JitsiConnection {
 
     this.room = this.connection.initJitsiConference(roomId, confOptions);
 
-    this.room.setDisplayName('???');
+    this.room.setDisplayName(this._displayName);
     this.room.on(
       JitsiMeetJS.events.conference.CONFERENCE_JOINED,
       () => { this.onConferenceJoined(); });
@@ -156,6 +157,7 @@ export class JitsiConnection {
   }
 
   setDisplayName(name) {
+    this._displayName = name;
     if (this.room) {
       this.room.setDisplayName(name);
     }

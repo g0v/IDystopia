@@ -70,6 +70,29 @@ $( '#button-sound' ).click(() => {
     soundButton.text('🔊');
   }
 });
+$( '#button-show-mission' ).hide();
+$( '#button-join-online-event' ).hide();
+
 $( '#button-show-mission' ).click( () => {
   Hero.dialogDaemon.showHint();
+});
+
+$( '#button-join-online-event' ).click( () => {
+  bootbox.confirm({
+    title: '參加線上集會',
+    message: '線上集會預定於 (台灣時區) 12/16 21:00 舉行，去看看嗎？',
+    buttons: {
+      confirm: {
+        label: '說走就走'
+      },
+      cancel: {
+        label: '先不要'
+      }
+    },
+    callback: (result) => {
+      if (result) {
+        game.joinOnlineEvent();
+      }
+    }
+  });
 });
