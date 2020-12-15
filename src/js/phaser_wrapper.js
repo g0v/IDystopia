@@ -488,10 +488,15 @@ class GameScene extends Phaser.Scene {
 
   update(time, delta) {
     if (this.vision && this.mask) {
-      this.vision.x = this.player.x;
-      this.vision.y = this.player.y;
-      this.mask.x = this.player.x;
-      this.mask.y = this.player.y;
+      if (config.connection) {
+        this.mask.visible = false;
+      } else {
+        this.mask.visible = true;
+        this.vision.x = this.player.x;
+        this.vision.y = this.player.y;
+        this.mask.x = this.player.x;
+        this.mask.y = this.player.y;
+      }
     }
 
     // let's check if we triggered any dialogs
