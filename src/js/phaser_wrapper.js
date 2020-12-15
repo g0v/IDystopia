@@ -638,7 +638,11 @@ export function CreateGame({
     DataStore.AnswerStore.listen('player_name', () => {
       conn.setDisplayName(DataStore.AnswerStore.get('player_name'));
     });
+    $( '#online-panel' ).show();
   };
+  game.sendMessage = (message) => {
+    config.connection.sendMessage(message);
+  }
   return game;
 
 }

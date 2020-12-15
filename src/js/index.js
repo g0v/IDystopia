@@ -72,6 +72,7 @@ $( '#button-sound' ).click(() => {
 });
 $( '#button-show-mission' ).hide();
 $( '#button-join-online-event' ).hide();
+$( '#online-panel' ).hide();
 
 $( '#button-show-mission' ).click( () => {
   Hero.dialogDaemon.showHint();
@@ -95,4 +96,9 @@ $( '#button-join-online-event' ).click( () => {
       }
     }
   });
+});
+
+$( '#emoji-send' ).click(() => {
+  const select = document.getElementById('emoji-select');
+  game.sendMessage(select.value);
 });
