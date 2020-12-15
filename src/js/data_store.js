@@ -62,7 +62,7 @@ function _hasOwnProperty(obj, property) {
 })(StoreModule._);
 
 
-const _DATASTORE_API_URL = 'https://pingtung-hao-305236.middle2.me';
+const _DATASTORE_API_URL = 'https://pingtung-hao-305236.middle2.me/api';
 const _REMOTE_STORE_CACHE = StoreModule.namespace('REMOTE_STORE_CACHE');
 
 class RemoteStoreClass {
