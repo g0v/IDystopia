@@ -40,3 +40,6 @@
   text-shadow: none;
 }
 
+#online-panel {
+  display: inline;
+}
