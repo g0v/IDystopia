@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<<<<<<< HEAD
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="298">
-=======
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="12" nextobjectid="298">
->>>>>>> 4cde4fe2ebf2c414dc2deffe0a41b32b1c782386
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="299">
  <editorsettings>
   <export target="idystopia.json" format="json"/>
  </editorsettings>
@@ -4088,7 +4084,6 @@
   <object id="294" name="counder" x="5332.33" y="1891.14">
    <point/>
   </object>
-<<<<<<< HEAD
   <object id="295" name="nurse-npc" x="3731.66" y="1979.19">
    <point/>
   </object>
@@ -4096,9 +4091,9 @@
    <point/>
   </object>
   <object id="297" name="robot-npc-1" x="5162.87" y="2028.46">
-=======
-  <object id="295" name="online-event-spawn-point" x="604.411" y="688.81">
->>>>>>> 4cde4fe2ebf2c414dc2deffe0a41b32b1c782386
+   <point/>
+  </object>
+  <object id="298" name="online-event-spawn-point" x="604.411" y="688.81">
    <point/>
   </object>
  </objectgroup>
