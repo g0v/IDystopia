@@ -427,36 +427,6 @@
         }
       }
     },
-    "street": {
-      "depend": [
-        "doctor-enters-ward/step-2/done"
-      ],
-      "title": "On the street",
-      "description": "....",
-      "firstStep": "last",
-      "steps": {
-        "step-1": {
-          "nextStep": "last",
-          "dialog": [
-            {
-              "type": "message",
-              "message": "機器人呢？"
-            }
-          ]
-        },
-        "last": {
-          "title": "On the street",
-          "description": "...",
-          "npcId": "doctor-npc",
-          "dialog": [
-            {
-              "name": "XX",
-              "line": "機器人呢？"
-            }
-          ]
-        }
-      }
-    },
     "wistoria": {
       "depend": [
         "street/last/done"
