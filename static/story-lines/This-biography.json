@@ -494,6 +494,10 @@
             {
               "name": "$player",
               "line": "我是誰？我在哪裡？我在做什麼？"
+            },
+            {
+              "name": "$player",
+              "line": "2020/12/16 21:00 在 https://idystopia.art/form/ 會有一場線上集會活動，你可以連上來，不管你在 2035 或者 2020，我們將在 IDystopia 遊戲中相會。"
             }
           ]
         }
