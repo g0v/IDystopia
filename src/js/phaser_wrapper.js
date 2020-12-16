@@ -108,6 +108,7 @@ class GameScene extends Phaser.Scene {
     // see:
     // https://labs.phaser.io/view.html?src=src/animation/single%20this.player%20sheet.js
     this.load.atlas("atlas", "atlas/atlas.png", "atlas/atlas.json");
+    this.load.atlas("NPC-i", "atlas/NPC-i.png", "atlas/atlas.json");
   }
 
   onDoneCreate() {

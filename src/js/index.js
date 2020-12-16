@@ -45,7 +45,7 @@ const npcList = {
   },
   'nurse-npc': {
     name: '護士',
-    texture: 'atlas',
+    texture: 'NPC-i',
     frame: 'misa-right'
   },
 };
