@@ -369,16 +369,10 @@
     },
     "Robot-dialogue-3": {
       "depend": [
-        [
-          {
-            "storeKey": "robot-3",
-            "value": "怎麼不早說"
-          },
-          {
-            "storeKey": "Robot-dialogue-2/step-1/done",
-            "value": "true"
-          }
-        ]
+        {
+          "storeKey": "Robot-dialogue-2/step-1/done",
+          "value": "true"
+        }
       ],
       "title": "機器人談話",
       "description": "跟機器人聊天",
@@ -429,7 +423,7 @@
     },
     "wistoria": {
       "depend": [
-        "Wistoria/step-1/done"
+        "Wistoria-1/step-1/done"
       ],
       "title": "Wistoria",
       "description": "....",
