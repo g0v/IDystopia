@@ -590,7 +590,7 @@ export class DialogDaemon {
         !(location in PhaserWrapper.mapObjects) ||
         location === '$player') {
       location = {
-        x: me.player.x + 2 * Const.TILE_SIZE,
+        x: me.player.x - 2 * Const.TILE_SIZE,
         y: me.player.y,
       }
       // TODO(stimim): need to handle different texture
