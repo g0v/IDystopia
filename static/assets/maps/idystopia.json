@@ -246,7 +246,7 @@
                 {
                  "height":0,
                  "id":296,
-                 "name":"doctor-npc",
+                 "name":"robot-npc",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -258,7 +258,7 @@
                 {
                  "height":0,
                  "id":297,
-                 "name":"doctor-npc-1",
+                 "name":"robot-npc-1",
                  "point":true,
                  "rotation":0,
                  "type":"",

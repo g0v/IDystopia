@@ -48,12 +48,12 @@ const npcList = {
     texture: 'atlas',
     frame: 'misa-right'
   },
-  'doctor-npc': {
+  'robot-npc': {
     name: '機器人',
     texture: 'atlas',
     frame: 'misa-right'
   },
-  'doctor-npc-1': {
+  'robot-npc-1': {
     name: '機器人',
     texture: 'atlas',
     frame: 'misa-right'
