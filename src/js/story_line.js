@@ -127,8 +127,8 @@ class MissionStep {
     moveTo}) {
 
     this.id = id;
-    this.title = title || 'Unnamed Step';
-    this.description = description || '...';
+    this.title = title || mission.title;
+    this.description = description || mission.description;
     this.nextStep = nextStep;
     this.npcId = npcId;
     this.locationId = locationId;
