@@ -44,6 +44,8 @@
           }
         },
         "step-2": {
+          "title": "跟醫生談話",
+          "description": "醫生已經來了，和醫生聊聊吧！",
           "npcId": "doctor-npc",
           "dialog": [
             {
@@ -174,7 +176,7 @@
             },
             {
               "type": "message",
-              "message": "先去辦出院手續好了"
+              "message": "往右走就可以去櫃檯辦出院手續了"
             }
           ]
         }
@@ -188,6 +190,8 @@
       "description": "走出病房到醫院櫃臺辦出院手續",
       "steps": {
         "step-1": {
+          "title": "走出病房",
+          "description": "走出病房（向右）到醫院櫃臺辦出院手續",
           "nextStep": "step-2",
           "locationId": "Ward-door",
           "moveTo": "counder",
