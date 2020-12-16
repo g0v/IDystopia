@@ -1,0 +1,14 @@
+<head>
+  <title>
+    病例
+  </title>
+</head>
+<body>
+  <span id="player_name"></span>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerName = urlParams.get('player_name');
+    document.getElementById('player_name').innerText = playerName;
+  </script>
+</body>
