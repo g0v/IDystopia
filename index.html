@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height" />
+    <script src="https://jitsi.jothon.online/libs/lib-jitsi-meet.min.js"></script>
+
+    <!-- TODO(stimim): figure out how to use bootbox from NPM -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.css">
+    <link rel="stylesheet" href="css/joystick.css">
+    <link rel="stylesheet" href="css/index.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/popper.min.js" integrity="sha512-eHo1pysFqNmmGhQ8DnYZfBVDlgFSbv3rxS0b/5+Eyvgem/xk0068cceD8GTlJOZsUrtjANIrFhhlwmsL1K3PKg==" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootbox.js/5.4.0/bootbox.min.js" integrity="sha512-8vfyGnaOX2EeMypNMptU+MwwK206Jk1I/tMQV4NkhOz+W8glENoMhGyU6n/6VgQUhQcJH8NqQgHhMtZjJJBv3A==" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.24.1/dist/phaser.min.js"></script>
+    <style>
+
+iframe.dialog-iframe {
+  width: 100%;
+  height: 80%;
+  border: 1px black solid;
+}
+
+#stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+#mission-panel {
+  position: absolute;
+  right: 0%;
+  bottom: 0%;
+  background-color: white;
+  padding: 5px;
+}
+
+#notice {
+  background-color: rgba(0,0,0,.9);
+  border: 3px solid #04fefd;
+  position: fixed;
+  width: 30%;
+  margin-left: -15%;
+  left: 50%;
+  top: 15px;
+  text-align: center;
+}
+#notice p {
+  margin: 0;
+  color: #04fefd;
+  padding: 1em;
+}
+@media (max-width: 768px) {
+  #notice {
+    width: 80%;
+    margin-left: -40%;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div id="notice">
+      <p>Hi，想對岔派樂基因說些什麼嗎？</p>
+    </div>
+    <div id="mission-panel">
+      <div id="online-panel">
+        <select id="emoji-select">
+          <option>😃</option>
+          <option>😅</option>
+          <option>😭</option>
+          <option>🕯️</option>
+        </select>
+        <input id="msg-send" type="text" value="" placeholder="對數位身份的疑慮或想說的話" width="10" />
+        <button id="emoji-send" class="btn btn-primary">send</button>
+      </div>
+      <button id="button-join-online-event" class="btn btn-primary">Online Event</button>
+      <button id="button-show-mission" class="btn btn-primary">Mission</button>
+      <a href="https://idystopia.art" class="btn btn-primary" target="_blank">About</a>
+      <button id="button-sound" class="btn btn-primary">🔈</button>
+    </div>
+    <div id="joystick">
+      <div class="touch-stick">
+      </div>
+    </div>
+    <script async src='/js/index.js?'></script>
+  </body>
+</html>
