@@ -54,7 +54,7 @@ const npcList = {
     frame: 'misa-right'
   },
   'robot-npc-1': {
-    name: '機器人-1',
+    name: '機器人',
     texture: 'atlas',
     frame: 'misa-right'
   },
