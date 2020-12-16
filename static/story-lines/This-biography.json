@@ -299,7 +299,7 @@
             {
               "name": "$player",
               "type": "input.select",
-              "question": null,
+              "question": "...",
               "storeKey": "robot-2",
               "choices": [
                 {
