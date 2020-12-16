@@ -14,3 +14,10 @@ visit 127.0.0.1:3000
 npm run build
 bash ./deploy
 ```
+
+## Regenerate story line JSON after changing story.yaml
+```
+npm run story
+git add ...
+git commit ...
+```
