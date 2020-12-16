@@ -250,17 +250,19 @@ missions:
     steps:
       step-1:
         nextStep: last
-        moveTo: SHOP-INSIDE
+        moveTo: SHOP-BASEMENT
         dialog:
           - name: $player
             line: 這是哪？
       last:
         title: Wistoria
         description: ...
-        npcId: shop-clerk-npc
+        npcId: speaker-npc
         dialog:
-          - name: $player
-            line: oh這是哪？
+          - name: 主持人
+            line: 大家好,非常感謝各位抽空來參加「數位＆基因」這個活動，在活動的開始會由 i 來開啟一些疑問及話題，之後就由各位在會場討論,會場內會有吃的喝的各位可以盡情的享用,櫃台可以報名活動最後的閃電秀，讓報名的人可以有幾分鐘上台,訴說自己的經歷或是說自己想說的話。
+          - name: 主持人
+            line: 那現在就把麥克風交給 i。
   ending-vo:
     depend:
       - wistoria/last/done
@@ -268,7 +270,7 @@ missions:
     description: ....
     steps:
       step-1:
-        moveTo: MY-ROOM
+        moveTo: SCHOOL
         title: Home
         description: ...
         nextStep: step-2
