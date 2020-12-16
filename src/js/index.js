@@ -65,6 +65,7 @@ const game = PhaserWrapper.CreateGame({
   storylineJSON: 'This-biography.json',
   npcList});
 
+$("#notice").hide();
 window.game = game;
 
 $( '#button-sound' ).click(() => {
@@ -102,6 +103,7 @@ $( '#button-join-online-event' ).click( () => {
     },
     callback: (result) => {
       if (result) {
+        $("#notice").show();
         game.joinOnlineEvent();
       }
     }

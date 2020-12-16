@@ -13,7 +13,7 @@ body {
 
 #joystick {
   position: fixed;
-  bottom: 20px;
+  bottom: 12%;
   left: 35vw;
   border: 2px solid white;
   border-radius: 50%;
