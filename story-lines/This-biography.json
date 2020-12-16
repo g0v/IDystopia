@@ -44,6 +44,7 @@
           }
         },
         "step-2": {
+          "npcId": "doctor-npc",
           "dialog": [
             {
               "name": "醫生",
@@ -115,14 +116,6 @@
               "question": "你還記得什麼事情嗎？例如你的興趣或是你的家人之類的，或是你的基因等級？",
               "storeKey": "player_problem",
               "choices": [
-                {
-                  "text": "最近……爆發了疫情，已經持續快一年了。",
-                  "value": "疫情"
-                },
-                {
-                  "text": "因為疫情的關係，所以數位身分證要改到明年換發。",
-                  "value": "數位身分證"
-                },
                 {
                   "text": "基因等級……那是什麼？",
                   "value": "基因等級"
@@ -376,16 +369,10 @@
     },
     "Robot-dialogue-3": {
       "depend": [
-        [
-          {
-            "storeKey": "robot-3",
-            "value": "怎麼不早說"
-          },
-          {
-            "storeKey": "Robot-dialogue-2/step-1/done",
-            "value": "true"
-          }
-        ]
+        {
+          "storeKey": "Robot-dialogue-2/step-1/done",
+          "value": "true"
+        }
       ],
       "title": "機器人談話",
       "description": "跟機器人聊天",
@@ -414,10 +401,10 @@
     },
     "Wistoria-1": {
       "depend": [
-        "Roobot-dialogue-3/step-1/done"
+        "Robot-dialogue-3/step-1/done"
       ],
       "title": "去Wistoria",
-      "description": "詢問機器人Wistoriay的位置",
+      "description": "詢問機器人Wistoria的位置",
       "npcId": "robot-npc-1",
       "steps": {
         "step-1": {
@@ -434,39 +421,9 @@
         }
       }
     },
-    "street": {
-      "depend": [
-        "doctor-enters-ward/step-2/done"
-      ],
-      "title": "On the street",
-      "description": "....",
-      "firstStep": "last",
-      "steps": {
-        "step-1": {
-          "nextStep": "last",
-          "dialog": [
-            {
-              "type": "message",
-              "message": "機器人呢？"
-            }
-          ]
-        },
-        "last": {
-          "title": "On the street",
-          "description": "...",
-          "npcId": "doctor-npc",
-          "dialog": [
-            {
-              "name": "XX",
-              "line": "機器人呢？"
-            }
-          ]
-        }
-      }
-    },
     "wistoria": {
       "depend": [
-        "street/last/done"
+        "Wistoria-1/step-1/done"
       ],
       "title": "Wistoria",
       "description": "....",
