@@ -229,9 +229,9 @@ missions:
             message: 去看看好了反正也不知道該做什麼
   Wistoria-1:
     depend:
-      - Roobot-dialogue-3/step-1/done
+      - Robot-dialogue-3/step-1/done
     title: 去Wistoria
-    description: 詢問機器人Wistoriay的位置
+    description: 詢問機器人Wistoria的位置
     npcId: robot-npc-1
     steps:
       step-1:
@@ -242,30 +242,9 @@ missions:
             line: ...
 
 
-    
-
-#  street:
-#    depend:
-#      - doctor-enters-ward/step-2/done
-#    title: On the street
-#    description: ....
-#    firstStep: last
-#    steps:
-#      step-1:
-#        nextStep: last
-#        dialog:
-#          - type: message
-#            message: 機器人呢？
-#      last:
-#        title: On the street
-#        description: ...
-#        npcId: doctor-npc
-#        dialog:
-#          - name: XX
-#            line: 機器人呢？
   wistoria:
     depend:
-      - street/last/done
+      - Wistoria/step-1/done
     title: Wistoria
     description: ....
     steps:
