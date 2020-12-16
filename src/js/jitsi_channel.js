@@ -298,9 +298,8 @@ export class JitsiConnection {
           const y = Number(property.top);
           if (Number.isNaN(x) === false && Number.isNaN(y) === false) {
             const t = (new Date()).getTime() + 100;
-            char.setProperty('position', {x, y, t});
-            //char.x = x;
-            //char.y = y;
+            const timestamp = Number(property.timestamp) || t;
+            char.setProperty('position', {x, y, t, timestamp});
           }
 
           char.setProperty(
@@ -332,7 +331,7 @@ export class JitsiConnection {
     this._lastBroadcastLocalProperty = now;
     try {
       this.room.broadcastEndpointMessage(
-        {type: TYPE_PLAYER_PROPERTY, property: property});
+        {type: TYPE_PLAYER_PROPERTY, property: { timestamp: now, ...property }});
     } catch (error) {
       // I don't care...
       // console.error('failed to broadcast new property', error);

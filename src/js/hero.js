@@ -184,7 +184,7 @@ export class RemotePlayer extends Char {
     super(scene, id, name, x, y, texture, frame);
 
     // we don't want to be moved to (0, 0) on the next frame.
-    this.ps = [ { x, y, t: 0}, {x, y, t: 0} ];
+    this.ps = [ { x, y, t: 0, timestamp: 0}, {x, y, t: 0, timestamp: 0} ];
   }
 
   setProperty(key, value) {
@@ -206,7 +206,9 @@ export class RemotePlayer extends Char {
         break;
       case 'position':
         // const {x, y, t} = value;
-        this.ps = [this.ps[1], value]
+        if (this.ps[1].timestamp < value.timestamp) {
+          this.ps = [this.ps[1], value]
+        }
     }
   }
 
