@@ -44,6 +44,7 @@
           }
         },
         "step-2": {
+          "npcId": "doctor-npc",
           "dialog": [
             {
               "name": "醫生",

@@ -31,7 +31,7 @@ missions:
           npcId: doctor-npc
           location: $player
       step-2:
-        #npcId: doctor-npc
+        npcId: doctor-npc
         dialog:
           - name: 醫生
             line: 您好！我是你的主治醫師。你叫什麼名字呢？
