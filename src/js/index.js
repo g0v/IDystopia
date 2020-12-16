@@ -40,12 +40,12 @@ const npcList = {
   },
   'doctor-npc': {
     name: '醫生',
-    texture: 'atlas',
+    texture: 'NPC-i',
     frame: 'misa-right'
   },
   'nurse-npc': {
     name: '護士',
-    texture: 'NPC-i',
+    texture: 'atlas',
     frame: 'misa-right'
   },
 };
