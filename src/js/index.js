@@ -110,5 +110,7 @@ $( '#button-join-online-event' ).click( () => {
 
 $( '#emoji-send' ).click(() => {
   const select = document.getElementById('emoji-select');
-  game.sendMessage(select.value);
+  const msg = document.getElementById('msg-send');
+  game.sendMessage(select.value + msg.value);
+  msg.value = '';
 });
