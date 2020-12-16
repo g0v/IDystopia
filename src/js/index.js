@@ -82,7 +82,7 @@ $( '#button-sound' ).click(() => {
   }
 });
 $( '#button-show-mission' ).hide();
-$( '#button-join-online-event' ).hide();
+// $( '#button-join-online-event' ).hide();
 $( '#online-panel' ).hide();
 
 $( '#button-show-mission' ).click( () => {
@@ -103,8 +103,12 @@ $( '#button-join-online-event' ).click( () => {
     },
     callback: (result) => {
       if (result) {
-        $("#notice").show();
-        game.joinOnlineEvent();
+        if (game.scene.isActive('Game')) {
+          game.joinOnlineEvent();
+        } else {
+          // we are still in intro page.
+          game.joinOnlineEventFromIntroStage();
+        }
       }
     }
   });

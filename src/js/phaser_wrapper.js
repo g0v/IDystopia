@@ -637,6 +637,7 @@ export function CreateGame({
 
   const game = new Phaser.Game(config);
   game.joinOnlineEvent = () => {
+    $("#notice").show();
     const conn = new JitsiChannel.JitsiConnection();
     conn.init();
     config.connection = conn;
@@ -647,6 +648,16 @@ export function CreateGame({
     const spawnPoint = 'online-event-spawn-point';
     Hero.dialogDaemon.moveTo(spawnPoint, () => {});
     $( '#online-panel' ).show();
+    $( '#button-join-online-event' ).hide();
+  };
+
+  game.joinOnlineEventFromIntroStage = () => {
+    config.storylineJSON = 'online_event.json';
+    config.gameSceneConfig.postBootCallback = () => {
+      game.joinOnlineEvent();
+    }
+    game.scene.start('Game');
+    game.scene.remove('Intro');
   };
   game.sendMessage = (message) => {
     config.connection.sendMessage(message);

@@ -9,7 +9,7 @@
             {
               "name": "User Info",
               "type": "input.text",
-              "question": "Username?",
+              "question": "請輸入使用者名稱",
               "storeKey": "player_name"
             }
           ]
