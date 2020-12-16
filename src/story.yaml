@@ -145,7 +145,7 @@ missions:
         dialog:
           - name: $player
             type: input.select
-            question: null
+            question: "..."
             storeKey: robot-1
             choices:
               - text: 碳足跡沒有了會怎麼樣嗎？
@@ -171,7 +171,7 @@ missions:
             line: 買東西的部分現在都用行動支付了購買的資訊會傳回政府那,車子跟電器政府有規定必須加裝WIFI,並且連到政府的伺服器才可以賣,當你碳足跡用完政府可以遠端關掉你的冷氣,現在缺電的時候也會用這方式...直接不讓你用電器
           - name: $player
             type: input.select
-            question: null
+            question: '...'
             storeKey: robot-2
             choices:
               - text: 怎麼可能,政府在推動這些法令時都沒人抗議嗎？
@@ -201,7 +201,7 @@ missions:
             line: 就好比之前疫情時,政府推對數位身分證這個真正會侵犯到隱私以及導致現在變成這樣的主因都沒有人探討,反而在美豬的議題下一直吵,這不就是用其他的話題來模糊焦點嗎？而且在當時不僅僅只是數位身分證的議題被掩蓋,在同一年政府說要給全國中小的學校裝冷氣時其實就已經在試辦由政府端控制用電了...在當時的招標案裡就限制必須要有WIFI模組,這件事甚至連新聞都沒有...
           - name: $player
             type: input.select
-            question: ...
+            question: "..."
             storeKey: robot-3
             choices:
               - text: 那你知道這些怎麼不早點跟大眾講呢？
