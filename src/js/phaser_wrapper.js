@@ -644,8 +644,7 @@ export function CreateGame({
     DataStore.AnswerStore.listen('player_name', () => {
       conn.setDisplayName(DataStore.AnswerStore.get('player_name'));
     });
-    // const spawnPoint = 'online-event-spawn-point';
-    const spawnPoint = 'SCHOOL-ENTRY';
+    const spawnPoint = 'online-event-spawn-point';
     Hero.dialogDaemon.moveTo(spawnPoint, () => {});
     $( '#online-panel' ).show();
   };
