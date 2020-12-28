@@ -76,10 +76,41 @@ missions:
             choices:
 #              - text: 最近……爆發了疫情，已經持續快一年了。
 #                value: 疫情
-#              - text: 因為疫情的關係，所以數位身分證要改到明年換發。
-#                value: 數位身分證
+              - text: 因為疫情的關係，所以數位身分證要改到明年換發。
+                value: 數位身分證
               - text: 基因等級……那是什麼？
                 value: 基因等級
+  New-eid:
+    depend:
+      - - storeKey: player_problem
+          value: 數位身分證
+        - storeKey: 15~24/step-1/done
+          value: "true"
+    title: New-eid
+    description: ""
+    steps:
+      step-1:
+        dialog:
+          - name: 醫生
+            line: 數位身分證已經十幾年沒改了,我記得當初要改數位身分證時有一些資安相關的新聞...之後就是跟萊豬一樣強行通過了
+          - name: $player
+            line: 是嗎？那通過之後發生了什麼事情呢？
+          - name: 醫生
+            line: 通過之後在之後的選舉有被在野黨拿出來講說這是政府獨裁的證據,但是其實這樣講也沒用因為還沒實行時都不講話等到要選舉才講就被反擊說是在炒作
+          - name: $player
+            line: 那之後有政黨輪替嗎？
+          - name: 醫生
+            line: 從那之後就沒有了,慢慢的大家都不討論政治了
+          - name: $player
+            line: 在這之間都沒發生什麼事情嗎？我記得都會有其他在野黨會監督政府
+          - name: 醫生
+            line: 詳細的情況可以詢問機器人，現在有一種搭載人工智慧的機器人，你可以問問看。
+          - name: $player
+            line: 機器人？在哪裏呢？
+          - name: 醫生
+            line: 旁邊的護士就是（機器人頭上會顯示＃）你可以看他衣服背後的編號有編號代表是機器人，還有在你昏迷期間對你做的檢查報告可以在手機裡查詢。我先去看其他病人了，依你現在的情況是因為過勞昏倒導致腦部長時間缺氧而失憶，身體其他地方沒有什麼傷害，你覺得沒事就可以出院了。
+          - type: message
+            message: 往右走就可以去櫃檯辦出院手續了
   gene-level:
     depend:
       - - storeKey: player_problem

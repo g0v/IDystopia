@@ -1,0 +1,495 @@
+{
+  "missions": {
+    "intro+start": {
+      "title": "start-1",
+      "description": "....",
+      "steps": {
+        "step-1": {
+          "title": "遊戲玩法",
+          "description": "...",
+          "dialog": [
+            {
+              "name": "玩法教學",
+              "line": "電腦版：用方向鍵移動，按 ENTER 觸發對話<br>手機版：用螢幕上的搖桿移動，點擊搖桿觸發對話"
+            },
+            {
+              "name": "$player",
+              "line": "這裡是……醫院？"
+            },
+            {
+              "name": "護士",
+              "line": "醒來了嗎？您現在感覺如何"
+            },
+            {
+              "name": "$player",
+              "line": "我怎麼會在這裡……你是誰？"
+            },
+            {
+              "name": "護士",
+              "line": "你因為在路邊昏倒，已經昏迷好幾天了，你先休息一下，等等醫生就會來了"
+            }
+          ]
+        }
+      }
+    },
+    "doctor-enters-ward": {
+      "title": "跟醫生談話",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "nextStep": "step-2",
+          "moveTo": {
+            "npcId": "doctor-npc",
+            "location": "$player"
+          }
+        },
+        "step-2": {
+          "title": "跟醫生談話",
+          "description": "醫生已經來了，和醫生聊聊吧！",
+          "npcId": "doctor-npc",
+          "dialog": [
+            {
+              "name": "醫生",
+              "line": "您好！我是你的主治醫師。你叫什麼名字呢？"
+            },
+            {
+              "name": "$player",
+              "type": "input.text",
+              "question": "我的名字叫",
+              "storeKey": "player_name"
+            },
+            {
+              "name": "醫生",
+              "line": "你還記得你現在幾歲嗎？"
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "好像是……",
+              "storeKey": "player_age",
+              "choices": [
+                {
+                  "text": "15~24",
+                  "value": "15~24"
+                },
+                {
+                  "text": "25~44歲",
+                  "value": "25~44"
+                },
+                {
+                  "text": "45~64歲",
+                  "value": "45~54"
+                },
+                {
+                  "text": "65以上",
+                  "value": "65UP"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "15~24": {
+      "depend": [
+        [
+          {
+            "storeKey": "player_age",
+            "value": "15~24"
+          },
+          {
+            "storeKey": "doctor-enters-ward/step-2/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "15~24",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "醫生",
+              "line": "你還記得什麼事情嗎？例如你的興趣或是你的家人之類的，或是你的基因等級？"
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "你還記得什麼事情嗎？例如你的興趣或是你的家人之類的，或是你的基因等級？",
+              "storeKey": "player_problem",
+              "choices": [
+                {
+                  "text": "因為疫情的關係，所以數位身分證要改到明年換發。",
+                  "value": "數位身分證"
+                },
+                {
+                  "text": "基因等級……那是什麼？",
+                  "value": "基因等級"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "New-eid": {
+      "depend": [
+        [
+          {
+            "storeKey": "player_problem",
+            "value": "數位身分證"
+          },
+          {
+            "storeKey": "15~24/step-1/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "New-eid",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "醫生",
+              "line": "數位身分證已經十幾年沒改了,我記得當初要改數位身分證時有一些資安相關的新聞...之後就是跟萊豬一樣強行通過了"
+            },
+            {
+              "name": "$player",
+              "line": "是嗎？那通過之後發生了什麼事情呢？"
+            },
+            {
+              "name": "醫生",
+              "line": "通過之後在之後的選舉有被在野黨拿出來講說這是政府獨裁的證據,但是其實這樣講也沒用因為還沒實行時都不講話等到要選舉才講就被反擊說是在炒作"
+            },
+            {
+              "name": "$player",
+              "line": "那之後有政黨輪替嗎？"
+            },
+            {
+              "name": "醫生",
+              "line": "從那之後就沒有了,慢慢的大家都不討論政治了"
+            },
+            {
+              "name": "$player",
+              "line": "在這之間都沒發生什麼事情嗎？我記得都會有其他在野黨會監督政府"
+            },
+            {
+              "name": "醫生",
+              "line": "詳細的情況可以詢問機器人，現在有一種搭載人工智慧的機器人，你可以問問看。"
+            },
+            {
+              "name": "$player",
+              "line": "機器人？在哪裏呢？"
+            },
+            {
+              "name": "醫生",
+              "line": "旁邊的護士就是（機器人頭上會顯示＃）你可以看他衣服背後的編號有編號代表是機器人，還有在你昏迷期間對你做的檢查報告可以在手機裡查詢。我先去看其他病人了，依你現在的情況是因為過勞昏倒導致腦部長時間缺氧而失憶，身體其他地方沒有什麼傷害，你覺得沒事就可以出院了。"
+            },
+            {
+              "type": "message",
+              "message": "往右走就可以去櫃檯辦出院手續了"
+            }
+          ]
+        }
+      }
+    },
+    "gene-level": {
+      "depend": [
+        [
+          {
+            "storeKey": "player_problem",
+            "value": "基因等級"
+          },
+          {
+            "storeKey": "15~24/step-1/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "gene-level",
+      "description": "",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "醫生",
+              "line": "基因等級是政府依照人民的健康檢測基因的部分作為判斷的標準，分成A,B,C,D 4個等級，A級代表比較有潛力可以拿到比較多資源甚至被特別栽培，D級代表沒有潛力不被重視，有些資源也得不到。"
+            },
+            {
+              "name": "$player",
+              "line": "那除了基因分級之外，還有其他什麼變化嗎？"
+            },
+            {
+              "name": "醫生",
+              "line": "還有政府有限制一天消耗的碳足跡，目的是為了要節能減碳。"
+            },
+            {
+              "name": "$player",
+              "line": "消耗完了會怎麼樣嗎？"
+            },
+            {
+              "name": "醫生",
+              "line": "詳細的情況可以詢問機器人，現在有一種搭載人工智慧的機器人，你可以問問看。"
+            },
+            {
+              "name": "$player",
+              "line": "機器人？在哪裏呢？"
+            },
+            {
+              "name": "醫生",
+              "line": "旁邊的護士就是（機器人頭上會顯示＃）你可以看他衣服背後的編號有編號代表是機器人，還有在你昏迷期間對你做的檢查報告可以在手機裡查詢。我先去看其他病人了，依你現在的情況是因為過勞昏倒導致腦部長時間缺氧而失憶，身體其他地方沒有什麼傷害，你覺得沒事就可以出院了。"
+            },
+            {
+              "type": "message",
+              "message": "往右走就可以去櫃檯辦出院手續了"
+            }
+          ]
+        }
+      }
+    },
+    "Out-of-the-ward": {
+      "depend": [
+        "gene-level/step-1/done"
+      ],
+      "title": "走出病房",
+      "description": "走出病房到醫院櫃臺辦出院手續",
+      "steps": {
+        "step-1": {
+          "title": "走出病房",
+          "description": "走出病房（向右）到醫院櫃臺辦出院手續",
+          "nextStep": "step-2",
+          "locationId": "Ward-door",
+          "moveTo": "counder",
+          "dialog": [
+            {
+              "name": "櫃檯護士",
+              "line": "這樣就好了。"
+            },
+            {
+              "name": "路人Ａ",
+              "line": "我發現機器人好像有其他隱藏功能誒。"
+            },
+            {
+              "name": "路人B",
+              "line": "是嗎？哪個功能？"
+            },
+            {
+              "name": "路人Ａ",
+              "line": "就是跟機器人問到一些敏感議題的時候機器人不都會回『我現在不太想討論這議題...』然後後面會再加一個關鍵字，我之前聽到的關鍵字是『樓梯間』然後我走到樓梯間的時候遇到另一個機器人，我再問他敏感話題他就會回復我的問題誒。"
+            },
+            {
+              "name": "路人Ｂ",
+              "line": "真的嗎？"
+            },
+            {
+              "type": "message",
+              "message": "剛剛醫生似乎有說有什麼問題都可以問機器人看看，不然找機器人對話看看好了"
+            }
+          ]
+        },
+        "step-2": {
+          "nextStep": "step-3",
+          "title": "找機器人聊天",
+          "description": "與機器人聊天",
+          "npcId": "robot-npc",
+          "dialog": [
+            {
+              "name": "$player",
+              "line": "碳足跡沒有了會怎麼樣嗎？"
+            },
+            {
+              "name": "機器人",
+              "line": "機器人--我現在不太想討論這議題...飲水機旁"
+            }
+          ]
+        },
+        "step-3": {
+          "title": "找飲水機旁的機器人聊天",
+          "description": "跟飲水機旁的機器人聊天",
+          "npcId": "robot-npc-1",
+          "dialog": [
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "...",
+              "storeKey": "robot-1",
+              "choices": [
+                {
+                  "text": "碳足跡沒有了會怎麼樣嗎？",
+                  "value": "沒碳足跡"
+                },
+                {
+                  "text": "做什麼事情會消耗碳足跡",
+                  "value": "消耗碳足跡"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "Robot-dialogue-1": {
+      "depend": [
+        [
+          {
+            "storeKey": "robot-1",
+            "value": "沒碳足跡"
+          },
+          {
+            "storeKey": "Out-of-the-ward/step-3/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "機器人談話",
+      "description": "跟機器人聊天",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "機器人",
+              "line": "等碳足跡沒了你那一天就不能做會消耗碳足跡的事情了,假如你在晚間10：00碳足跡沒了,你晚上就沒冷氣吹了"
+            },
+            {
+              "name": "$player",
+              "line": "怎麼可能！！政府怎麼知道我買什麼,開車開多久,冷氣吹多久,而且沒可能沒碳足跡就不能吹冷氣..."
+            },
+            {
+              "name": "機器人",
+              "line": "買東西的部分現在都用行動支付了購買的資訊會傳回政府那,車子跟電器政府有規定必須加裝WIFI,並且連到政府的伺服器才可以賣,當你碳足跡用完政府可以遠端關掉你的冷氣,現在缺電的時候也會用這方式...直接不讓你用電器"
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "...",
+              "storeKey": "robot-2",
+              "choices": [
+                {
+                  "text": "怎麼可能,政府在推動這些法令時都沒人抗議嗎？",
+                  "value": "法令"
+                },
+                {
+                  "text": "做什麼事情會消耗碳足跡",
+                  "value": "消耗碳足跡"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "Robot-dialogue-2": {
+      "depend": [
+        [
+          {
+            "storeKey": "robot-2",
+            "value": "法令"
+          },
+          {
+            "storeKey": "Robot-dialogue-1/step-1/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "機器人談話",
+      "description": "跟機器人聊天",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "機器人",
+              "line": "抗議？當初要執行時大家都覺得這些事情不可能發生...直到真正執行的時候大家才知道其實連反抗的機會都沒有了"
+            },
+            {
+              "name": "$player",
+              "line": "不是啊...不是會有其他在野黨在監督執政黨,怎麼還會發生這種事情"
+            },
+            {
+              "name": "機器人",
+              "line": "那如果在野黨跟執政黨合作呢？雙方都是既得利益者你覺得會有人真正的為人民發聲嗎？為了人民能得到什麼呢？政府只要對自己有利的話題帶風向,對自己有害的話題就用其他新聞蓋過去,人民真的知道事實嗎？"
+            },
+            {
+              "name": "$player",
+              "line": "你怎麼這麼說,你有證據嗎？"
+            },
+            {
+              "name": "機器人",
+              "line": "就好比之前疫情時,政府推對數位身分證這個真正會侵犯到隱私以及導致現在變成這樣的主因都沒有人探討,反而在美豬的議題下一直吵,這不就是用其他的話題來模糊焦點嗎？而且在當時不僅僅只是數位身分證的議題被掩蓋,在同一年政府說要給全國中小的學校裝冷氣時其實就已經在試辦由政府端控制用電了...在當時的招標案裡就限制必須要有WIFI模組,這件事甚至連新聞都沒有..."
+            },
+            {
+              "name": "$player",
+              "type": "input.select",
+              "question": "...",
+              "storeKey": "robot-3",
+              "choices": [
+                {
+                  "text": "那你知道這些怎麼不早點跟大眾講呢？",
+                  "value": "怎麼不早說"
+                },
+                {
+                  "text": "那你怎麼不跟大家說呢？",
+                  "value": "怎麼不說"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "Robot-dialogue-3": {
+      "depend": [
+        {
+          "storeKey": "Robot-dialogue-2/step-1/done",
+          "value": "true"
+        }
+      ],
+      "title": "機器人談話",
+      "description": "跟機器人聊天",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "機器人",
+              "line": "現在只要機器人說政府不好的話都會被斷定為故障機器,而且還會害生產機器人的廠商受到政府的壓迫"
+            },
+            {
+              "name": "$player",
+              "line": "難道真的都沒有人在反抗了嗎？大家都甘願過這種生活嗎？面對這樣的世界該怎麼做呢？"
+            },
+            {
+              "name": "機器人",
+              "line": "過幾天有一個聚會“數位＆基因”在Wistoria 茶屋你可以去交流看看"
+            },
+            {
+              "type": "message",
+              "message": "去看看好了反正也不知道該做什麼"
+            }
+          ]
+        }
+      }
+    },
+    "Wistoria-1": {
+      "depend": [
+        "Robot-dialogue-3/step-1/done"
+      ],
+      "title": "去Wistoria",
+      "description": "詢問機器人Wistoria的位置",
+      "npcId": "robot-npc-1",
+      "steps": {
+        "step-1": {
+          "dialog": [
+            {
+              "name": "$player",
+              "line": "Wistoria 茶屋要怎麼去"
+            },
+            {
+              "name": "機器人",
+              "line": "..."
+            }
+          ]
+        }
+      }
+    }
+  }
+}

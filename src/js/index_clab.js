@@ -62,7 +62,7 @@ const npcList = {
 
 const game = PhaserWrapper.CreateGame({
   tilemapTiledJSON: 'maps/idystopia.json',
-  storylineJSON: 'This-biography.json',
+  storylineJSON: 'New-biography.json',
   npcList,
   isCLabEnv: true,
 });
