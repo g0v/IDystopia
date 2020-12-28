@@ -74,8 +74,8 @@ missions:
             question: 你還記得什麼事情嗎？例如你的興趣或是你的家人之類的，或是你的基因等級？
             storeKey: player_problem
             choices:
-#              - text: 最近……爆發了疫情，已經持續快一年了。
-#                value: 疫情
+              - text: 最近……爆發了疫情，已經持續快一年了。
+                value: 疫情
 #              - text: 因為疫情的關係，所以數位身分證要改到明年換發。
 #                value: 數位身分證
               - text: 基因等級……那是什麼？
