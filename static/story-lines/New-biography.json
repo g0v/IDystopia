@@ -250,7 +250,8 @@
     },
     "Out-of-the-ward": {
       "depend": [
-        "gene-level/step-1/done"
+        "gene-level/step-1/done",
+        "New-eid/step-1/done"
       ],
       "title": "走出病房",
       "description": "走出病房到醫院櫃臺辦出院手續",
@@ -303,10 +304,26 @@
               "line": "機器人--我現在不太想討論這議題...飲水機旁"
             }
           ]
-        },
-        "step-3": {
-          "title": "找飲水機旁的機器人聊天",
-          "description": "跟飲水機旁的機器人聊天",
+        }
+      }
+    },
+    "Robot-dialogue-3": {
+      "depend": [
+        [
+          {
+            "storeKey": "player_problem",
+            "value": "基因等級"
+          },
+          {
+            "storeKey": "Out-of-the-ward/step-2/done",
+            "value": "true"
+          }
+        ]
+      ],
+      "title": "找飲水機旁的機器人聊天",
+      "description": "跟飲水機旁的機器人聊天",
+      "steps": {
+        "step-1": {
           "npcId": "robot-npc-1",
           "dialog": [
             {
@@ -329,7 +346,7 @@
         }
       }
     },
-    "Robot-dialogue-1": {
+    "Robot-dialogue-3.1": {
       "depend": [
         [
           {
@@ -337,7 +354,7 @@
             "value": "沒碳足跡"
           },
           {
-            "storeKey": "Out-of-the-ward/step-3/done",
+            "storeKey": "Robot-dialogue-3/step-1/done",
             "value": "true"
           }
         ]
@@ -379,7 +396,7 @@
         }
       }
     },
-    "Robot-dialogue-2": {
+    "Robot-dialogue-3.2": {
       "depend": [
         [
           {
@@ -387,7 +404,7 @@
             "value": "法令"
           },
           {
-            "storeKey": "Robot-dialogue-1/step-1/done",
+            "storeKey": "Robot-dialogue-3.1/step-1/done",
             "value": "true"
           }
         ]
@@ -415,7 +432,11 @@
             },
             {
               "name": "機器人",
-              "line": "就好比之前疫情時,政府推對數位身分證這個真正會侵犯到隱私以及導致現在變成這樣的主因都沒有人探討,反而在美豬的議題下一直吵,這不就是用其他的話題來模糊焦點嗎？而且在當時不僅僅只是數位身分證的議題被掩蓋,在同一年政府說要給全國中小的學校裝冷氣時其實就已經在試辦由政府端控制用電了...在當時的招標案裡就限制必須要有WIFI模組,這件事甚至連新聞都沒有..."
+              "line": "就好比之前疫情時,政府推對數位身分證這個真正會侵犯到隱私以及導致現在變成這樣的主因都沒有人探討,反而在萊豬的議題下一直吵,這不就是用其他的話題來模糊焦點嗎？而且在當時不僅僅只是數位身分證的議題被掩蓋,在同一年政府說要給全國中小的學校裝冷氣時其實就已經在試辦由政府端控制用電了...在當時的招標案裡就限制必須要有WIFI模組,這件事甚至連新聞都沒有..."
+            },
+            {
+              "name": "$player",
+              "line": "可是萊豬的議題是關係到人民的健康怎麼能不吵呢？"
             },
             {
               "name": "$player",
@@ -437,12 +458,18 @@
         }
       }
     },
-    "Robot-dialogue-3": {
+    "Robot-dialogue-3.3": {
       "depend": [
-        {
-          "storeKey": "Robot-dialogue-2/step-1/done",
-          "value": "true"
-        }
+        [
+          {
+            "storeKey": "robot-3",
+            "value": "怎麼不早說"
+          },
+          {
+            "storeKey": "Robot-dialogue-3.2/step-1/done",
+            "value": "true"
+          }
+        ]
       ],
       "title": "機器人談話",
       "description": "跟機器人聊天",
@@ -471,7 +498,7 @@
     },
     "Wistoria-1": {
       "depend": [
-        "Robot-dialogue-3/step-1/done"
+        "Robot-dialogue-3.3/step-1/done"
       ],
       "title": "去Wistoria",
       "description": "詢問機器人Wistoria的位置",

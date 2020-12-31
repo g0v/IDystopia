@@ -119,10 +119,6 @@
               "storeKey": "player_problem",
               "choices": [
                 {
-                  "text": "最近……爆發了疫情，已經持續快一年了。",
-                  "value": "疫情"
-                },
-                {
                   "text": "基因等級……那是什麼？",
                   "value": "基因等級"
                 }
