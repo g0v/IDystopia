@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="299">
  <editorsettings>
-  <export target="idystopia.tmx" format="tmx"/>
+  <export target="idystopia.json" format="json"/>
  </editorsettings>
  <properties>
   <property name="edges" value="clamped"/>
@@ -4245,7 +4245,7 @@
   <object id="290" name="speaker-npc" x="6783.29" y="1798.04">
    <point/>
   </object>
-  <object id="291" name="SHOP-BASEMENT" x="6784.48" y="1963.8">
+  <object id="291" name="SHOP-BASEMENT" x="6794.14" y="2120.79">
    <point/>
   </object>
   <object id="293" name="Ward-door" x="4070.32" y="1968.38">
