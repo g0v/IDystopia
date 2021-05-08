@@ -58,6 +58,21 @@ const npcList = {
     texture: 'atlas',
     frame: 'misa-right'
   },
+  'public-servant-npc':{
+    name: '不太懂電腦的公務員',
+    texture: 'atlas',
+    frame: 'misa-right'
+  },
+  'lieutenant-npc':{
+    name: '羅莎少尉',
+    texture: 'atlas',
+    frame: 'misa-right'
+  },
+  'dong-npc':{
+    name: '問茗堂',
+    texture: 'atlas',
+    frame: 'misa-right'
+  }
 };
 
 const game = PhaserWrapper.CreateGame({

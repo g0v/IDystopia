@@ -3,8 +3,8 @@
     {
      "export":
         {
-         "format":"json",
-         "target":"idystopia.json"
+         "format":"tmx",
+         "target":"idystopia.tmx"
         }
     },
  "height":80,
@@ -168,8 +168,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":5345.51516725033,
-                 "y":2166.08851225697
+                 "x":5345.52,
+                 "y":2166.09
                 }, 
                 {
                  "height":0,
@@ -204,8 +204,8 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":6784.47933099867,
-                 "y":1963.80412872841
+                 "x":6780.48,
+                 "y":2127.8
                 }, 
                 {
                  "height":0,
@@ -278,6 +278,42 @@
                  "width":0,
                  "x":604.411,
                  "y":688.81
+                }, 
+                {
+                 "height":0,
+                 "id":299,
+                 "name":"public-servant-npc",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6948,
+                 "y":1920
+                }, 
+                {
+                 "height":0,
+                 "id":300,
+                 "name":"lieutenant-npc",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6642,
+                 "y":1914
+                }, 
+                {
+                 "height":0,
+                 "id":301,
+                 "name":"dong-npc",
+                 "point":true,
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":0,
+                 "x":6662,
+                 "y":2030
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -286,7 +322,7 @@
          "y":0
         }],
  "nextlayerid":13,
- "nextobjectid":299,
+ "nextobjectid":302,
  "orientation":"orthogonal",
  "properties":[
         {

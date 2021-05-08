@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="299">
+<map version="1.4" tiledversion="1.4.2" orientation="orthogonal" renderorder="right-down" width="225" height="80" tilewidth="32" tileheight="32" infinite="0" nextlayerid="13" nextobjectid="302">
  <editorsettings>
-  <export target="idystopia.tmx" format="tmx"/>
+  <export format="tmx"/>
  </editorsettings>
  <properties>
   <property name="edges" value="clamped"/>
@@ -4245,7 +4245,7 @@
   <object id="290" name="speaker-npc" x="6783.29" y="1798.04">
    <point/>
   </object>
-  <object id="291" name="SHOP-BASEMENT" x="6784.48" y="1963.8">
+  <object id="291" name="SHOP-BASEMENT" x="6780.48" y="2127.8">
    <point/>
   </object>
   <object id="293" name="Ward-door" x="4070.32" y="1968.38">
@@ -4264,6 +4264,15 @@
    <point/>
   </object>
   <object id="298" name="online-event-spawn-point" x="604.411" y="688.81">
+   <point/>
+  </object>
+  <object id="299" name="public-servant-npc" x="6948" y="1920">
+   <point/>
+  </object>
+  <object id="300" name="lieutenant-npc" x="6642" y="1914">
+   <point/>
+  </object>
+  <object id="301" name="dong-npc" x="6662" y="2030">
    <point/>
   </object>
  </objectgroup>
