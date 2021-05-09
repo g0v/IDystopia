@@ -4,7 +4,7 @@ import * as Hero from './hero.js';
 const npcList = {
   'speaker-npc': {
     name: 'i',
-    texture: 'atlas',
+    texture: 'NPC-i',
     frame: 'misa-front',
   },
   'shop-clerk-npc': {
@@ -40,7 +40,7 @@ const npcList = {
   },
   'doctor-npc': {
     name: '醫生',
-    texture: 'NPC-i',
+    texture: 'doctor',
     frame: 'misa-right'
   },
   'nurse-npc': {
@@ -70,7 +70,7 @@ const npcList = {
   },
   'dong-npc':{
     name: '問茗堂',
-    texture: 'atlas',
+    texture: 'dong',
     frame: 'misa-right'
   }
 };

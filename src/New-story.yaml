@@ -414,7 +414,7 @@ missions:
     depend:
       - Wistoria/step-2/done
     title: communication-i
-    description: ...
+    description: Tinder of counterattack
     steps:
       step-1:
         npcId: speaker-npc
