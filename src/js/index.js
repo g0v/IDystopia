@@ -3,7 +3,7 @@ import * as Hero from './hero.js';
 
 const npcList = {
   'speaker-npc': {
-    name: '演講者',
+    name: 'i',
     texture: 'atlas',
     frame: 'misa-front',
   },
