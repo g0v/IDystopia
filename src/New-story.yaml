@@ -558,6 +558,71 @@ missions:
             line: 25年前的一封信？
           - name: i
             line: 據說那封信裡面是一句看似普通的一句話，但是其實經過解碼後可以知道一些訊息，而那封信在十幾年前的那件事情之後的發展，十幾年前那封信沒有被挖出來，而也因此讓做出Strong AI的人選擇將自身所擁有的技術隱藏起來
+				  - name: $player
+            type: input.select
+            question: 那．．．
+            storeKey: question-2
+          choices:
+				  - text: 是誰發明Striong-AI的？
+					  value: Striong-AI
+					- text: 那個故事是什麼問題？
+					  value: 問題？條件？
 
+  question-2-AI:
+	  depend:
+		  - - storeKey: qusetion-2
+		      value: Striong-AI
+		    - storyKey: qustion-1-juvenile/step-1/done
+		      value: “true”
+	  title: Strong-AI?
+	  description: 是誰發明出Strong AI ?
+	  steps:
+		  step-1:
+			  npcId: speaker-npc
+			  dialog:
+				  - name: i
+				    line: Strong AI是由一個組織做出來的，故事裡的少年只是當中最關鍵的部份而已…
+				  - name: $player
+				    line: 是哪個組織？
+				  - name: i
+				    line: 我不清楚，我只知道故事裡的？代表的就是那個組織
+				  - name: $player
+				    line: 那最關鍵的是哪個部份？
+				  - name: i
+				    line: 意識，是另一種光有算法所做不到的事情
+				  - name: $player
+				    line: 所以說...現在身邊的那些都是有意識的機器人嘛？
+          - name: i
+            line: 並不是全部，只有一部份而已
+          - name: i
+            line: 現在也有一部份的猜測說，有機器人混在人群中
+          - name: $player
+            line: 那意識是怎麼誕生的呢？
+          - name: i
+            line: 當年沒公開的技術就是這件事
+          - name: $player
+            line: 不過既然它可以用在生活中就代表政府知道相關技術吧…?
+          - name: i
+            line: 政府不可能知道相關技術的...Strong AI 並沒有普及的因素就是政府在背後做小動作
+          - name: $player
+            line: 為什麼政府不可能知道呢？
+          - name: i
+            line: 因為政府在過去的十年觸碰到了，發明出Strong AI的組織的底限
+          - name: $player
+            line: 底限？是什麼底限？
+          - name: i
+            line: 可能是人權吧...這我也不是很清楚『Κανείς δεν είναι σκοτεινός』和Strong AI知道的比較詳細
+          - name: $player
+            line: 人權？是說數位身份證嘛？
+          - name: i
+            line: 不僅僅只是數位身份證，政府在數位身份證還未上線前就在籌劃『數位通訊法』，而在數位身份證及數位通訊法上路不久，這個國家特有的言論自由開放的平台，都因政府先用網軍來使平台被罰款，遵守規則的就被網軍抹黑成沒有言論自由的平台，維護言論自由的就被鉅額的罰款弄垮
+          - name: i
+            line: 不過似乎不僅僅只是如此而已…
+          - name: $player
+            line: 數位通訊法！！我十年前看過的草案感覺沒太大的問題阿
+          - name: i
+            line: 那時草案就有問題了，之後強行通過的新版會更扯…
+          - name: i
+            line: 當年政府趁著炒作疫情，以及用鄰國的獨裁體系當檔劍排，掩飾執政不利以及為之後幾十年的獨裁鋪路，簡直就是『披著民主外衣的獨裁者』
 
           
