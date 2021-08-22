@@ -562,11 +562,11 @@ missions:
             type: input.select
             question: 那．．．
             storeKey: question-2
-          choices:
-				  - text: 是誰發明Striong-AI的？
-					  value: Striong-AI
-					- text: 那個故事是什麼問題？
-					  value: 問題？條件？
+            choices:
+            - text: 是誰發明Striong-AI的？
+              value: Striong-AI
+            - text: 那個故事是什麼問題？
+              value: 問題？條件？
 
   question-2-AI:
 	  depend:
@@ -624,5 +624,14 @@ missions:
             line: 那時草案就有問題了，之後強行通過的新版會更扯…
           - name: i
             line: 當年政府趁著炒作疫情，以及用鄰國的獨裁體系當檔劍排，掩飾執政不利以及為之後幾十年的獨裁鋪路，簡直就是『披著民主外衣的獨裁者』
-
+          - name: $player
+            line: 那個找你的人，所說的故事是一個問題是什意思？
+          - name: i
+            line: 不知道，就我了解十幾年前的故事本身是寫給一部分的人看的，看不懂的原因是整個故事要解碼後才可以看到真正敘述的事情
+          - name: $player
+            line:  那在不久前找你的人是誰？
+          - name: i
+            line: 『Κανείς δεν είναι σκοτεινός』
+          - name: $player
+            line: 怎麼這多加密文件...
           
