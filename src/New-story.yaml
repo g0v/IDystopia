@@ -633,5 +633,34 @@ missions:
           - name: i
             line: 『Κανείς δεν είναι σκοτεινός』
           - name: $player
-            line: 怎麼這多加密文件...
-          
+            line: 怎麼這多加密文件...…25年前的那封信也是
+          - name: i
+            line: 我也不太清楚為什麼要把這些部份加密，不過會加密的話其實就代表這些部份很重要吧… 或許你可以詢問String AI或者是『』
+          - name:  $player
+            type: input.select
+            qustion: 看來要了解情況只能問『』跟String AI了，接下來…
+            storekey: choose-one-of-two
+            choices:
+            - text: 『Κανείς δεν είναι σκοτεινός』
+              value: 『Κανείς δεν είναι σκοτεινός』
+            - text: Strinng AI
+              value: String-AI
+  Decrypt-1:
+    depend:
+        - - storeKey: choose-one-of-two
+        value: 『Κανείς δεν είναι σκοτεινός』
+          - storeKey:  question-2-AI/step-1/done
+    title: 『Κανείς δεν είναι σκοτεινός』
+    description: 大樓
+    steps:
+      step-1:
+        npcId:
+        dialog:
+          - name: Κανείς δεν είναι σκοτεινός
+            line: 你找我有什麽事嘛？
+          - name: $player
+            line: 我是從i知道你的，想問你十幾年前發生了什麼事？
+          - name: Κανείς δεν είναι σκοτεινός
+            line: 十幾年前發生很多事...你想了解哪件事？
+          - name: $player
+            line: 我在i那裡聽他說了一個故事……想問你故事中的少年是誰？
